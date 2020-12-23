@@ -1,8 +1,8 @@
--- FUNCTION: public."1_create_tables"()
+-- FUNCTION: public."2_create_tables"()
 
--- DROP FUNCTION public."1_create_tables"();
+-- DROP FUNCTION public."2_create_tables"();
 
-CREATE OR REPLACE FUNCTION public."1_create_tables"(
+CREATE OR REPLACE FUNCTION public."2_create_tables"(
 	)
     RETURNS void
     LANGUAGE 'plpgsql'
@@ -10,6 +10,7 @@ CREATE OR REPLACE FUNCTION public."1_create_tables"(
     VOLATILE
 AS $BODY$begin
 
+--********************************DRUG EXTRACTION********************************--
 --create drug table
 DROP TABLE IF EXISTS drug;
 CREATE TABLE drug(
@@ -44,6 +45,9 @@ CREATE TABLE drug_mapper(
 
 --set primary key
 ALTER TABLE drug_mapper ADD PRIMARY KEY (drugbank_id);
+
+
+--********************************DRUG TARGET, ENZYME, TRANSPORTER, CARRIER, PATHWAY EXTRACTION********************************--
 
 --create drug_target table
 DROP TABLE IF EXISTS drug_target;
@@ -131,7 +135,7 @@ CREATE TABLE drug_pathway(
 --set primary key
 ALTER TABLE drug_pathway ADD PRIMARY KEY (drug_id, pathway_id, category, enzyme);
 
---ddi extraction
+--********************************DDI EXTRACTION********************************--
 
 --create  table
 DROP TABLE IF EXISTS ddi;
@@ -355,6 +359,7 @@ CREATE TABLE ddi_same_pathway_same_category_same_enzyme(
 ALTER TABLE ddi_same_pathway ADD PRIMARY KEY (drug1_id, drug2_id, pathway_id, category, enzyme);
 */
 
+--********************************NEWLY PREDICTED DDIs********************************--
 
 --create ddi_same_enzyme_new table
 DROP TABLE IF EXISTS ddi_same_enzyme_new;
@@ -398,47 +403,34 @@ CREATE TABLE ddi_same_etc(
 ALTER TABLE ddi_same_etc ADD PRIMARY KEY (drug1_id, drug2_id);
 
 
---create drug_snp table
-DROP TABLE IF EXISTS drug_snp;
-CREATE TABLE drug_snp(
-	drug_id TEXT,
-	snp_id TEXT,
-	severity TEXT,
-	gene_name TEXT,
-	description TEXT,
-	pubmed_id TEXT
-);
-
---set primary key
-ALTER TABLE drug_snp ADD PRIMARY KEY (drug_id, snp_id, severity, gene_name, pubmed_id);
-
---create ddgi table
-DROP TABLE IF EXISTS ddgi;
-CREATE TABLE ddgi(
-	drug1_id TEXT,
-	drug2_id TEXT,
-	snp TEXT,
-	interaction_severity TEXT
-);
-
---set primary key
-ALTER TABLE ddgi ADD PRIMARY KEY (drug1_id, drug2_id, snp, interaction_severity);
-
+--********************************DRUG_SNP EXTRACTION********************************--
 
 --create drug_snp table
 DROP TABLE IF EXISTS drug_snp;
 CREATE TABLE drug_snp(
+	id SERIAL PRIMARY KEY,
 	drug_id TEXT,
 	snp_id TEXT,
-	severity TEXT,
 	gene_name TEXT,
+	chromosome TEXT
+);
+
+--TODO: create unique index
+--CREATE UNIQUE INDEX CONCURRENTLY unique_drug_snp ON drug_snp (drug_id, snp_id, gene_name, chromosome);
+
+--create drug_snp_detail table
+DROP TABLE IF EXISTS drug_snp_detail;
+CREATE TABLE drug_snp_detail(
+	drug_snp_id INT REFERENCES drug_snp,
+	phenotype TEXT,
+	significance TEXT,
 	description TEXT,
+	severity TEXT,
 	pubmed_id TEXT
 );
 
---set primary key
-ALTER TABLE drug_snp ADD PRIMARY KEY (drug_id, snp_id, severity, gene_name, pubmed_id);
 
+--********************************DRUG_DRUG_GENE EXTRACTION********************************--
 
 --create ddgi table
 DROP TABLE IF EXISTS ddgi;
@@ -455,5 +447,8 @@ ALTER TABLE ddgi ADD PRIMARY KEY (drug1_id, drug2_id, snp, interaction_severity)
 
 end;$BODY$;
 
-ALTER FUNCTION public."1_create_tables"()
+ALTER FUNCTION public."2_create_tables"()
     OWNER TO postgres;
+
+--run function
+SELECT public."2_create_tables"();

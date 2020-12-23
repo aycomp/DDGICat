@@ -2,7 +2,7 @@
 
 -- DROP FUNCTION public."4_import_clinvar"();
 
-CREATE OR REPLACE FUNCTION public."4_import_clinvar"(
+CREATE OR REPLACE FUNCTION public."5_import_clinvar"(
 	)
     RETURNS void
     LANGUAGE 'plpgsql'
@@ -15,5 +15,5 @@ AS $BODY$begin
 
 end;$BODY$;
 
-ALTER FUNCTION public."4_import_clinvar"()
+ALTER FUNCTION public."5_import_clinvar"()
     OWNER TO postgres;

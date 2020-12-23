@@ -1,8 +1,8 @@
--- FUNCTION: public."2_import_drugbank"()
+-- FUNCTION: public."3_import_drugbank"()
 
--- DROP FUNCTION public."2_import_drugbank"();
+-- DROP FUNCTION public."3_import_drugbank"();
 
-CREATE OR REPLACE FUNCTION public."2_import_drugbank"(
+CREATE OR REPLACE FUNCTION public."3_import_drugbank"(
 	)
     RETURNS void
     LANGUAGE 'plpgsql'
@@ -10,6 +10,7 @@ CREATE OR REPLACE FUNCTION public."2_import_drugbank"(
     VOLATILE
 AS $BODY$begin
 
+--********************************DRUG IMPORT********************************--
 
 --affected organism different from 'Humans', 'Humans and other mammals' are eliminated
 --13185 rows inserted
@@ -82,10 +83,12 @@ LEFT JOIN public.drug_external_identifiers de
 ORDER BY 1,2;
 
 --1530
-select count(*) from public.drug_mapper where pharmgkb_id is not null;
+--select count(*) from public.drug_mapper where pharmgkb_id is not null;
 
 --11655
-select count(*) from public.drug_mapper where pharmgkb_id is null;
+--select count(*) from public.drug_mapper where pharmgkb_id is null;
+
+--********************************DRUG TARGET, ENZYME, TRANSPORTER, CARRIER IMPORT********************************--
 
 --	Notes: records from var_drug_ann
 --		1)	Severity kismi dusunulecek
@@ -813,8 +816,6 @@ ON CONFLICT DO NOTHING;
 
 
 
-
-
 --14130 records inserted.
 WITH
 drug1_enzyme AS (
@@ -904,19 +905,9 @@ INSERT INTO ddi_same_etc
 	drug2_id
 )
 SELECT
-	distinct(e.drug1_id || e.drug2_id),
+	distinct
 	e.drug1_id,
 	e.drug2_id
-	/*,
-	d1.carrier_id,
-	d1.carrier_name,
-	d1.carrier_action,
-	d1.polypeptide_source,
-	d1.polypeptide_uniprot_id,
-	d1.polypeptide_name,
-	d1.gene_name,
-	d1.general_function,
-	d1.specific_function*/
 FROM ddi_same_enzyme e
 INNER JOIN ddi_same_transporter t
 	ON e.polypeptide_uniprot_id = t.polypeptide_uniprot_id
@@ -926,10 +917,31 @@ INNER JOIN ddi_same_carrier c
 ORDER BY e.drug1_id, e.drug2_id
 ON CONFLICT DO NOTHING;
 
+--********************************DRUG_SNP IMPORT********************************--
 
-
---199 rows inserted.
-WITH drug_snp_effects AS (
+-- records inserted.
+WITH new_drug_snp AS
+(
+	INSERT INTO drug_snp
+	(
+		drug_id,
+		snp_id,
+		gene_name,
+		chromosome
+	)
+	SELECT
+		parent_key AS drug_id,
+		"rs-id" AS snp_id,
+		"gene-symbol" AS gene_name,
+		"allele"
+	FROM public.drug_snp_effects
+	WHERE parent_key IN (SELECT drug_id FROM drug)
+		AND parent_key || "rs-id" || "gene-symbol"
+			NOT IN (SELECT drug_id || snp_id || gene_name FROM drug_snp)
+	RETURNING id, drug_id, snp_id, gene_name
+),
+new_drug_snp_detail AS
+(
 	SELECT
 		parent_key AS drug_id,
 		"rs-id" AS snp_id,
@@ -942,28 +954,44 @@ WITH drug_snp_effects AS (
 		AND parent_key || "rs-id" || "gene-symbol"
 			NOT IN (SELECT drug_id || snp_id || gene_name FROM drug_snp)
 )
-INSERT INTO drug_snp
-(
-	drug_id,
-	snp_id,
-	severity,
-	gene_name,
-	description,
-	pubmed_id
-)
+INSERT INTO drug_snp_detail
 SELECT
-	drug_id,
-	snp_id,
+	id,
+	defining_change,
 	'Minor',
-	gene_name,
-	description || '. defining change: ' || defining_change,
+	description,
+	'',
 	pubmed_id
-FROM drug_snp_effects
-ON CONFLICT DO NOTHING;
+FROM new_drug_snp m
+LEFT JOIN new_drug_snp_detail d ON
+	m.drug_id = d.drug_id AND
+	m.snp_id = d.snp_id AND
+	m.gene_name = d.gene_name;
 
 
---107 rows inserted.
-WITH snp_adverse_reactions AS (
+-- records inserted.
+WITH new_drug_snp AS
+(
+	INSERT INTO drug_snp
+	(
+		drug_id,
+		snp_id,
+		gene_name,
+		chromosome
+	)
+	SELECT
+		parent_key AS drug_id,
+		"rs-id" AS snp_id,
+		"gene-symbol" AS gene_name,
+		"allele"
+	FROM public.snp_adverse_reactions
+	WHERE parent_key IN (SELECT drug_id FROM drug)
+		AND parent_key || "rs-id" || "gene-symbol"
+			NOT IN (SELECT drug_id || snp_id || gene_name FROM drug_snp)
+	RETURNING id, drug_id, snp_id, gene_name
+),
+new_drug_snp_detail AS
+(
 	SELECT
 		parent_key AS drug_id,
 		"rs-id" AS snp_id,
@@ -976,27 +1004,25 @@ WITH snp_adverse_reactions AS (
 		AND parent_key || "rs-id" || "gene-symbol"
 			NOT IN (SELECT drug_id || snp_id || gene_name FROM drug_snp)
 )
-INSERT INTO drug_snp
-(
-	drug_id,
-	snp_id,
-	severity,
-	gene_name,
-	description,
-	pubmed_id
-)
+INSERT INTO drug_snp_detail
 SELECT
-	drug_id,
-	snp_id,
+	id,
+	adverse_reaction,
 	'Major',
-	gene_name,
 	description || '. adverse reaction: ' || adverse_reaction,
+	'',
 	pubmed_id
-FROM snp_adverse_reactions
-ON CONFLICT DO NOTHING;
-
+FROM new_drug_snp m
+LEFT JOIN new_drug_snp_detail d ON
+	m.drug_id = d.drug_id AND
+	m.snp_id = d.snp_id AND
+	m.gene_name = d.gene_name;
 
 end;$BODY$;
 
-ALTER FUNCTION public."2_import_drugbank"()
+ALTER FUNCTION public."3_import_drugbank"()
     OWNER TO postgres;
+
+
+--run function
+SELECT public."3_import_drugbank"();
