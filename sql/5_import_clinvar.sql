@@ -1,6 +1,6 @@
--- FUNCTION: public."4_import_clinvar"()
+-- FUNCTION: public."5_import_clinvar"()
 
--- DROP FUNCTION public."4_import_clinvar"();
+-- DROP FUNCTION public."5_import_clinvar"();
 
 CREATE OR REPLACE FUNCTION public."5_import_clinvar"(
 	)

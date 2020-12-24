@@ -30,6 +30,18 @@ WHERE split_part(TRIM(split_part("Chemical", '(', 2), ')'), ')', 1)
 -- records inserted. prev:--7496 rows inserted.
 WITH new_drug_snp AS
 (
+	WITH vd AS (
+		SELECT
+			"Variant" AS snp_id,
+			unnest(string_to_array("Chemical", ',')) as chemical,
+			TRIM(split_part("Gene", '(', 1), ')') AS gene_name,
+			"Chromosome" AS chromosome,
+			split_part(TRIM(split_part(unnest(string_to_array("Chemical", ',')), '(', 2), ')'), ')', 1) AS drug
+		FROM public.var_drug_ann
+	),
+	dm AS (
+		SELECT * FROM drug_mapper
+	)
 	INSERT INTO drug_snp
 	(
 		drug_id,
@@ -39,32 +51,51 @@ WITH new_drug_snp AS
 	)
 	SELECT
 		dm.drugbank_id AS drug_id,
-		"Variant" AS snp_id,
-		TRIM(split_part(v."Gene", '(', 1), ')') AS gene_name,
-		"Chromosome" AS chromosome
-	FROM public.var_drug_ann v
-	INNER JOIN drug_mapper dm
-		ON split_part(TRIM(split_part("Chemical", '(', 2), ')'), ')', 1) = dm.pharmgkb_id
-	WHERE dm.drugbank_id || "Variant" || TRIM(split_part("Gene", '(', 1), ')')
+		snp_id,
+		gene_name,
+		chromosome
+	FROM vd
+	INNER JOIN dm
+		ON vd.drug = dm.pharmgkb_id
+	WHERE dm.drugbank_id || vd.snp_id || vd.gene_name
 		 NOT IN (SELECT drug_id || snp_id || gene_name FROM drug_snp)
+	ORDER BY dm.drugbank_id, gene_name, snp_id
 	RETURNING id, drug_id, snp_id, gene_name
 ),
 new_drug_snp_detail AS
 (
+	WITH vd AS (
+		SELECT
+			"Variant" AS snp_id,
+			unnest(string_to_array("Chemical", ',')) as chemical,
+			TRIM(split_part("Gene", '(', 1), ')') AS gene_name,
+			"Chromosome" AS chromosome,
+			"Phenotype.Category" AS phenotype,
+			"Significance" AS significance,
+			'Sentence: ' || "Sentence" || ' Notes: ' || "Notes" AS description,
+			'' AS severity,
+			"PMID" AS pubmed_id,
+			split_part(TRIM(split_part(unnest(string_to_array("Chemical", ',')), '(', 2), ')'), ')', 1) AS drug
+		FROM public.var_drug_ann
+	),
+	dm AS (
+		SELECT * FROM drug_mapper
+	)
 	SELECT
 		dm.drugbank_id AS drug_id,
-		"Variant" AS snp_id,
-		TRIM(split_part(v."Gene", '(', 1), ')') AS gene_name,
-		"Phenotype.Category" AS phenotype,
-		"Significance" AS significance,
-		'Sentence: ' || "Sentence" || ' Notes: ' || "Notes" AS description,
-		'' AS severity,
-		"PMID" AS pubmed_id
-	FROM public.var_drug_ann v
-	INNEr JOIN drug_mapper dm
-		ON split_part(TRIM(split_part("Chemical", '(', 2), ')'), ')', 1) = dm.pharmgkb_id
-	WHERE dm.drugbank_id || "Variant" || TRIM(split_part("Gene", '(', 1), ')')
+		snp_id,
+		gene_name,
+		phenotype,
+		significance,
+		description,
+		severity,
+		pubmed_id
+	FROM vd
+	INNER JOIN dm
+		ON vd.drug = dm.pharmgkb_id
+	WHERE dm.drugbank_id || vd.snp_id || vd.gene_name
 		 NOT IN (SELECT drug_id || snp_id || gene_name FROM drug_snp)
+	ORDER BY dm.drugbank_id, gene_name, snp_id
 )
 INSERT INTO drug_snp_detail
 SELECT
@@ -85,6 +116,18 @@ LEFT JOIN new_drug_snp_detail d ON
 --....records inserted. prev: 7495 rows inserted.
 WITH new_drug_snp AS
 (
+	WITH vd AS (
+		SELECT
+			"Variant" AS snp_id,
+			unnest(string_to_array("Chemical", ',')) as chemical,
+			TRIM(split_part("Gene", '(', 1), ')') AS gene_name,
+			"Chromosome" AS chromosome,
+			split_part(TRIM(split_part(unnest(string_to_array("Chemical", ',')), '(', 2), ')'), ')', 1) AS drug
+		FROM public.var_pheno_ann
+	),
+	dm AS (
+		SELECT * FROM drug_mapper
+	)
 	INSERT INTO drug_snp
 	(
 		drug_id,
@@ -94,32 +137,51 @@ WITH new_drug_snp AS
 	)
 	SELECT
 		dm.drugbank_id AS drug_id,
-		"Variant" AS snp_id,
-		TRIM(split_part(v."Gene", '(', 1), ')') AS gene_name,
-		"Chromosome" AS chromosome
-	FROM public.var_pheno_ann v
-	INNEr JOIN drug_mapper dm
-		ON split_part(TRIM(split_part("Chemical", '(', 2), ')'), ')', 1) = dm.pharmgkb_id
-	WHERE dm.drugbank_id || "Variant" || TRIM(split_part("Gene", '(', 1), ')')
+		snp_id,
+		gene_name,
+		chromosome
+	FROM vd
+	INNER JOIN dm
+		ON vd.drug = dm.pharmgkb_id
+	WHERE dm.drugbank_id || vd.snp_id || vd.gene_name
 		 NOT IN (SELECT drug_id || snp_id || gene_name FROM drug_snp)
+	ORDER BY dm.drugbank_id, gene_name, snp_id
 	RETURNING id, drug_id, snp_id, gene_name
 ),
 new_drug_snp_detail AS
 (
+	WITH vd AS (
+		SELECT
+			"Variant" AS snp_id,
+			unnest(string_to_array("Chemical", ',')) as chemical,
+			TRIM(split_part("Gene", '(', 1), ')') AS gene_name,
+			"Chromosome" AS chromosome,
+			"Phenotype.Category" AS phenotype,
+			"Significance" AS significance,
+			'Sentence: ' || "Sentence" || ' Notes: ' || "Notes" AS description,
+			'' AS severity,
+			"PMID" AS pubmed_id,
+			split_part(TRIM(split_part(unnest(string_to_array("Chemical", ',')), '(', 2), ')'), ')', 1) AS drug
+		FROM public.var_pheno_ann
+	),
+	dm AS (
+		SELECT * FROM drug_mapper
+	)
 	SELECT
 		dm.drugbank_id AS drug_id,
-		"Variant" AS snp_id,
-		TRIM(split_part(v."Gene", '(', 1), ')') AS gene_name,
-		"Phenotype.Category" AS phenotype,
-		"Significance" AS significance,
-		'Sentence: ' || "Sentence" || ' Notes: ' || "Notes" AS description,
-		'' AS severity,
-		"PMID" AS pubmed_id
-	FROM public.var_pheno_ann v
-	INNEr JOIN drug_mapper dm
-		ON split_part(TRIM(split_part("Chemical", '(', 2), ')'), ')', 1) = dm.pharmgkb_id
-	WHERE dm.drugbank_id || "Variant" || TRIM(split_part("Gene", '(', 1), ')')
+		snp_id,
+		gene_name,
+		phenotype,
+		significance,
+		description,
+		severity,
+		pubmed_id
+	FROM vd
+	INNER JOIN dm
+		ON vd.drug = dm.pharmgkb_id
+	WHERE dm.drugbank_id || vd.snp_id || vd.gene_name
 		 NOT IN (SELECT drug_id || snp_id || gene_name FROM drug_snp)
+	ORDER BY dm.drugbank_id, gene_name, snp_id
 )
 INSERT INTO drug_snp_detail
 SELECT
@@ -140,6 +202,18 @@ LEFT JOIN new_drug_snp_detail d ON
 --... records inserted. prev: 950 rows inserted.
 WITH new_drug_snp AS
 (
+	WITH vd AS (
+		SELECT
+			"Variant" AS snp_id,
+			unnest(string_to_array("Chemical", ',')) as chemical,
+			TRIM(split_part("Gene", '(', 1), ')') AS gene_name,
+			"Chromosome" AS chromosome,
+			split_part(TRIM(split_part(unnest(string_to_array("Chemical", ',')), '(', 2), ')'), ')', 1) AS drug
+		FROM public.var_fa_ann
+	),
+	dm AS (
+		SELECT * FROM drug_mapper
+	)
 	INSERT INTO drug_snp
 	(
 		drug_id,
@@ -149,32 +223,51 @@ WITH new_drug_snp AS
 	)
 	SELECT
 		dm.drugbank_id AS drug_id,
-		"Variant" AS snp_id,
-		TRIM(split_part(v."Gene", '(', 1), ')') AS gene_name,
-		"Chromosome" AS chromosome
-	FROM public.var_fa_ann v
-	INNEr JOIN drug_mapper dm
-		ON split_part(TRIM(split_part("Chemical", '(', 2), ')'), ')', 1) = dm.pharmgkb_id
-	WHERE dm.drugbank_id || "Variant" || TRIM(split_part("Gene", '(', 1), ')')
+		snp_id,
+		gene_name,
+		chromosome
+	FROM vd
+	INNER JOIN dm
+		ON vd.drug = dm.pharmgkb_id
+	WHERE dm.drugbank_id || vd.snp_id || vd.gene_name
 		 NOT IN (SELECT drug_id || snp_id || gene_name FROM drug_snp)
+	ORDER BY dm.drugbank_id, gene_name, snp_id
 	RETURNING id, drug_id, snp_id, gene_name
 ),
 new_drug_snp_detail AS
 (
+	WITH vd AS (
+		SELECT
+			"Variant" AS snp_id,
+			unnest(string_to_array("Chemical", ',')) as chemical,
+			TRIM(split_part("Gene", '(', 1), ')') AS gene_name,
+			"Chromosome" AS chromosome,
+			"Phenotype.Category" AS phenotype,
+			"Significance" AS significance,
+			'Sentence: ' || "Sentence" || ' Notes: ' || "Notes" AS description,
+			'' AS severity,
+			"PMID" AS pubmed_id,
+			split_part(TRIM(split_part(unnest(string_to_array("Chemical", ',')), '(', 2), ')'), ')', 1) AS drug
+		FROM public.var_fa_ann
+	),
+	dm AS (
+		SELECT * FROM drug_mapper
+	)
 	SELECT
 		dm.drugbank_id AS drug_id,
-		"Variant" AS snp_id,
-		TRIM(split_part(v."Gene", '(', 1), ')') AS gene_name,
-		"Phenotype.Category" AS phenotype,
-		"Significance" AS significance,
-		'Sentence: ' || "Sentence" || ' Notes: ' || "Notes" AS description,
-		'' AS severity,
-		"PMID" AS pubmed_id
-	FROM public.var_fa_ann v
-	INNEr JOIN drug_mapper dm
-		ON split_part(TRIM(split_part("Chemical", '(', 2), ')'), ')', 1) = dm.pharmgkb_id
-	WHERE dm.drugbank_id || "Variant" || TRIM(split_part("Gene", '(', 1), ')')
+		snp_id,
+		gene_name,
+		phenotype,
+		significance,
+		description,
+		severity,
+		pubmed_id
+	FROM vd
+	INNER JOIN dm
+		ON vd.drug = dm.pharmgkb_id
+	WHERE dm.drugbank_id || vd.snp_id || vd.gene_name
 		 NOT IN (SELECT drug_id || snp_id || gene_name FROM drug_snp)
+	ORDER BY dm.drugbank_id, gene_name, snp_id
 )
 INSERT INTO drug_snp_detail
 SELECT
