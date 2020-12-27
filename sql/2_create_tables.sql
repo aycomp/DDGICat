@@ -29,7 +29,9 @@ CREATE TABLE drug(
 	protein_binding TEXT,
 	route_of_elimination TEXT,
 	volume_of_distribution TEXT,
-	clearance TEXT
+	clearance TEXT,
+	articles_count INT,
+	drug_interactions_count INT
 );
 
 --set primary key

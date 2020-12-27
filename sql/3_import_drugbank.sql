@@ -17,7 +17,7 @@ AS $BODY$begin
 INSERT INTO drug
 	(drug_id, name, "type", description, state, indication, toxicity, pharmacodynamics,
 	mechanism_of_action, metabolism, absorption, half_life, protein_binding,
-	route_of_elimination, volume_of_distribution, clearance)
+	route_of_elimination, volume_of_distribution, clearance, articles_count, drug_interactions_count)
 SELECT
 	d.primary_key,
 	d.name,
@@ -34,7 +34,9 @@ SELECT
 	d.protein_binding,
 	d.route_of_elimination,
 	d.volume_of_distribution,
-	d.clearance
+	d.clearance,
+	d.articles_count,
+	d.drug_interactions_count
 FROM public.drugs d
 WHERE d.primary_key NOT IN (
 	SELECT drugbank_id
@@ -82,11 +84,8 @@ LEFT JOIN public.drug_external_identifiers de
 	ON d.drug_id = de.parent_key AND de.resource = 'PharmGKB'
 ORDER BY 1,2;
 
---1530
---select count(*) from public.drug_mapper where pharmgkb_id is not null;
 
---11655
---select count(*) from public.drug_mapper where pharmgkb_id is null;
+
 
 --********************************DRUG TARGET, ENZYME, TRANSPORTER, CARRIER IMPORT********************************--
 
@@ -916,6 +915,7 @@ INNER JOIN ddi_same_carrier c
 		and t.polypeptide_uniprot_id = e.polypeptide_uniprot_id
 ORDER BY e.drug1_id, e.drug2_id
 ON CONFLICT DO NOTHING;
+
 
 --********************************DRUG_SNP IMPORT********************************--
 
