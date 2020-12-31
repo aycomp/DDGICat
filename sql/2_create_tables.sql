@@ -57,7 +57,6 @@ CREATE TABLE drug_target(
     drug_id TEXT,
 	target_id TEXT,
 	target_name TEXT,
-	target_action TEXT,
 	polypeptide_source TEXT,
 	polypeptide_uniprot_id TEXT,
 	polypeptide_name TEXT,
@@ -67,7 +66,7 @@ CREATE TABLE drug_target(
 );
 
 --set primary key
-ALTER TABLE drug_target ADD PRIMARY KEY (drug_id, target_id, target_action);
+ALTER TABLE drug_target ADD PRIMARY KEY (drug_id, target_id);
 
 --create drug_enzyme table
 DROP TABLE IF EXISTS drug_enzyme;
@@ -75,7 +74,6 @@ CREATE TABLE drug_enzyme(
     drug_id TEXT,
 	enzyme_id TEXT,
 	enzyme_name TEXT,
-	enzyme_action TEXT,
 	polypeptide_source TEXT,
 	polypeptide_uniprot_id TEXT,
 	polypeptide_name TEXT,
@@ -85,7 +83,7 @@ CREATE TABLE drug_enzyme(
 );
 
 --set primary key
-ALTER TABLE drug_enzyme ADD PRIMARY KEY (drug_id, enzyme_id, enzyme_action);
+ALTER TABLE drug_enzyme ADD PRIMARY KEY (drug_id, enzyme_id);
 
 --create drug_transporter table
 DROP TABLE IF EXISTS drug_transporter;
@@ -93,7 +91,6 @@ CREATE TABLE drug_transporter(
     drug_id TEXT,
 	transporter_id TEXT,
 	transporter_name TEXT,
-	transporter_action TEXT,
 	polypeptide_source TEXT,
 	polypeptide_uniprot_id TEXT,
 	polypeptide_name TEXT,
@@ -103,7 +100,7 @@ CREATE TABLE drug_transporter(
 );
 
 --set primary key
-ALTER TABLE drug_transporter ADD PRIMARY KEY (drug_id, transporter_id, transporter_action);
+ALTER TABLE drug_transporter ADD PRIMARY KEY (drug_id, transporter_id);
 
 --create drug_carrier table
 DROP TABLE IF EXISTS drug_carrier;
@@ -111,7 +108,6 @@ CREATE TABLE drug_carrier(
     drug_id TEXT,
 	carrier_id TEXT,
 	carrier_name TEXT,
-	carrier_action TEXT,
 	polypeptide_source TEXT,
 	polypeptide_uniprot_id TEXT,
 	polypeptide_name TEXT,
@@ -121,10 +117,10 @@ CREATE TABLE drug_carrier(
 );
 
 --set primary key
-ALTER TABLE drug_carrier ADD PRIMARY KEY (drug_id, carrier_id, carrier_action);
+ALTER TABLE drug_carrier ADD PRIMARY KEY (drug_id, carrier_id);
 
+/* TODO:
 --pathway extraction
-
 --create drug_pathway table
 DROP TABLE IF EXISTS drug_pathway;
 CREATE TABLE drug_pathway(
@@ -136,15 +132,29 @@ CREATE TABLE drug_pathway(
 
 --set primary key
 ALTER TABLE drug_pathway ADD PRIMARY KEY (drug_id, pathway_id, category, enzyme);
+*/
 
 --********************************DDI EXTRACTION********************************--
+
+--description category  table
+DROP TABLE IF EXISTS description_category;
+CREATE TABLE description_category(
+	id INT,
+	category_id INT,
+	category TEXT,
+	description TEXT
+);
+
+--set primary key
+ALTER TABLE description_category ADD PRIMARY KEY (id);
 
 --create  table
 DROP TABLE IF EXISTS ddi;
 CREATE TABLE ddi(
 	drug1_id TEXT,
 	drug2_id TEXT,
-	description TEXT
+	description TEXT,
+	desc_cat TEXT
 );
 
 --set primary key
@@ -158,38 +168,17 @@ CREATE TABLE ddi_same_target(
 	drug2_id TEXT,
 	target_id TEXT,
 	target_name TEXT,
-	drug1_actions TEXT,
-	drug2_actions TEXT,
 	polypeptide_source TEXT,
 	polypeptide_uniprot_id TEXT,
 	polypeptide_name TEXT,
 	gene_name TEXT,
 	general_function TEXT,
-	specific_function TEXT
+	specific_function TEXT,
+	ddi_desc_cat TEXT
 );
 
 --set primary key
 ALTER TABLE ddi_same_target ADD PRIMARY KEY (drug1_id, drug2_id, target_id);
-
-
---create ddi_same_target_same_action table
-DROP TABLE IF EXISTS ddi_same_target_same_action;
-CREATE TABLE ddi_same_target_same_action(
-	drug1_id TEXT,
-	drug2_id TEXT,
-	target_id TEXT,
-	target_name TEXT,
-	target_action TEXT,
-	polypeptide_source TEXT,
-	polypeptide_uniprot_id TEXT,
-	polypeptide_name TEXT,
-	gene_name TEXT,
-	general_function TEXT,
-	specific_function TEXT
-);
-
---set primary key
-ALTER TABLE ddi_same_target_same_action ADD PRIMARY KEY (drug1_id, drug2_id, target_id, target_action);
 
 
 --create ddi_same_enzyme table
@@ -199,38 +188,17 @@ CREATE TABLE ddi_same_enzyme(
 	drug2_id TEXT,
 	enzyme_id TEXT,
 	enzyme_name TEXT,
-	drug1_actions TEXT,
-	drug2_actions TEXT,
 	polypeptide_source TEXT,
 	polypeptide_uniprot_id TEXT,
 	polypeptide_name TEXT,
 	gene_name TEXT,
 	general_function TEXT,
-	specific_function TEXT
+	specific_function TEXT,
+	ddi_desc_cat TEXT
 );
 
 --set primary key
 ALTER TABLE ddi_same_enzyme ADD PRIMARY KEY (drug1_id, drug2_id, enzyme_id);
-
-
---create ddi_same_enzyme_same_action table
-DROP TABLE IF EXISTS ddi_same_enzyme_same_action;
-CREATE TABLE ddi_same_enzyme_same_action(
-	drug1_id TEXT,
-	drug2_id TEXT,
-	enzyme_id TEXT,
-	enzyme_name TEXT,
-	enzyme_action TEXT,
-	polypeptide_source TEXT,
-	polypeptide_uniprot_id TEXT,
-	polypeptide_name TEXT,
-	gene_name TEXT,
-	general_function TEXT,
-	specific_function TEXT
-);
-
---set primary key
-ALTER TABLE ddi_same_enzyme_same_action ADD PRIMARY KEY (drug1_id, drug2_id, enzyme_id, enzyme_action);
 
 
 --create ddi_same_transporter table
@@ -240,38 +208,17 @@ CREATE TABLE ddi_same_transporter(
 	drug2_id TEXT,
 	transporter_id TEXT,
 	transporter_name TEXT,
-	drug1_actions TEXT,
-	drug2_actions TEXT,
 	polypeptide_source TEXT,
 	polypeptide_uniprot_id TEXT,
 	polypeptide_name TEXT,
 	gene_name TEXT,
 	general_function TEXT,
-	specific_function TEXT
+	specific_function TEXT,
+	ddi_desc_cat TEXT
 );
 
 --set primary key
 ALTER TABLE ddi_same_transporter ADD PRIMARY KEY (drug1_id, drug2_id, transporter_id);
-
-
---create ddi_same_transporter_same_action table
-DROP TABLE IF EXISTS ddi_same_transporter_same_action;
-CREATE TABLE ddi_same_transporter_same_action(
-	drug1_id TEXT,
-	drug2_id TEXT,
-	transporter_id TEXT,
-	transporter_name TEXT,
-	transporter_action TEXT,
-	polypeptide_source TEXT,
-	polypeptide_uniprot_id TEXT,
-	polypeptide_name TEXT,
-	gene_name TEXT,
-	general_function TEXT,
-	specific_function TEXT
-);
-
---set primary key
-ALTER TABLE ddi_same_transporter_same_action ADD PRIMARY KEY (drug1_id, drug2_id, transporter_id, transporter_action);
 
 
 --create ddi_same_carrier table
@@ -281,38 +228,28 @@ CREATE TABLE ddi_same_carrier(
 	drug2_id TEXT,
 	carrier_id TEXT,
 	carrier_name TEXT,
-	drug1_actions TEXT,
-	drug2_actions TEXT,
 	polypeptide_source TEXT,
 	polypeptide_uniprot_id TEXT,
 	polypeptide_name TEXT,
 	gene_name TEXT,
 	general_function TEXT,
-	specific_function TEXT
+	specific_function TEXT,
+	ddi_desc_cat TEXT
 );
 
 --set primary key
 ALTER TABLE ddi_same_carrier ADD PRIMARY KEY (drug1_id, drug2_id, carrier_id);
 
 
---create ddi_same_carrier_same_action table
-DROP TABLE IF EXISTS ddi_same_carrier_same_action;
-CREATE TABLE ddi_same_carrier_same_action(
+--create ddi_same_etc table
+DROP TABLE IF EXISTS ddi_same_etc;
+CREATE TABLE ddi_same_etc(
 	drug1_id TEXT,
-	drug2_id TEXT,
-	carrier_id TEXT,
-	carrier_name TEXT,
-	carrier_action TEXT,
-	polypeptide_source TEXT,
-	polypeptide_uniprot_id TEXT,
-	polypeptide_name TEXT,
-	gene_name TEXT,
-	general_function TEXT,
-	specific_function TEXT
+	drug2_id TEXT
 );
 
 --set primary key
-ALTER TABLE ddi_same_carrier_same_action ADD PRIMARY KEY (drug1_id, drug2_id, carrier_id, carrier_action);
+ALTER TABLE ddi_same_etc ADD PRIMARY KEY (drug1_id, drug2_id);
 
 
 --create ddi_same_pathway table
@@ -360,50 +297,6 @@ CREATE TABLE ddi_same_pathway_same_category_same_enzyme(
 --set primary key
 ALTER TABLE ddi_same_pathway ADD PRIMARY KEY (drug1_id, drug2_id, pathway_id, category, enzyme);
 */
-
---********************************NEWLY PREDICTED DDIs********************************--
-
---create ddi_same_enzyme_new table
-DROP TABLE IF EXISTS ddi_same_enzyme_new;
-CREATE TABLE ddi_same_enzyme_new(
-	drug1_id TEXT,
-	drug2_id TEXT,
-	enzyme_id TEXT,
-	enzyme_name TEXT,
-	drug1_actions TEXT,
-	drug2_actions TEXT,
-	polypeptide_source TEXT,
-	polypeptide_uniprot_id TEXT,
-	polypeptide_name TEXT,
-	gene_name TEXT,
-	general_function TEXT,
-	specific_function TEXT
-);
-
-
---set primary key
-ALTER TABLE ddi_same_enzyme_new ADD PRIMARY KEY (drug1_id, drug2_id, enzyme_id);
-
-
---create ddi_same_etc table
-DROP TABLE IF EXISTS ddi_same_etc;
-CREATE TABLE ddi_same_etc(
-	drug1_id TEXT,
-	drug2_id TEXT/*,
-	carrier_id TEXT,
-	carrier_name TEXT,
-	carrier_action TEXT,
-	polypeptide_source TEXT,
-	polypeptide_uniprot_id TEXT,
-	polypeptide_name TEXT,
-	gene_name TEXT,
-	general_function TEXT,
-	specific_function TEXT*/
-);
-
---set primary key
-ALTER TABLE ddi_same_etc ADD PRIMARY KEY (drug1_id, drug2_id);
-
 
 --********************************DRUG_SNP EXTRACTION********************************--
 
