@@ -1,3 +1,8 @@
+/*
+	NOTE:	What percentages of interacted drugs have same protein.
+
+
+*/
 -------------TARGET
 --CALCULATION: 39684 * 100 / 580673 = 7 %
 
