@@ -1,9 +1,11 @@
 library(dplyr)
 library(DBI)
 
-df = read.table('~/Desktop/drugLabels.byGene.tsv', header = T, sep = '\t', fill = T)
+df=NULL
+df = read.table('~/Desktop/2020_Spring/Datasets/PharmGKB/drugLabels/drugLabels.byGene.tsv',  header = T, sep = '\t', fill = T, quote = "")
 
 con <- dbConnect(RPostgres::Postgres(),user="postgres",password="terlik",host="localhost",port=5432, dbname="PharmGKB")
 
-dbWriteTable(con, "annotations_drug_labels_by_gene", df)
+dbWriteTable(con, "drug_labels_by_gene_ann", df)
 dbDisconnect(con)
+df=NULL
