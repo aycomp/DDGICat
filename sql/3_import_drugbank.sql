@@ -13,64 +13,70 @@ AS $BODY$begin
 --********************************DRUG IMPORT********************************--
 
 --affected organism different from 'Humans', 'Humans and other mammals' are eliminated
---13185 rows inserted
+--13914 rows inserted
 INSERT INTO drug
 	(drug_id, name, "type", description, state, indication, toxicity, pharmacodynamics,
 	mechanism_of_action, metabolism, absorption, half_life, protein_binding,
-	route_of_elimination, volume_of_distribution, clearance, articles_count, drug_interactions_count)
+	route_of_elimination, volume_of_distribution, clearance)
 SELECT
 	d.primary_key,
 	d.name,
 	d.type,
 	d.description,
 	d.state,
-	d.indication,
-	d.toxicity,
-	d.pharmacodynamics,
-	d.mechanism_of_action,
-	d.metabolism,
-	d.absorption,
-	d.half_life,
-	d.protein_binding,
-	d.route_of_elimination,
-	d.volume_of_distribution,
-	d.clearance,
-	d.articles_count,
-	d.drug_interactions_count
+	p.indication,
+	p.toxicity,
+	p.pharmacodynamics,
+	p.mechanism_of_action,
+	p.metabolism,
+	p.absorption,
+	p.half_life,
+	p.protein_binding,
+	p.route_of_elimination,
+	p.volume_of_distribution,
+	p.clearance
 FROM public.drugs d
+INNER JOIN public.drug_pharmacology p
+	ON d.primary_key = p.drugbank_id
 WHERE d.primary_key NOT IN (
 	SELECT drugbank_id
 	FROM public.drug_affected_organisms
 	WHERE affected_organism NOT IN ('Humans', 'Humans and other mammals'))
 ORDER BY d.primary_key;
 
---TODO: the tables below could be added into main drug table as columns
---drug_synonym table
---26181 records inserted.
-DROP TABLE IF EXISTS helper_drug_synonym;
-CREATE TABLE helper_drug_synonym AS
-SELECT parent_key AS drug_id, synonym, language, coder
-FROM public.drug_syn
-WHERE parent_key IN(SELECT drug_id FROM drug);
-
---drug_dosages table
---37350 records inserted.
-DROP TABLE IF EXISTS helper_drug_dosage;
-CREATE TABLE helper_drug_dosage AS
-SELECT parent_key AS drug_id, form, route, strength
-FROM public.drug_dosages
-WHERE parent_key IN(SELECT drug_id FROM drug);
-
---drug_article table
---11905 records inserted.
-DROP TABLE IF EXISTS helper_drug_article;
-CREATE TABLE helper_drug_article AS
-SELECT parent_key AS drug_id, "ref-id", "pubmed-id", citation
-FROM public.drug_articles
-WHERE parent_key IN(SELECT drug_id FROM drug);
+--fill pubmed_ids
+--2812 rows updated.
+WITH sub AS (
+	SELECT
+		parent_key,
+		TRIM(TRIM(ARRAY_AGG("pubmed-id")::TEXT, '{'), '}') AS pubmed_ids
+	FROM public.drugs_articles
+	GROUP BY parent_key
+)
+UPDATE drug
+SET pubmed_id = sub.pubmed_ids
+FROM sub
+WHERE drug.drug_id = sub.parent_key;
 
 
---13185 rows inserted
+--fill synonyms
+--6259 rows updated.
+WITH sub AS (
+	SELECT
+		"drugbank-id" AS drug_id,
+		TRIM(TRIM(ARRAY_AGG(synonym)::TEXT, '{'), '}') AS synonym
+	FROM public.drug_syn
+	WHERE "drugbank-id" IN(SELECT drug_id FROM drug)
+		AND language = 'english'
+	GROUP BY "drugbank-id"
+)
+UPDATE drug
+SET synonym = sub.synonym
+FROM sub
+WHERE drug.drug_id = sub.drug_id;
+
+
+--13914 rows inserted
 INSERT INTO drug_mapper
 (
 	drugbank_id,
@@ -87,100 +93,100 @@ ORDER BY 1,2;
 
 --********************************DRUG TARGET, ENZYME, TRANSPORTER, CARRIER IMPORT********************************--
 
---14170 rows inserted
-WITH target AS (
+--14230 rows inserted
+WITH sub AS (
 	SELECT *
-	FROM public.drug_targ
+	FROM public.targets
 	WHERE parent_key IN(SELECT drug_id FROM drug)
 		AND organism in ('Humans', 'Mouse', 'Rat')
 )
-INSERT INTO drug_target
+INSERT INTO target
 SELECT
-	t.parent_key AS drug_id,
-	t.id AS target_id,
-	t.name AS target_name,
+	sub.parent_key AS drug_id,
+	sub.id AS target_id,
+	sub.name AS target_name,
 	tp.source AS polypeptide_source,
 	tp.id AS polypeptide_uniprot_id,
 	tp.name AS polypeptide_name,
 	tp.gene_name,
 	tp.general_function,
 	tp.specific_function
-FROM target t
-LEFT JOIN public.drug_targ_polys tp
-	ON t.id = tp.parent_id
-ORDER BY t.parent_key;
+FROM sub
+LEFT JOIN public.targets_polypeptides tp
+	ON sub.id = tp.parent_id
+ORDER BY sub.parent_key;
 
 
---4522 rows inserted
-WITH enzyme AS (
+--4594 rows inserted
+WITH sub AS (
 	SELECT *
-	FROM public.drug_enzymes
+	FROM public.enzymes
 	WHERE parent_key IN(SELECT drug_id FROM drug)
 		AND organism in ('Humans', 'Mouse', 'Rat')
 )
-INSERT INTO drug_enzyme
+INSERT INTO enzyme
 SELECT
-	e.parent_key AS drug_id,
-	e.id,
-	e.name AS enzyme_name,
+	sub.parent_key AS drug_id,
+	sub.id,
+	sub.name AS enzyme_name,
 	ep.source AS polypeptide_source,
 	ep.id AS polypeptide_uniprot_id,
 	ep.name AS polypeptide_name,
 	ep.gene_name,
 	ep.general_function,
 	ep.specific_function
-FROM enzyme e
-LEFT JOIN public.drug_enzymes_polypeptides ep
-	ON e.id = ep.parent_id
-ORDER BY e.parent_key;
+FROM sub
+LEFT JOIN public.enzymes_polypeptides ep
+	ON sub.id = ep.parent_id
+ORDER BY sub.parent_key;
 
 
---2528 rows inserted
-WITH transporter AS (
+--2567 rows inserted
+WITH sub AS (
 	SELECT *
-	FROM public.drug_transporters
+	FROM public.transporters
 	WHERE parent_key IN(SELECT drug_id FROM drug)
 		AND organism in ('Humans', 'Mouse', 'Rat')
 )
-INSERT INTO drug_transporter
+INSERT INTO transporter
 SELECT
-	t.parent_key AS drug_id,
-	t.id,
-	t.name AS transporter_name,
+	sub.parent_key AS drug_id,
+	sub.id,
+	sub.name AS transporter_name,
 	tp.source AS polypeptide_source,
 	tp.id AS polypeptide_uniprot_id,
 	tp.name AS polypeptide_name,
 	tp.gene_name,
 	tp.general_function,
 	tp.specific_function
-FROM transporter t
-LEFT JOIN public.drug_trans_polys tp
-	ON t.id = tp.parent_id
-ORDER BY t.parent_key;
+FROM sub
+LEFT JOIN public.transporters_polypeptides tp
+	ON sub.id = tp.parent_id
+ORDER BY sub.parent_key;
 
 
---722 rows inserted
-WITH carrier AS (
+--731 rows inserted
+WITH sub AS (
 	SELECT *
-	FROM public.drug_carriers
+	FROM public.carriers
 	WHERE parent_key IN(SELECT drug_id FROM drug)
 		AND organism in ('Humans', 'Mouse', 'Rat')
 )
-INSERT INTO drug_carrier
+INSERT INTO carrier
 SELECT
-	c.parent_key AS drug_id,
-	c.id,
-	c.name AS carrier_name,
+	sub.parent_key AS drug_id,
+	sub.id,
+	sub.name AS carrier_name,
 	cp.source AS polypeptide_source,
 	cp.id AS polypeptide_uniprot_id,
 	cp.name AS polypeptide_name,
 	cp.gene_name,
 	cp.general_function,
 	cp.specific_function
-FROM carrier c
-LEFT JOIN public.drug_carriers_polypeptides cp
-	ON c.id = cp.parent_id
-ORDER BY c.parent_key;
+FROM sub
+LEFT JOIN public.carriers_polypeptides cp
+	ON sub.id = cp.parent_id
+ORDER BY sub.parent_key;
 
 
 --********************************DDI IMPORT********************************--
@@ -205,104 +211,70 @@ ON CONFLICT DO NOTHING;
 
 --********************************DRUG_SNP IMPORT********************************--
 
--- records inserted.
-WITH new_drug_snp AS
+--201 records inserted.
+INSERT INTO drug_snp
 (
-	INSERT INTO drug_snp
-	(
-		drug_id,
-		snp_id,
-		gene_name,
-		chromosome
-	)
-	SELECT
-		parent_key AS drug_id,
-		"rs-id" AS snp_id,
-		"gene-symbol" AS gene_name,
-		"allele"
-	FROM public.drug_snp_effects
-	WHERE parent_key IN (SELECT drug_id FROM drug)
-		AND parent_key || "rs-id" || "gene-symbol"
-			NOT IN (SELECT drug_id || snp_id || gene_name FROM drug_snp)
-	RETURNING id, drug_id, snp_id, gene_name
-),
-new_drug_snp_detail AS
-(
-	SELECT
-		parent_key AS drug_id,
-		"rs-id" AS snp_id,
-		"gene-symbol" AS gene_name,
-		description,
-		"defining-change" AS defining_change,
-		"pubmed-id" AS pubmed_id
-	FROM public.drug_snp_effects
-	WHERE parent_key IN (SELECT drug_id FROM drug)
-		AND parent_key || "rs-id" || "gene-symbol"
-			NOT IN (SELECT drug_id || snp_id || gene_name FROM drug_snp)
-)
-INSERT INTO drug_snp_detail
-SELECT
-	id,
-	defining_change,
-	'Minor',
+	drug_id,
+	snp_id,
+	uniprot_id,
+	gene_name,
+	chromosome,
+	phenotype,
+	significance,
 	description,
-	'',
+	description2,
+	severity,
 	pubmed_id
-FROM new_drug_snp m
-LEFT JOIN new_drug_snp_detail d ON
-	m.drug_id = d.drug_id AND
-	m.snp_id = d.snp_id AND
-	m.gene_name = d.gene_name;
-
-
--- records inserted.
-WITH new_drug_snp AS
-(
-	INSERT INTO drug_snp
-	(
-		drug_id,
-		snp_id,
-		gene_name,
-		chromosome
-	)
-	SELECT
-		parent_key AS drug_id,
-		"rs-id" AS snp_id,
-		"gene-symbol" AS gene_name,
-		"allele"
-	FROM public.snp_adverse_reactions
-	WHERE parent_key IN (SELECT drug_id FROM drug)
-		AND parent_key || "rs-id" || "gene-symbol"
-			NOT IN (SELECT drug_id || snp_id || gene_name FROM drug_snp)
-	RETURNING id, drug_id, snp_id, gene_name
-),
-new_drug_snp_detail AS
-(
-	SELECT
-		parent_key AS drug_id,
-		"rs-id" AS snp_id,
-		"gene-symbol" AS gene_name,
-		description,
-		"adverse-reaction" AS adverse_reaction,
-		"pubmed-id" AS pubmed_id
-	FROM public.snp_adverse_reactions
-	WHERE parent_key IN (SELECT drug_id FROM drug)
-		AND parent_key || "rs-id" || "gene-symbol"
-			NOT IN (SELECT drug_id || snp_id || gene_name FROM drug_snp)
 )
-INSERT INTO drug_snp_detail
 SELECT
-	id,
-	adverse_reaction,
-	'Major',
-	description || '. adverse reaction: ' || adverse_reaction,
-	'',
+	parent_key AS drug_id,
+	"rs-id" AS snp_id,
+	"uniprot-id" AS uniprot_id,
+	"gene-symbol" AS gene_name,
+	'' AS chromosome,
+	'allele: ' || allele AS phenotype,
+	'' AS significance,
+	description,
+	'defining-change' AS description2,
+	'Minor' AS severity,
+	"pubmed-id" AS pubmed_id
+FROM public.drug_snp_effects
+WHERE parent_key IN (SELECT drug_id FROM drug)
+	AND parent_key || "rs-id" || "gene-symbol"
+		NOT IN (SELECT drug_id || snp_id || gene_name FROM drug_snp);
+
+--113 records inserted.
+INSERT INTO drug_snp
+(
+	drug_id,
+	snp_id,
+	uniprot_id,
+	gene_name,
+	chromosome,
+	phenotype,
+	significance,
+	description,
+	description2,
+	severity,
 	pubmed_id
-FROM new_drug_snp m
-LEFT JOIN new_drug_snp_detail d ON
-	m.drug_id = d.drug_id AND
-	m.snp_id = d.snp_id AND
-	m.gene_name = d.gene_name;
+)
+SELECT
+	parent_key AS drug_id,
+	"rs-id" AS snp_id,
+	"uniprot-id" AS uniprot_id,
+	"gene-symbol" AS gene_name,
+	'' AS chromosome,
+	'allele: ' || allele AS phenotype,
+	'' AS significance,
+	description,
+	'adverse-reaction: ' || 'adverse-reaction' AS description2,
+	'Major' AS severity,
+	"pubmed-id" AS pubmed_id
+FROM public.snp_adverse_reactions
+WHERE parent_key IN (SELECT drug_id FROM drug)
+	AND parent_key || "rs-id" || "gene-symbol"
+		NOT IN (SELECT drug_id || snp_id || gene_name FROM drug_snp);
+
 
 end;$BODY$;
 
@@ -312,3 +284,17 @@ ALTER FUNCTION public."3_import_drugbank"()
 
 --run function
 SELECT public."3_import_drugbank"();
+
+
+
+
+
+/* TODO: Will be opened if needed
+--drug_dosages table
+--83665 records inserted.
+DROP TABLE IF EXISTS helper_drug_dosage;
+CREATE TABLE helper_drug_dosage AS
+SELECT parent_key AS drug_id, form, route, strength
+FROM public.drug_dosages
+WHERE parent_key IN(SELECT drug_id FROM drug);
+*/

@@ -23,10 +23,12 @@ OPTIONS (user 'postgres', password 'terlik');
 IMPORT FOREIGN SCHEMA public
 LIMIT TO
 (
-	drugs, drug_groups, drug_affected_organisms, drug_syn, drug_dosages,drug_articles,drug_external_identifiers, drug_calculated_properties,
-	drug_targ, drug_targ_actions, drug_targ_polys, drug_enzymes, drug_enzymes_actions, drug_enzymes_polypeptides,
-	drug_transporters, drug_trans_actions, drug_trans_polys, drug_carriers, drug_carriers_actions, drug_carriers_polypeptides,
-	drug_pathways, drug_pathways_drugs, drug_pathways_enzyme, drug_drug_interactions, drug_snp_effects, snp_adverse_reactions
+	drugs, drug_pharmacology, drug_groups, drug_affected_organisms, drug_syn, drugs_articles, drug_external_identifiers, drug_dosages,
+	targets, targets_actions, targets_polypeptides, drug_targ_articles,
+    enzymes, enzymes_polypeptides, enzymes_actions, drug_enzymes_articles,
+    transporters, transporters_polypeptides, transporters_actions, drug_trans_articles,
+    carriers, carriers_polypeptides, carriers_actions, drug_carriers_articles,
+    drug_drug_interactions, drug_snp_effects, snp_adverse_reactions
 )
 FROM SERVER fdw_server INTO public;
 
@@ -42,7 +44,7 @@ OPTIONS (user 'postgres', password 'terlik');
 IMPORT FOREIGN SCHEMA public
 LIMIT TO
 (
-    primary_genes, primary_drugs, primary_chemicals, drug_external_identifiers, var_drug_ann, var_pheno_ann, var_fa_ann
+    clinical_ann_metadata, drug_external_identifiers
 )
 FROM SERVER fdw_server_2 INTO public;
 

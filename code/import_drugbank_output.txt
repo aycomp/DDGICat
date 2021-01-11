@@ -1,0 +1,999 @@
+   `drugbank-id` name          parent_key
+   <chr>         <chr>         <chr>     
+ 1 DB00001       Lepirudin     SMP0000278
+ 2 DB01022       Phylloquinone SMP0000278
+ 3 DB01373       Calcium       SMP0000278
+ 4 DB00002       Cetuximab     SMP0000474
+ 5 DB00006       Bivalirudin   SMP0000277
+ 6 DB01022       Phylloquinone SMP0000277
+ 7 DB01373       Calcium       SMP0000277
+ 8 DB00009       Alteplase     SMP0000280
+ 9 DB01022       Phylloquinone SMP0000280
+10 DB01373       Calcium       SMP0000280
+# … with 7,428 more rows
+
+$pathway_enzyme
+# A tibble: 15,198 x 2
+   enzyme pathway_id
+   <chr>  <chr>     
+ 1 P00734 SMP0000278
+ 2 P00748 SMP0000278
+ 3 P02452 SMP0000278
+ 4 P03952 SMP0000278
+ 5 P03951 SMP0000278
+ 6 P00740 SMP0000278
+ 7 P00451 SMP0000278
+ 8 P12259 SMP0000278
+ 9 P00742 SMP0000278
+10 P02671 SMP0000278
+# … with 15,188 more rows
+
+$reactions
+# A tibble: 3,362 x 6
+   sequence left_drugbank_id left_drugbank_name right_drugbank_id right_drugbank_name         parent_key
+   <chr>    <chr>            <chr>              <chr>             <chr>                       <chr>     
+ 1 1        DB00047          Insulin glargine   DBMET00786        A21-Gly-des-B30-Thr-insulin DB00047   
+ 2 1        DB00047          Insulin glargine   DBMET00787        A21-Gly-insulin             DB00047   
+ 3 1        DB00091          Cyclosporine       DBMET02955        Cyclosporine AM-4N          DB00091   
+ 4 1        DB00091          Cyclosporine       DBMET02217        Cyclosporine M-1 (AM-9)     DB00091   
+ 5 1        DB00091          Cyclosporine       DBMET00359        Cyclosporine M-17 (AM-1)    DB00091   
+ 6 1        DB00115          Cyanocobalamin     DB03614           Mecobalamin                 DB00115   
+ 7 1        DB00118          Ademetionine       DBMET00503        Cysteine                    DB00118   
+ 8 1        DB00118          Ademetionine       DBMET00506        Methionine                  DB00118   
+ 9 1        DB00118          Ademetionine       DBMET00508        Homocysteine                DB00118   
+10 1        DB00118          Ademetionine       DBMET00514        S-Adenosylhomocysteine      DB00118   
+# … with 3,352 more rows
+
+$reactions_enzymes
+# A tibble: 3,117 x 3
+   `drugbank-id` name                                                   `uniprot-id`
+   <chr>         <chr>                                                  <chr>       
+ 1 BE0002638     Cytochrome P450 3A4                                    P08684      
+ 2 BE0002362     Cytochrome P450 3A5                                    P20815      
+ 3 BE0002638     Cytochrome P450 3A4                                    P08684      
+ 4 BE0002362     Cytochrome P450 3A5                                    P20815      
+ 5 BE0002638     Cytochrome P450 3A4                                    P08684      
+ 6 BE0002362     Cytochrome P450 3A5                                    P20815      
+ 7 BE0002240     Glutamine synthetase                                   P15104      
+ 8 BE0000003     Glutaminase liver isoform, mitochondrial               Q9UI32      
+ 9 BE0000825     Glutaminase kidney isoform, mitochondrial              O94925      
+10 BE0000618     Glycine dehydrogenase [decarboxylating], mitochondrial P23378      
+# … with 3,107 more rows
+
+$snp_effects
+# A tibble: 211 x 9
+   `protein-name`               `gene-symbol` `uniprot-id` `rs-id`  allele   `defining-change` description                                                   `pubmed-id` parent_key
+   <chr>                        <chr>         <chr>        <chr>    <chr>    <chr>             <chr>                                                         <chr>       <chr>     
+ 1 Low affinity immunoglobulin… FCGR2A        P12318       rs18012… ""       H allelle         Patients with this genotype may have increased progression-f… 17704420    DB00002   
+ 2 Low affinity immunoglobulin… FCGR3A        P08637       rs396991 ""       G > T             Patients with this genotype have increased progression-free … 17704420    DB00002   
+ 3 Interferon lambda-3          IFNL3         Q8IZI9       rs12979… ""       C > T             Patients with this genotype in IFNL3 have a reduced likeliho… 24096968    DB00008   
+ 4 Interferon lambda-3          IFNL3         Q8IZI9       rs12979… ""       C > T             Patients with this genotype in IFNL3 have a reduced likeliho… 24096968    DB00022   
+ 5 Low affinity immunoglobulin… FCGR3A        P08637       rs18012… ""       CC Allele (homoz… Patients with this genotype have increased ACR20 response wh… 18930989    DB00065   
+ 6 Low affinity immunoglobulin… FCGR3A        P08637       rs396991 "FCGR3A" T > G             Patients with this genotype have increased frequency of anti… 16609067    DB00073   
+ 7 Kinesin-like protein KIF6    KIF6          Q6ZMV9       rs20455  ""       C Allele          Patients with this genotype have a greater reduction in risk… 18222353    DB00175   
+ 8 3-hydroxy-3-methylglutaryl-… HMGCR         P04035       rs17244… ""       T Allele          Patients with this genotype have a lesser reduction in LDL c… 15199031    DB00175   
+ 9 Cytochrome P450 2D6          CYP2D6        P10635       rs35742… "CYP2D6… 2549delA          The presence of this polymorphism in CYP2D6 is associated wi… 25974703    DB00176   
+10 Cytochrome P450 2D6          CYP2D6        P10635       rs38920… "CYP2D6… A allele          The presence of this polymorphism in CYP2D6 is associated wi… 25974703    DB00176   
+# … with 201 more rows
+
+$snp_adverse_reactions
+# A tibble: 113 x 9
+   `protein-name`               `gene-symbol` `uniprot-id` `rs-id`   allele    `adverse-reactio… description                                                 `pubmed-id` parent_key
+   <chr>                        <chr>         <chr>        <chr>     <chr>     <chr>             <chr>                                                       <chr>       <chr>     
+ 1 Receptor tyrosine-protein k… ERBB2         P04626       "rs11362… ""        G Allele, hetero… Patients with this genotype have increased risk of cardiot… "17693647"  DB00072   
+ 2 Cytochrome P450 1A2          CYP1A2        P05177       "rs76255… ""        C allele          Patients with this genotype have increased risk of a non-f… "16522833"  DB00201   
+ 3 Glutamate receptor ionotrop… GRIK2         Q13002       "rs25182… ""        C Allele, homozy… Patients with this genotype have increased frequency of su… "17898344"  DB00215   
+ 4 Glutamate receptor 3         GRIA3         P42263       "rs48254… ""        G allele          Patients with this genotype have increased frequency of su… "17898344"  DB00215   
+ 5 Cyclic AMP-responsive eleme… CREB1         P16220       "rs46756… ""        T allele, homozy… Male patients with this genotype have an increased risk of… "17548750"  DB00215   
+ 6 HLA class I histocompatibil… HLA-B         P30464       ""        "HLA-B*1… HLA-B*15          The presence of this genotype in HLA-B is associated with … "25099164"  DB00252   
+ 7 DNA polymerase subunit gamm… POLG          P54098       "rs11399… "A467T"   G > A             The presence of this polymorphism in POLG may indicate an … ""          DB00313   
+ 8 DNA polymerase subunit gamm… POLG          P54098       "rs11399… "W748S"   G > C             The presence of this polymorphism in POLG may indicate an … ""          DB00313   
+ 9 ATP-binding cassette sub-fa… ABCG2         Q9UNQ0       "rs22311… ""        A allele          Patients with this genotype have an increased risk of diar… "17148776"  DB00317   
+10 Cytochrome P450 2C19         CYP2C19       P33261       "rs42442… "CYP2C19… G > A/C           Patients with this genotype have reduced metabolism of clo… "15483195"  DB00349   
+# … with 103 more rows
+
+$food_interactions
+# A tibble: 2,290 x 2
+   food_interaction                                                                                                                                        drugbank_id
+   <chr>                                                                                                                                                   <chr>      
+ 1 Avoid herbs and supplements with anticoagulant/antiplatelet activity. Examples include garlic, ginger, bilberry, danshen, piracetam, and ginkgo biloba. DB00001    
+ 2 Avoid echinacea.                                                                                                                                        DB00006    
+ 3 Avoid herbs and supplements with anticoagulant/antiplatelet activity. Examples include garlic, ginger, bilberry, danshen, piracetam, and ginkgo biloba. DB00006    
+ 4 Drink plenty of fluids.                                                                                                                                 DB00008    
+ 5 Avoid herbs and supplements with anticoagulant/antiplatelet activity. Examples include garlic, ginger, bilberry, danshen, piracetam, and ginkgo biloba. DB00009    
+ 6 Avoid alcohol.                                                                                                                                          DB00011    
+ 7 Avoid herbs and supplements with anticoagulant/antiplatelet activity. Examples include garlic, ginger, bilberry, danshen, piracetam, and ginkgo biloba. DB00013    
+ 8 Avoid herbs and supplements with anticoagulant/antiplatelet activity. Examples include garlic, ginger, bilberry, danshen, piracetam, and ginkgo biloba. DB00015    
+ 9 Avoid herbs and supplements with anticoagulant/antiplatelet activity. Examples include garlic, ginger, bilberry, danshen, piracetam, and ginkgo biloba. DB00029    
+10 Avoid alcohol. Alcohol may impair blood glucose control.                                                                                                DB00030    
+# … with 2,280 more rows
+
+$pdb_entries
+# A tibble: 223,557 x 2
+   pdb_entry drugbank_id
+   <chr>     <chr>      
+ 1 1a3g      DB00114    
+ 2 1a50      DB00114    
+ 3 1a5a      DB00114    
+ 4 1a5b      DB00114    
+ 5 1a5s      DB00114    
+ 6 1aam      DB00114    
+ 7 1aaw      DB00114    
+ 8 1ahe      DB00114    
+ 9 1ahf      DB00114    
+10 1ahg      DB00114    
+# … with 223,547 more rows
+
+$ahfs_codes
+# A tibble: 1,782 x 2
+   ahfs_code   drugbank_id
+   <chr>       <chr>      
+ 1 10:00.00    DB00002    
+ 2 44:00.00    DB00003    
+ 3 92:36.00    DB00005    
+ 4 20:12.04.12 DB00006    
+ 5 10:00.00    DB00007    
+ 6 68:18.08    DB00007    
+ 7 08:18.20    DB00008    
+ 8 20:12.20    DB00009    
+ 9 20:16.00    DB00012    
+10 68:18.00    DB00014    
+# … with 1,772 more rows
+
+$affected_organisms
+# A tibble: 3,200 x 2
+   affected_organism        drugbank_id
+   <chr>                    <chr>      
+ 1 Humans and other mammals DB00001    
+ 2 Humans and other mammals DB00002    
+ 3 Humans and other mammals DB00003    
+ 4 Humans and other mammals DB00004    
+ 5 Humans and other mammals DB00005    
+ 6 Humans and other mammals DB00006    
+ 7 Humans and other mammals DB00007    
+ 8 Humans and other mammals DB00008    
+ 9 Humans and other mammals DB00009    
+10 Humans and other mammals DB00010    
+# … with 3,190 more rows
+
+$groups
+# A tibble: 16,931 x 2
+   group           `drugbank-id`
+   <chr>           <chr>        
+ 1 approved        DB00001      
+ 2 approved        DB00002      
+ 3 approved        DB00003      
+ 4 approved        DB00004      
+ 5 investigational DB00004      
+ 6 approved        DB00005      
+ 7 investigational DB00005      
+ 8 approved        DB00006      
+ 9 investigational DB00006      
+10 approved        DB00007      
+# … with 16,921 more rows
+
+$products
+# A tibble: 375,316 x 19
+   name  labeller `ndc-id` `ndc-product-co… `dpd-id` `ema-product-co… `ema-ma-number` `started-market… `ended-marketin… `dosage-form` strength route `fda-applicatio… generic
+   <chr> <chr>    <chr>    <chr>            <chr>    <chr>            <chr>           <chr>            <chr>            <chr>         <chr>    <chr> <chr>            <chr>  
+ 1 Refl… Celgene… ""       ""               ""       "EMEA/H/C/00012… "EU/1/97/035/0… 1997-03-13       "2012-07-27"     Injection, s… 50 mg    Intr… ""               false  
+ 2 Refl… Celgene… ""       ""               ""       "EMEA/H/C/00012… "EU/1/97/035/0… 1997-03-13       "2012-07-27"     Injection, s… 50 mg    Intr… ""               false  
+ 3 Refl… Celgene… ""       ""               ""       "EMEA/H/C/00012… "EU/1/97/035/0… 1997-03-13       "2012-07-27"     Injection, s… 20 mg    Intr… ""               false  
+ 4 Refl… Celgene… ""       ""               ""       "EMEA/H/C/00012… "EU/1/97/035/0… 1997-03-13       "2012-07-27"     Injection, s… 20 mg    Intr… ""               false  
+ 5 Refl… Bayer    ""       "50419-150"      ""       ""               ""              1998-03-06       "2013-06-30"     Powder        50 mg/1… Intr… "NDA020807"      false  
+ 6 Refl… Bayer    ""       ""               "022409… ""               ""              2000-01-31       "2013-07-26"     Powder, for … 50 mg    Intr… ""               false  
+ 7 Erbi… Merck K… ""       ""               ""       "EMEA/H/C/00055… "EU/1/04/281/0… 2004-06-29       ""               Injection, s… 5 mg/ml  Intr… ""               false  
+ 8 Erbi… Merck K… ""       ""               ""       "EMEA/H/C/00055… "EU/1/04/281/0… 2004-06-29       ""               Injection, s… 5 mg/ml  Intr… ""               false  
+ 9 Erbi… ImClone… ""       "66733-948"      ""       ""               ""              2004-02-12       ""               Solution      2 mg/1mL Intr… "BLA125084"      false  
+10 Erbi… ImClone… ""       "66733-958"      ""       ""               ""              2007-10-02       ""               Solution      2 mg/1mL Intr… "BLA125084"      false  
+# … with 375,306 more rows, and 5 more variables: `over-the-counter` <chr>, approved <chr>, country <chr>, source <chr>, parent_key <chr>
+
+$external_links
+# A tibble: 3,088 x 3
+   resource  url                                               parent_key
+   <chr>     <chr>                                             <chr>     
+ 1 RxList    http://www.rxlist.com/cgi/generic/lepirudin.htm   DB00001   
+ 2 Drugs.com http://www.drugs.com/cdi/lepirudin.html           DB00001   
+ 3 RxList    http://www.rxlist.com/cgi/generic3/erbitux.htm    DB00002   
+ 4 Drugs.com http://www.drugs.com/cdi/cetuximab.html           DB00002   
+ 5 RxList    http://www.rxlist.com/cgi/generic/pulmozyme.htm   DB00003   
+ 6 Drugs.com http://www.drugs.com/cdi/dornase-alfa.html        DB00003   
+ 7 RxList    http://www.rxlist.com/cgi/generic2/denileukin.htm DB00004   
+ 8 Drugs.com http://www.drugs.com/cdi/denileukin-diftitox.html DB00004   
+ 9 RxList    http://www.rxlist.com/cgi/generic/etanercept.htm  DB00005   
+10 Drugs.com http://www.drugs.com/cdi/etanercept.html          DB00005   
+# … with 3,078 more rows
+
+$salts
+# A tibble: 2,505 x 8
+   `drugbank-id` name                           unii         `cas-number`  inchikey                      `average-mass` `monoisotopic-mass` parent_key
+   <chr>         <chr>                          <chr>        <chr>         <chr>                         <chr>          <chr>               <chr>     
+ 1 DBSALT000105  Leuprolide acetate             "37JNS02E7V" "74381-53-6"  "YFDMUNOZURYOCP-XNHQSDQCSA-N" 1269.473       1268.666591578      DB00007   
+ 2 DBSALT001439  Sermorelin acetate             "00IBG87IQW" "114466-38-5" ""                            NA             NA                  DB00010   
+ 3 DBSALT000093  Goserelin acetate              "6YUU2PV0U8" "145781-92-6" "IKDXDQDKCZPQSZ-JHYYTBFNSA-N" 1329.4624      1328.662568858      DB00014   
+ 4 DBSALT001733  Insulin human zinc suspension  ""           ""            ""                            NA             NA                  DB00030   
+ 5 DBSALT001734  NPH insulin                    ""           "53027-39-7"  ""                            NA             NA                  DB00030   
+ 6 DBSALT001154  Desmopressin acetate           "XB13HYU18U" "62357-86-2"  "YNKFCNRZZPFMEX-XHPDKPNGSA-N" 1183.32        1182.479779327      DB00035   
+ 7 DBSALT000044  Desmopressin acetate anhydrous "1K12647SFC" "62288-83-9"  "MLSVJHOYXJGGTR-IFHOVBQLSA-N" 1129.269       1128.448084334      DB00035   
+ 8 DBSALT001413  Glucagon hydrochloride         "1H87NVF4DB" "19179-82-9"  ""                            NA             NA                  DB00040   
+ 9 DBSALT000021  Cetrorelix acetate             "W9Y8L7GP4C" "130143-01-0" "DTPVYWHLQLAXFT-SMCUOGPFSA-N" 1551.17        1549.7120771        DB00050   
+10 DBSALT002464  Argipressin                    "Y4907O6MFD" "113-79-1"    "KBZOIRJILGZLEJ-LGYYRGKSSA-N" 1084.24        1083.437854941      DB00067   
+# … with 2,495 more rows
+
+$articles_drug
+# A tibble: 13,681 x 4
+   `ref-id` `pubmed-id` citation                                                                                                                                         parent_key
+   <chr>    <chr>       <chr>                                                                                                                                            <chr>     
+ 1 A1       16244762    Smythe MA, Stephens JL, Koerber JM, Mattson JC: A comparison of lepirudin and argatroban outcomes. Clin Appl Thromb Hemost. 2005 Oct;11(4):371-… DB00001   
+ 2 A2       16690967    Tardy B, Lecompte T, Boelhen F, Tardy-Poncet B, Elalamy I, Morange P, Gruel Y, Wolf M, Francois D, Racadot E, Camarasa P, Blouch MT, Nguyen F, … DB00001   
+ 3 A3       16241940    Lubenow N, Eichler P, Lietz T, Greinacher A: Lepirudin in patients with heparin-induced thrombocytopenia - results of the third prospective stu… DB00001   
+ 4 A4       10480573    Hosokawa N, Yamamoto S, Uehara Y, Hori M, Tsuchiya KS: Effect of thiazinotrienomycin B, an ansamycin antibiotic, on the function of epidermal g… DB00002   
+ 5 A5       10601294    Wakita H, Takigawa M: Activation of epidermal growth factor receptor promotes late terminal differentiation of cell-matrix interaction-disrupte… DB00002   
+ 6 A6       10628369    Suwa T, Ueda M, Jinno H, Ozawa S, Kitagawa Y, Ando N, Kitajima M: Epidermal growth factor receptor-dependent cytotoxic effect of anti-EGFR anti… DB00002   
+ 7 A7       11408594    Burke P, Schooler K, Wiley HS: Regulation of epidermal growth factor receptor signaling by endocytosis and intracellular trafficking. Mol Biol … DB00002   
+ 8 A8       11431346    Viloria-Petit A, Crombet T, Jothy S, Hicklin D, Bohlen P, Schlaeppi JM, Rak J, Kerbel RS: Acquired resistance to the antitumor effect of epider… DB00002   
+ 9 A9       11752352    Chen X, Ji ZL, Chen YZ: TTD: Therapeutic Target Database. Nucleic Acids Res. 2002 Jan 1;30(1):412-5.                                             DB00002   
+10 A10      15269308    Schrag D: The price tag on progress--chemotherapy for colorectal cancer. N Engl J Med. 2004 Jul 22;351(4):317-9.                                 DB00002   
+# … with 13,671 more rows
+
+$books_drug
+# A tibble: 437 x 4
+   `ref-id` isbn               citation                                                                                                                                  parent_key
+   <chr>    <chr>              <chr>                                                                                                                                     <chr>     
+ 1 T28      "978-0-7020-3471-… 32. (2012). In Rang and Dale's Pharmacology  (7th ed., pp. 399-400). Edinburgh: Elsevier/Churchill Livingstone.                           DB00035   
+ 2 T180     "978-1-4160-0208-… Shorr R., Hoth A. and Rawls N. (2007). Drugs for the Geriatric Patient. Elsevier.                                                         DB00085   
+ 3 T454     ""                 Amidon, Gordon L., Sadée, Wolfgang (2002). Vitamin B12 Transporters (12th ed.). Springer, Boston MA.                                      DB00115   
+ 4 T577     "978-012-374118-9" Coulston A. and Boushey C. (2008). Nutrition in the Prevention and Treatment of Disease (2nd ed.). Academic Press.                        DB00153   
+ 5 T580     "978-0-8493-9771-… Eitenmiller R., Ye L. and Landen W. (2008). Vitamin analysis for the health and food sciences (2nd ed.). Taylor and Francis.              DB00153   
+ 6 T140     "978-1-4612-9793-… Rajiv Kumar (1984). Vitamin D: Basic and Clinical Aspects. Martinus Nijhoff Publishing.                                                   DB00153   
+ 7 T592     ""                 Speeckaert M., Speeckaert R., Geel N. and Delanghe J. (2014). Advances in Clinical Chemistry. Elsevier.                                   DB00153   
+ 8 T527     "0429863632"       Caroline Ashley, Aileen Dunleavy (2018). The Renal Drug Handbook: The Ultimate Prescribing Guide for Renal Practitioners, 5th Edition (5… DB00169   
+ 9 T274     "1-57340-221-4"    Frishman W., Cheng-Lai A. and Nawarskas J. (2005). Current cardiovascular drugs (4th ed.). Current medicine LLC.                          DB00175   
+10 T303     "9781935395621"    William H. Frishman, MD, Domenic A. Sica, MD (2011). Cardiovascular Pharmacotherapeutics. Cardiotext Publishing.                          DB00175   
+# … with 427 more rows
+
+$links_drug
+# A tibble: 4,918 x 4
+   `ref-id` title                                                                                        url                                                             parent_key
+   <chr>    <chr>                                                                                        <chr>                                                           <chr>     
+ 1 L48      Google books                                                                                 http://books.google.com/books?id=iadLoXoQkWEC&pg=PA440          DB00001   
+ 2 L14862   FDA Approved Drug Products: Enbrel (etanercept) injection solution                           https://www.accessdata.fda.gov/drugsatfda_docs/label/2020/1037… DB00005   
+ 3 L10310   FDA Approved Drug Products: Lupaneta Pack for intramuscular and oral use                     https://www.accessdata.fda.gov/drugsatfda_docs/label/2013/2036… DB00007   
+ 4 L13781   FDA Approved Drug Products: Lupron Depot (leuprolide acetate) depot suspension               https://www.accessdata.fda.gov/drugsatfda_docs/label/2019/0205… DB00007   
+ 5 L13784   FDA Approved Drug Products: Lupron Depot-Ped (leuprolide acetate) depot suspension           https://www.accessdata.fda.gov/drugsatfda_docs/label/2020/0202… DB00007   
+ 6 L13787   FDA Approved Drug Products: Fensolvi (leuprolide acetate) suspension                         https://www.accessdata.fda.gov/drugsatfda_docs/label/2020/2131… DB00007   
+ 7 L13790   FDA Approved Drug Products: Eligard (leuprolide acetate) suspension                          https://www.accessdata.fda.gov/drugsatfda_docs/label/2019/0213… DB00007   
+ 8 L13814   FDA Approved Drug Products: Lupron Depot 3.75mg (leuprolide acetate) depot suspension        https://www.accessdata.fda.gov/drugsatfda_docs/label/2013/0199… DB00007   
+ 9 L13850   FDA Approved Drug Products: Lupron (leuprolide) injection; discontinued                      https://www.accessdata.fda.gov/drugsatfda_docs/nda/pre96/01901… DB00007   
+10 L852     American Association for the Study of Liver Diseases; Infectious Diseases Society of Americ… http://hcvguidelines.org/full-report-view                       DB00008   
+# … with 4,908 more rows
+
+$attachments_drug
+# A tibble: 424 x 4
+   `ref-id` title                                                                         url                                                                            parent_key
+   <chr>    <chr>                                                                         <chr>                                                                          <chr>     
+ 1 F85      EMA Summary of Product Characteristics: RETACRIT (epoetin alfa-epox) injecti… //s3-us-west-2.amazonaws.com/drugbank/cite_this/attachments/files/000/000/085… DB00016   
+ 2 F86      Epoetin Alfa (Epogen®) Product Monograph                                      //s3-us-west-2.amazonaws.com/drugbank/cite_this/attachments/files/000/000/086… DB00016   
+ 3 F1946    Xolair EMA label                                                              //s3-us-west-2.amazonaws.com/drugbank/cite_this/attachments/files/000/001/946… DB00043   
+ 4 F2118    HUMIRA FDA LABEL                                                              //s3-us-west-2.amazonaws.com/drugbank/cite_this/attachments/files/000/002/118… DB00051   
+ 5 F229     Albuminex package insert                                                      //s3-us-west-2.amazonaws.com/drugbank/cite_this/attachments/files/000/000/229… DB00062   
+ 6 F230     Albuminex 25 package insert                                                   //s3-us-west-2.amazonaws.com/drugbank/cite_this/attachments/files/000/000/230… DB00062   
+ 7 F231     CSL Bhering Prescribing Information                                           //s3-us-west-2.amazonaws.com/drugbank/cite_this/attachments/files/000/000/231… DB00062   
+ 8 F202     Trastuzumab: Antineoplastic agent; a recombinant DNA- derived humanized anti… //s3-us-west-2.amazonaws.com/drugbank/cite_this/attachments/files/000/000/202… DB00072   
+ 9 F3091    NEORAL (cyclosporine) HC label                                                //s3-us-west-2.amazonaws.com/drugbank/cite_this/attachments/files/000/003/091… DB00091   
+10 F714     EMA label                                                                     //s3-us-west-2.amazonaws.com/drugbank/cite_this/attachments/files/000/000/714… DB00099   
+# … with 414 more rows
+
+$articles_carrier
+# A tibble: 1,046 x 4
+   `ref-id` `pubmed-id` citation                                                                                                                                         parent_key
+   <chr>    <chr>       <chr>                                                                                                                                            <chr>     
+ 1 A11627   10036158    Maingonnat C, Victor R, Bertrand P, Courel MN, Maunoury R, Delpech B: Activation and inhibition of human cancer cell hyaluronidase by proteins.… BE0000530 
+ 2 A11628   10466114    Parameswaran S, Brown LV, Ibbott GS, Lai-Fook SJ: Effect of concentration and hyaluronidase on albumin diffusion across rabbit mesentery. Micro… BE0000530 
+ 3 A192021  12090938    Lozinsky E, Novoselsky A, Glaser R, Shames AI, Likhtenshtein GI, Meyerstein D: Effect of ionic strength on the binding of ascorbate to albumin.… BE0000530 
+ 4 A192024  6735617     Oelrichs BA, Kratzing CC, Kelly JD, Winzor DJ: The binding of ascorbate to bovine serum albumin. Int J Vitam Nutr Res. 1984;54(1):61-4.          BE0000530 
+ 5 A13643   10854433    Balendiran GK, Schnutgen F, Scapin G, Borchers T, Xhong N, Lim K, Godbout R, Spener F, Sacchettini JC: Crystal structure and thermodynamic anal… BE0001821 
+ 6 A175717  27742848    Davey RX: Vitamin D-binding protein as it is understood in 2016: is it a critical key with which to help to solve the calcitriol conundrum? Ann… BE0001141 
+ 7 A20277   8370586     Arnaud J, Constans J: Affinity differences for vitamin D metabolites associated with the genetic isoforms of the human serum carrier protein (D… BE0001141 
+ 8 A11676   16678417    Zsila F, Nadolski G, Lockwood SF: Association studies of aggregated aqueous lutein diphosphate with human serum albumin and alpha1-acid glycopr… BE0000530 
+ 9 A11677   11273666    Yemelyanov AY, Katz NB, Bernstein PS: Ligand-binding characterization of xanthophyll carotenoids to solubilized membrane proteins derived from … BE0000530 
+10 A192381  26372107    Hosseinzadeh R, Khorsandi K: Interaction of vitamin B1 with bovine serum albumin investigation using vitamin B1-selective electrode: potentiome… BE0000530 
+# … with 1,036 more rows
+
+$textbooks_carrier
+# A tibble: 23 x 4
+   `ref-id` isbn                citation                                                                                                                             parent_key
+   <chr>    <chr>               <chr>                                                                                                                                <chr>     
+ 1 T592     ""                  Speeckaert M., Speeckaert R., Geel N. and Delanghe J. (2014). Advances in Clinical Chemistry. Elsevier.                              BE0001141 
+ 2 T445     "978-0-8261-2858-4" Hale T. and Rowe H. (2017). MEdications & mothers' milk (17th ed.). Springer publishing company.                                     BE0000530 
+ 3 T55      ""                  Zaragoza Dorwald F. (2012). Lead optimization for medicinal chemists. Wiley-VCH.                                                     BE0000530 
+ 4 T55      ""                  Zaragoza Dorwald F. (2012). Lead optimization for medicinal chemists. Wiley-VCH.                                                     BE0000685 
+ 5 T116     "978-1-25-958473-2" Schimmer B, Funder J (2018). 46. In Goodman & Gilman's: The Pharmacological Basis of Therapeutics (13th ed.). McGraw-Hill Education. BE0000209 
+ 6 T116     "978-1-25-958473-2" Schimmer B, Funder J (2018). 46. In Goodman & Gilman's: The Pharmacological Basis of Therapeutics (13th ed.). McGraw-Hill Education. BE0000530 
+ 7 T164     ""                  Combs G. (2012). The vitamins (4th ed.). Elsevier.                                                                                   BE0004020 
+ 8 T164     ""                  Combs G. (2012). The vitamins (4th ed.). Elsevier.                                                                                   BE0000301 
+ 9 T164     ""                  Combs G. (2012). The vitamins (4th ed.). Elsevier.                                                                                   BE0000505 
+10 T164     ""                  Combs G. (2012). The vitamins (4th ed.). Elsevier.                                                                                   BE0000255 
+# … with 13 more rows
+
+$links_carrier
+# A tibble: 121 x 4
+   `ref-id` title                                                url                                                                                                     parent_key
+   <chr>    <chr>                                                <chr>                                                                                                   <chr>     
+ 1 L14513   Product monograph: Sandostatin (octreotide acetate)… https://www.accessdata.fda.gov/drugsatfda_docs/label/2003/19667scm044_Sandostatin_lbl.pdf               BE0000530 
+ 2 L5473    Australian Assessment Report                         https://www.tga.gov.au/sites/default/files/auspar-ranolazine-180220.pdf                                 BE0000925 
+ 3 L7342    FDA Approved Drug Products: Geodon (ziprasidone HCl) https://www.accessdata.fda.gov/drugsatfda_docs/label/2018/020825s059,020919s047lbl.pdf                  BE0000925 
+ 4 L7763    EUTHYROX (levothyroxine sodium) tablets, for oral u… https://www.accessdata.fda.gov/drugsatfda_docs/label/2018/021292s004,021292s005,021292s006lbl.pdf       BE0000537 
+ 5 L10544   FDA label, topiramate                                https://www.accessdata.fda.gov/drugsatfda_docs/label/2017/020505s057_020844s048lbl.pdf                  BE0000530 
+ 6 L5695    PMC                                                  https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2683610/                                                   BE0000530 
+ 7 L5695    PMC                                                  https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2683610/                                                   BE0000685 
+ 8 L6292    Diltiazem Hydrochloride Injection Label - Bedford L… https://docs.boehringer-ingelheim.com/Prescribing%20Information/PIs/Ben%20Venue_Bedford%20Labs/55390-5… BE0000530 
+ 9 L6292    Diltiazem Hydrochloride Injection Label - Bedford L… https://docs.boehringer-ingelheim.com/Prescribing%20Information/PIs/Ben%20Venue_Bedford%20Labs/55390-5… BE0000925 
+10 L7664    Prozac FDA Label                                     https://www.accessdata.fda.gov/drugsatfda_docs/label/2017/018936s103,021235s023lbl.pdf                  BE0000530 
+# … with 111 more rows
+
+$attachments_carrier
+# A tibble: 38 x 4
+   `ref-id` title                                                   url                                                                                                  parent_key
+   <chr>    <chr>                                                   <chr>                                                                                                <chr>     
+ 1 F3799    CYTOMEL (liothyronine) FDA label                        //s3-us-west-2.amazonaws.com/drugbank/cite_this/attachments/files/000/003/799/original/fda.pdf?1551… BE0000537 
+ 2 F3799    CYTOMEL (liothyronine) FDA label                        //s3-us-west-2.amazonaws.com/drugbank/cite_this/attachments/files/000/003/799/original/fda.pdf?1551… BE0000537 
+ 3 F4127    MADELINE (desogestrel and ethinyl estradiol) Australia… //s3-us-west-2.amazonaws.com/drugbank/cite_this/attachments/files/000/004/127/original/1.pdf?155364… BE0000530 
+ 4 F4127    MADELINE (desogestrel and ethinyl estradiol) Australia… //s3-us-west-2.amazonaws.com/drugbank/cite_this/attachments/files/000/004/127/original/1.pdf?155364… BE0000685 
+ 5 F3799    CYTOMEL (liothyronine) FDA label                        //s3-us-west-2.amazonaws.com/drugbank/cite_this/attachments/files/000/003/799/original/fda.pdf?1551… BE0000537 
+ 6 F4235    Prazosin FDA label                                      //s3-us-west-2.amazonaws.com/drugbank/cite_this/attachments/files/000/004/235/original/Prazosin_FDA… BE0000925 
+ 7 F3799    CYTOMEL (liothyronine) FDA label                        //s3-us-west-2.amazonaws.com/drugbank/cite_this/attachments/files/000/003/799/original/fda.pdf?1551… BE0000537 
+ 8 F3799    CYTOMEL (liothyronine) FDA label                        //s3-us-west-2.amazonaws.com/drugbank/cite_this/attachments/files/000/003/799/original/fda.pdf?1551… BE0000537 
+ 9 F3799    CYTOMEL (liothyronine) FDA label                        //s3-us-west-2.amazonaws.com/drugbank/cite_this/attachments/files/000/003/799/original/fda.pdf?1551… BE0000537 
+10 F3799    CYTOMEL (liothyronine) FDA label                        //s3-us-west-2.amazonaws.com/drugbank/cite_this/attachments/files/000/003/799/original/fda.pdf?1551… BE0000537 
+# … with 28 more rows
+
+$articles_enzyme
+# A tibble: 7,475 x 4
+   `ref-id` `pubmed-id` citation                                                                                                                                         parent_key
+   <chr>    <chr>       <chr>                                                                                                                                            <chr>     
+ 1 A17596   18701766    Rudolph V, Rudolph TK, Schopfer FJ, Bonacci G, Lau D, Szocs K, Klinke A, Meinertz T, Freeman BA, Baldus S: Bivalirudin decreases NO bioavailabi… BE0001075 
+ 2 A39126   11910269    Begre S, von Bardeleben U, Ladewig D, Jaquet-Rochat S, Cosendai-Savary L, Golay KP, Kosel M, Baumann P, Eap CB: Paroxetine increases steady-sta… BE0002433 
+ 3 A181307  9064483     Delaporte E, Renton KW: Cytochrome P4501A1 and cytochrome P4501A2 are downregulated at both transcriptional and post-transcriptional levels by … BE0002433 
+ 4 A191940  12195704    Andolfo A, English WR, Resnati M, Murphy G, Blasi F, Sidenius N: Metalloproteases cleave the urokinase-type plasminogen activator receptor in t… BE0001198 
+ 5 A181307  9064483     Delaporte E, Renton KW: Cytochrome P4501A1 and cytochrome P4501A2 are downregulated at both transcriptional and post-transcriptional levels by … BE0002433 
+ 6 A13096   14657210    Carter CR, Whitmore KM, Thorpe R: The significance of carbohydrates on G-CSF: differential sensitivity of G-CSFs to human neutrophil elastase d… BE0000394 
+ 7 A13097   16245075    Jian MY, Koizumi T, Tsushima K, Fujimoto K, Kubo K: Effects of granulocyte colony-stimulating factor (G-CSF) and neutrophil elastase inhibitor … BE0000394 
+ 8 A13098   12958067    Pelus LM, Bian H, King AG, Fukuda S: Neutrophil-derived MMP-9 mediates synergistic mobilization of hematopoietic stem and progenitor cells by t… BE0000394 
+ 9 A13099   15353486    Druhan LJ, Ai J, Massullo P, Kindwall-Keller T, Ranalli MA, Avalos BR: Novel mechanism of G-CSF refractoriness in patients with severe congenit… BE0000394 
+10 A13100   17475913    Schepers H, Wierenga AT, van Gosliga D, Eggen BJ, Vellenga E, Schuringa JJ: Reintroduction of C/EBPalpha in leukemic CD34+ stem/progenitor cell… BE0000394 
+# … with 7,465 more rows
+
+$textbooks_enzyme
+# A tibble: 94 x 4
+   `ref-id` isbn             citation                                                                                                                                    parent_key
+   <chr>    <chr>            <chr>                                                                                                                                       <chr>     
+ 1 T312     ""               Litt J. (2016). Litt's Drug eruption & reaction manual (22nd ed.). CRC Press LLc.                                                           BE0002638 
+ 2 T229     "1-894402-22-7"  Clin-Info. (2006). In Compendium of Pharmaceuticals and Specialties: The Canadian Drug Reference for Health Professionals (pp. L55). Canad… BE0002638 
+ 3 T229     "1-894402-22-7"  `Clin-Info. (2006). In Compendium of Pharmaceuticals and Specialties: The Canadian Drug Reference for Health Professionals (pp. L55). Cana… BE0002793 
+ 4 T306     "978-0-803-6694… Vallerand A. and Sanoski C. (2017). David's Canadian Drug Guide for Nurses (16th ed.). FA Davis Company.                                    BE0002638 
+ 5 T243     "978-1-4614-749… Marcucci C., Hutchens M., Wittwer E., Weingarten T., Sprung J., Nicholson W., Lalwani K., Metro D., Dull R., Swide C., Seagull F., Kirsch … BE0002638 
+ 6 T230     "085369754X"     16, 29. (2008). In Stockley's Drug Interactions (8th ed., pp. 598, 1071-1072). RPS Publishing.                                              BE0002638 
+ 7 T357     "978-0-7817-687… Lemke T., Williams D., Roche V. and Zito W. (2008). Foye's Principles of Medicinal Chemistry (6th) (6th ed.). Lippincott Williams & Wilkin… BE0002793 
+ 8 T551     "978-0-521-8736… Ng C., Lin K., Singh B. and Chiu E. (2008). Ethno-psychopharmacology. Cambridge University Press.                                           BE0003544 
+ 9 T229     "1-894402-22-7"  Clin-Info. (2006). In Compendium of Pharmaceuticals and Specialties: The Canadian Drug Reference for Health Professionals (pp. L58). Canad… BE0002793 
+10 T505     ""               Yumiko Nasako, Tetsuya Yamamoto, Yuji Moriwaki, Sumio Takahashi, Zenta Tsutsumi, Toshikazu Hada, Kazuya Higashino (1995). Purine and Pyrim… BE0003539 
+# … with 84 more rows
+
+$links_enzyme
+# A tibble: 1,619 x 4
+   `ref-id` title                                                                 url                                                                                    parent_key
+   <chr>    <chr>                                                                 <chr>                                                                                  <chr>     
+ 1 L4626    Aids info document                                                    https://aidsinfo.nih.gov/drugs/487/peginterferon-alfa-2b--hcv/136/professional         BE0002793 
+ 2 L5707    Uniprot P16519                                                        https://www.uniprot.org/uniprot/P16519                                                 BE0002124 
+ 3 L5710    Uniprot P29120                                                        https://www.uniprot.org/uniprot/P29120                                                 BE0002125 
+ 4 L162     Flockhart Table of Drug Interactions                                  https://drug-interactions.medicine.iu.edu/Main-Table.aspx                              BE0002362 
+ 5 L3734    Neoral (Cyclosporine) FDA Label                                       https://www.accessdata.fda.gov/drugsatfda_docs/label/2009/050715s027,050716s028lbl.pdf BE0002362 
+ 6 L2953    FDA Drug Development and Drug Interactions: Table of Substrates, Inh… https://www.fda.gov/Drugs/DevelopmentApprovalProcess/DevelopmentResources/DrugInterac… BE0002638 
+ 7 L162     Flockhart Table of Drug Interactions                                  https://drug-interactions.medicine.iu.edu/Main-Table.aspx                              BE0002638 
+ 8 L8003    CYP24A1 gene - Genetics Home Reference - NIH                          https://ghr.nlm.nih.gov/gene/CYP24A1                                                   BE0002250 
+ 9 L162     Flockhart Table of Drug Interactions                                  https://drug-interactions.medicine.iu.edu/Main-Table.aspx                              BE0002363 
+10 L162     Flockhart Table of Drug Interactions                                  https://drug-interactions.medicine.iu.edu/Main-Table.aspx                              BE0002433 
+# … with 1,609 more rows
+
+$attachments_enzyme
+# A tibble: 429 x 4
+   `ref-id` title                                                     url                                                                                                parent_key
+   <chr>    <chr>                                                     <chr>                                                                                              <chr>     
+ 1 F1718    Peg-interferon FDA label                                  //s3-us-west-2.amazonaws.com/drugbank/cite_this/attachments/files/000/001/718/original/peg.pdf?15… BE0002433 
+ 2 F1719    Peg-interferon alfa-2b FDA label                          //s3-us-west-2.amazonaws.com/drugbank/cite_this/attachments/files/000/001/719/original/Peg_interf… BE0002433 
+ 3 F1814    Sylatron FDA label                                        //s3-us-west-2.amazonaws.com/drugbank/cite_this/attachments/files/000/001/814/original/103949s515… BE0002793 
+ 4 F1722    PEG-Intron package insert                                 //s3-us-west-2.amazonaws.com/drugbank/cite_this/attachments/files/000/001/722/original/PEG-Intron… BE0002433 
+ 5 F1694    Fluvoxamine FDA label                                     //s3-us-west-2.amazonaws.com/drugbank/cite_this/attachments/files/000/001/694/original/Fluvoxamin… BE0002433 
+ 6 F3283    QSYMIA (phentermine/topiramate) FDA label                 //s3-us-west-2.amazonaws.com/drugbank/cite_this/attachments/files/000/003/283/original/fda.pdf?15… BE0002638 
+ 7 F1635    CYp1A3 CTEP document, cancer.gov                          //s3-us-west-2.amazonaws.com/drugbank/cite_this/attachments/files/000/001/635/original/cyp1a2.doc… BE0002433 
+ 8 F1636    Companion Dx reference lab document: EXPANDED TEST OFFER… //s3-us-west-2.amazonaws.com/drugbank/cite_this/attachments/files/000/001/636/original/PGX_CYP1A2… BE0002433 
+ 9 F1870    Sildenafil FDA label                                      //s3-us-west-2.amazonaws.com/drugbank/cite_this/attachments/files/000/001/870/original/Sildenafil… BE0002793 
+10 F1612    List of drugs that may have potential CYP2E1 interactions //s3-us-west-2.amazonaws.com/drugbank/cite_this/attachments/files/000/001/612/original/cyp2e1.doc… BE0003533 
+# … with 419 more rows
+
+$articles_target
+# A tibble: 34,460 x 4
+   `ref-id` `pubmed-id` citation                                                                                                                                         parent_key
+   <chr>    <chr>       <chr>                                                                                                                                            <chr>     
+ 1 A1703    10505536    Turpie AG: Anticoagulants in acute coronary syndromes. Am J Cardiol. 1999 Sep 2;84(5A):2M-6M.                                                    BE0000048 
+ 2 A1705    10912644    Warkentin TE: Venous thromboembolism in heparin-induced thrombocytopenia. Curr Opin Pulm Med. 2000 Jul;6(4):343-51.                              BE0000048 
+ 3 A1707    11055889    Eriksson BI: New therapeutic options in deep vein thrombosis prophylaxis. Semin Hematol. 2000 Jul;37(3 Suppl 5):7-9.                             BE0000048 
+ 4 A1709    11467439    Fabrizio MC: Use of ecarin clotting time (ECT) with lepirudin therapy in heparin-induced thrombocytopenia and cardiopulmonary bypass. J Extra C… BE0000048 
+ 5 A1711    11807012    Szaba FM, Smiley ST: Roles for thrombin and fibrin(ogen) in cytokine/chemokine production and macrophage adhesion in vivo. Blood. 2002 Feb 1;99… BE0000048 
+ 6 A9       11752352    Chen X, Ji ZL, Chen YZ: TTD: Therapeutic Target Database. Nucleic Acids Res. 2002 Jan 1;30(1):412-5.                                             BE0000048 
+ 7 A4       10480573    Hosokawa N, Yamamoto S, Uehara Y, Hori M, Tsuchiya KS: Effect of thiazinotrienomycin B, an ansamycin antibiotic, on the function of epidermal g… BE0000767 
+ 8 A5       10601294    Wakita H, Takigawa M: Activation of epidermal growth factor receptor promotes late terminal differentiation of cell-matrix interaction-disrupte… BE0000767 
+ 9 A6       10628369    Suwa T, Ueda M, Jinno H, Ozawa S, Kitagawa Y, Ando N, Kitajima M: Epidermal growth factor receptor-dependent cytotoxic effect of anti-EGFR anti… BE0000767 
+10 A7       11408594    Burke P, Schooler K, Wiley HS: Regulation of epidermal growth factor receptor signaling by endocytosis and intracellular trafficking. Mol Biol … BE0000767 
+# … with 34,450 more rows
+
+$textbooks_target
+# A tibble: 122 x 4
+   `ref-id` isbn             citation                                                                                                                                    parent_key
+   <chr>    <chr>            <chr>                                                                                                                                       <chr>     
+ 1 T776     "978-1-4939-140… Denise Rook, Johannes B. van Goudoever (2014). Oxidative Stress and Glutathione Synthesis Rates in Early Postnatal Life. In Perinatal and … BE0000166 
+ 2 T779     "978-3-030-0531… Peter Weber, Marc Birringer, Jeffrey B. Blumberg, Manfred Eggersdorfer, Jan Frank (2019). Vitamin E in Human Health. Springer.              BE0000076 
+ 3 T274     "1-57340-221-4"  Frishman W., Cheng-Lai A. and Nawarskas J. (2005). Current cardiovascular drugs (4th ed.). Current medicine LLC.                            BE0000574 
+ 4 T11      "978-0321556660" Stanfield, Cindy L.;Germann, William J. (2009). Principles of Human Physiology (3rd ed.). Benjamin-Cummings Publishing Company.             BE0000062 
+ 5 T403     "978-1-60413-20… May S. (2009). Weight-Loss Drugs. Chelsea House Publishers.                                                                                 BE0003476 
+ 6 T716     ""               Justin Evans; Amanda S. Battisti (2019). Caffeine. Stat Pearls Publishing.                                                                  BE0000241 
+ 7 T716     ""               Justin Evans; Amanda S. Battisti (2019). Caffeine. Stat Pearls Publishing.                                                                  BE0000354 
+ 8 T6       "0471948470"     Sneader, Walter (1996). Drug Prototypes and Their Exploitation. John Wiley & Sons.                                                          BE0000694 
+ 9 T18      "0198031351"     Robert A. Davidoff (2002). Migraine : Manifestations, Pathogenesis, and Management (pp. 438). Oxford University Press.                      BE0000451 
+10 T9       "978-0781754002" Saxena PR, Tfel-Hansen P (2005). Triptans, 5-HT 1B/1D receptor agonists in the acute treatment of migraines. In Headaches (3rd ed., pp. 46… BE0000797 
+# … with 112 more rows
+
+$links_target
+# A tibble: 851 x 4
+   `ref-id` title                                                                 url                                                                                    parent_key
+   <chr>    <chr>                                                                 <chr>                                                                                  <chr>     
+ 1 L4237    Enbrel (Etanercept) FDA Label                                         https://www.accessdata.fda.gov/drugsatfda_docs/label/2012/103795s5503lbl.pdf           BE0001087 
+ 2 L10310   FDA Approved Drug Products: Lupaneta Pack for intramuscular and oral… https://www.accessdata.fda.gov/drugsatfda_docs/label/2013/203696s001lbl.pdf            BE0000203 
+ 3 L13781   FDA Approved Drug Products: Lupron Depot (leuprolide acetate) depot … https://www.accessdata.fda.gov/drugsatfda_docs/label/2019/020517s042,019732s044lbl.pdf BE0000203 
+ 4 L13784   FDA Approved Drug Products: Lupron Depot-Ped (leuprolide acetate) de… https://www.accessdata.fda.gov/drugsatfda_docs/label/2020/020263s046lbl.pdf            BE0000203 
+ 5 L13787   FDA Approved Drug Products: Fensolvi (leuprolide acetate) suspension  https://www.accessdata.fda.gov/drugsatfda_docs/label/2020/213150s000lbl.pdf            BE0000203 
+ 6 L13790   FDA Approved Drug Products: Eligard (leuprolide acetate) suspension   https://www.accessdata.fda.gov/drugsatfda_docs/label/2019/021343s039,021379s041,02148… BE0000203 
+ 7 L13814   FDA Approved Drug Products: Lupron Depot 3.75mg (leuprolide acetate)… https://www.accessdata.fda.gov/drugsatfda_docs/label/2013/019943s034lbl.pdf            BE0000203 
+ 8 L12138   FDA Approved Drug Products: Kinlytic Urokinase Injection (Discontinu… https://www.accessdata.fda.gov/drugsatfda_docs/label/2008/021846s101lbl.pdf            BE0000211 
+ 9 L17933   FDA Approved Drug Product: Kepivance (Palifermin) Intravenous Inject… https://www.accessdata.fda.gov/drugsatfda_docs/label/2019/125103s176lbl.pdf            BE0000748 
+10 L3734    Neoral (Cyclosporine) FDA Label                                       https://www.accessdata.fda.gov/drugsatfda_docs/label/2009/050715s027,050716s028lbl.pdf BE0002143 
+# … with 841 more rows
+
+$attachments_target
+# A tibble: 103 x 4
+   `ref-id` title                                         url                                                                                                            parent_key
+   <chr>    <chr>                                         <chr>                                                                                                          <chr>     
+ 1 F2122    Rituxan FDA label                             //s3-us-west-2.amazonaws.com/drugbank/cite_this/attachments/files/000/002/122/original/Rituxan_FDA_label.pdf?… BE0000066 
+ 2 F714     EMA label                                     //s3-us-west-2.amazonaws.com/drugbank/cite_this/attachments/files/000/000/714/original/nivestim_EMA.pdf?15321… BE0000793 
+ 3 F719     TBO filgrastim                                //s3-us-west-2.amazonaws.com/drugbank/cite_this/attachments/files/000/000/719/original/TBO_filgrastim.pdf?153… BE0000793 
+ 4 F3151    Valsartan HCT monograph                       //s3-us-west-2.amazonaws.com/drugbank/cite_this/attachments/files/000/003/151/original/Valsartan_HCT_TAB_Mono… BE0000062 
+ 5 F3202    Protonix delayed release and oral suspension… //s3-us-west-2.amazonaws.com/drugbank/cite_this/attachments/files/000/003/202/original/Protonix_Delayed_relas… BE0000349 
+ 6 F3286    Citalopram MedSafe NZ Data Sheet              //s3-us-west-2.amazonaws.com/drugbank/cite_this/attachments/files/000/003/286/original/ArrowCitalopramtab.pdf… BE0000442 
+ 7 F3088    Canesten Monograph                            //s3-us-west-2.amazonaws.com/drugbank/cite_this/attachments/files/000/003/088/original/Canesten_Monograph.pdf… BE0004803 
+ 8 F3100    MedSafe NZ Data Sheet, Clotrimazole           //s3-us-west-2.amazonaws.com/drugbank/cite_this/attachments/files/000/003/100/original/MedSafe_NZ_Data_Sheet-… BE0004803 
+ 9 F3385    Requip FDA label                              //s3-us-west-2.amazonaws.com/drugbank/cite_this/attachments/files/000/003/385/original/FDA_label__Requip.pdf?… BE0000756 
+10 F3439    FDA label, Viread                             //s3-us-west-2.amazonaws.com/drugbank/cite_this/attachments/files/000/003/439/original/viread-epar-product-in… BE0004136 
+# … with 93 more rows
+
+$articles_transporter
+# A tibble: 4,694 x 4
+   `ref-id` `pubmed-id` citation                                                                                                                                         parent_key
+   <chr>    <chr>       <chr>                                                                                                                                            <chr>     
+ 1 A15836   14985103    Nagy H, Goda K, Fenyvesi F, Bacso Z, Szilasi M, Kappelmayer J, Lustyik G, Cianfriglia M, Szabo G Jr: Distinct groups of multidrug resistance mo… BE0001032 
+ 2 A15854   8621716     Borgnia MJ, Eytan GD, Assaraf YG: Competition of hydrophobic peptides, cytotoxic drugs, and chemosensitizers on a common P-glycoprotein pharmac… BE0001032 
+ 3 A191203  11707575    Kondratov RV, Komarov PG, Becker Y, Ewenson A, Gudkov AV: Small molecules that dramatically alter multidrug resistance phenotype by modulating … BE0001032 
+ 4 A15802   10692506    Madon J, Hagenbuch B, Landmann L, Meier PJ, Stieger B: Transport function and hepatocellular localization of mrp6 in rat liver. Mol Pharmacol. … BE0001069 
+ 5 A15910   8842452     Fricker G, Drewe J, Huwyler J, Gutmann H, Beglinger C: Relevance of p-glycoprotein for the enteral absorption of cyclosporin A: in vitro-in viv… BE0001032 
+ 6 A15911   9333100     Lown KS, Mayo RR, Leichtman AB, Hsiao HL, Turgeon DK, Schmiedlin-Ren P, Brown MB, Guo W, Rossi SJ, Benet LZ, Watkins PB: Role of intestinal P-g… BE0001032 
+ 7 A15891   10227700    Soldner A, Christians U, Susanto M, Wacher VJ, Silverman JA, Benet LZ: Grapefruit juice activates P-glycoprotein-mediated drug transport. Pharm… BE0001032 
+ 8 A189402  23922006    Barbarino JM, Staatz CE, Venkataramanan R, Klein TE, Altman RB: PharmGKB summary: cyclosporine and tacrolimus pathways. Pharmacogenet Genomics.… BE0001032 
+ 9 A12261   12404239    Byrne JA, Strautnieks SS, Mieli-Vergani G, Higgins CF, Linton KJ, Thompson RJ: The human bile salt export pump: characterization of substrate s… BE0000703 
+10 A16122   10648470    Stieger B, Fattinger K, Madon J, Kullak-Ublick GA, Meier PJ: Drug- and estrogen-induced cholestasis through inhibition of the hepatocellular bi… BE0000703 
+# … with 4,684 more rows
+
+$textbooks_transporter
+# A tibble: 17 x 4
+   `ref-id` isbn               citation                                                                                                                                  parent_key
+   <chr>    <chr>              <chr>                                                                                                                                     <chr>     
+ 1 T244     ""                 Coleman J., Cox A. and Cowley N. (2011). Side Effects of Drugs Annual. Elsevier.                                                          BE0001004 
+ 2 T338     "978-1-84973-828-… Wilson A. (2016). New horizons in predictive drug metabolism and pharmacokinetics. The Royal Society of Chemistry.                        BE0000703 
+ 3 T338     "978-1-84973-828-… Wilson A. (2016). New horizons in predictive drug metabolism and pharmacokinetics. The Royal Society of Chemistry.                        BE0000703 
+ 4 T338     "978-1-84973-828-… Wilson A. (2016). New horizons in predictive drug metabolism and pharmacokinetics. The Royal Society of Chemistry.                        BE0000703 
+ 5 T768     ""                 Alexander Alex, C. John Harris, Dennis A. Smith (2016). Attrition in the Pharmaceutical industry: reasons, implications, and pathways fo… BE0004782 
+ 6 T338     "978-1-84973-828-… Wilson A. (2016). New horizons in predictive drug metabolism and pharmacokinetics. The Royal Society of Chemistry.                        BE0000703 
+ 7 T338     "978-1-84973-828-… Wilson A. (2016). New horizons in predictive drug metabolism and pharmacokinetics. The Royal Society of Chemistry.                        BE0000703 
+ 8 T123     ""                 8. (2015). In Advances in Cancer Research (pp. 217-243). Elsevier.                                                                        BE0003646 
+ 9 T123     ""                 8. (2015). In Advances in Cancer Research (pp. 217-243). Elsevier.                                                                        BE0001204 
+10 T123     ""                 8. (2015). In Advances in Cancer Research (pp. 217-243). Elsevier.                                                                        BE0004706 
+11 T123     ""                 8. (2015). In Advances in Cancer Research (pp. 217-243). Elsevier.                                                                        BE0004705 
+12 T123     ""                 8. (2015). In Advances in Cancer Research (pp. 217-243). Elsevier.                                                                        BE0004781 
+13 T123     ""                 8. (2015). In Advances in Cancer Research (pp. 217-243). Elsevier.                                                                        BE0003672 
+14 T44      "978 92 4 153077 … Peter Watts and Paul Howe (2010). Strontium and Strontium compounds. World Health Organization.                                           BE0000986 
+15 T44      "978 92 4 153077 … Peter Watts and Paul Howe (2010). Strontium and Strontium compounds. World Health Organization.                                           BE0000012 
+16 T54      ""                 Dittmar T. and Zanker K. (2009). Stem cell biology in health and disease. Springer.                                                       BE0000785 
+17 T338     "978-1-84973-828-… Wilson A. (2016). New horizons in predictive drug metabolism and pharmacokinetics. The Royal Society of Chemistry.                        BE0000703 
+
+$links_transporter
+# A tibble: 390 x 4
+   `ref-id` title                                                                 url                                                                                    parent_key
+   <chr>    <chr>                                                                 <chr>                                                                                  <chr>     
+ 1 L3002    Cyclosporine Product Label                                            https://www.accessdata.fda.gov/drugsatfda_docs/label/2013/050573s039,050574s047,05062… BE0001032 
+ 2 L2953    FDA Drug Development and Drug Interactions: Table of Substrates, Inh… https://www.fda.gov/Drugs/DevelopmentApprovalProcess/DevelopmentResources/DrugInterac… BE0001032 
+ 3 L2953    FDA Drug Development and Drug Interactions: Table of Substrates, Inh… https://www.fda.gov/Drugs/DevelopmentApprovalProcess/DevelopmentResources/DrugInterac… BE0003643 
+ 4 L11097   Novartis Monograph: Apo-Cyclosporine                                  https://pdf.hres.ca/dpd_pm/00014004.PDF                                                BE0001066 
+ 5 L2953    FDA Drug Development and Drug Interactions: Table of Substrates, Inh… https://www.fda.gov/Drugs/DevelopmentApprovalProcess/DevelopmentResources/DrugInterac… BE0001004 
+ 6 L2953    FDA Drug Development and Drug Interactions: Table of Substrates, Inh… https://www.fda.gov/Drugs/DevelopmentApprovalProcess/DevelopmentResources/DrugInterac… BE0003659 
+ 7 L16398   EMA Summary of Product Characteristics: Replagal Agalsidase Alfa Int… https://www.ema.europa.eu/en/documents/product-information/replagal-epar-product-info… BE0004494 
+ 8 L16383   FDA Approved Drug Products: Fabrazyme Agalsidase Beta Intravenous In… https://www.accessdata.fda.gov/drugsatfda_docs/label/2018/103979s5303lbl.pdf           BE0004494 
+ 9 L176     Link                                                                  http://www.pharmgkb.org/pathway/PA145011110                                            BE0003659 
+10 L11043   FDA Approved Drug Products: Diflucan (fluconazole)                    https://www.accessdata.fda.gov/drugsatfda_docs/label/2019/019949s065,020090s047lbl.pdf BE0001032 
+# … with 380 more rows
+
+$attachments_transporter
+# A tibble: 67 x 4
+   `ref-id` title                                                                                url                                                                     parent_key
+   <chr>    <chr>                                                                                <chr>                                                                   <chr>     
+ 1 F3133    Valsartan Canadian Monograph                                                         //s3-us-west-2.amazonaws.com/drugbank/cite_this/attachments/files/000/… BE0001004 
+ 2 F3139    Valsartan HCT Canadian Monograph                                                     //s3-us-west-2.amazonaws.com/drugbank/cite_this/attachments/files/000/… BE0001069 
+ 3 F3070    In Vitro and In Vivo Evidence of the Importance of Organic Anion Transporters (OATs… //s3-us-west-2.amazonaws.com/drugbank/cite_this/attachments/files/000/… BE0001066 
+ 4 F3076    A ROLE OF P-GLYCOPROTEIN IN MODULATION OF ANTIBIOTIC PHARMACOKINETICS                //s3-us-west-2.amazonaws.com/drugbank/cite_this/attachments/files/000/… BE0002369 
+ 5 F3103    Interaction of Cytochrome P450 3A Inhibitors with P-Glycoprotein                     //s3-us-west-2.amazonaws.com/drugbank/cite_this/attachments/files/000/… BE0001032 
+ 6 F3106    Identification, Ki determination and CoMFA analysis of nuclear receptor ligands as … //s3-us-west-2.amazonaws.com/drugbank/cite_this/attachments/files/000/… BE0001004 
+ 7 F4112    FDA label, metformin                                                                 //s3-us-west-2.amazonaws.com/drugbank/cite_this/attachments/files/000/… BE0003647 
+ 8 F1794    Metformin FDA label                                                                  //s3-us-west-2.amazonaws.com/drugbank/cite_this/attachments/files/000/… BE0004752 
+ 9 F649     Lonsurf Summary of Product Characteristics- European Medicines Agency - Europa EU    //s3-us-west-2.amazonaws.com/drugbank/cite_this/attachments/files/000/… BE0004705 
+10 F649     Lonsurf Summary of Product Characteristics- European Medicines Agency - Europa EU    //s3-us-west-2.amazonaws.com/drugbank/cite_this/attachments/files/000/… BE0001204 
+# … with 57 more rows
+
+$carriers
+# A tibble: 816 x 6
+   id        name                              organism known_action position parent_key
+   <chr>     <chr>                             <chr>    <chr>        <chr>    <chr>     
+ 1 BE0000537 Thyroxine-binding globulin        Humans   no           1        DB00023   
+ 2 BE0000537 Thyroxine-binding globulin        Humans   no           1        DB00059   
+ 3 BE0000530 Serum albumin                     Humans   unknown      5        DB00070   
+ 4 BE0000530 Serum albumin                     Humans   unknown      4        DB00104   
+ 5 BE0000530 Serum albumin                     Humans   unknown      30       DB00126   
+ 6 BE0001821 Fatty acid-binding protein, brain Humans   unknown      NA       DB00132   
+ 7 BE0001141 Vitamin D-binding protein         Humans   no           2        DB00136   
+ 8 BE0000530 Serum albumin                     Humans   unknown      NA       DB00137   
+ 9 BE0000530 Serum albumin                     Humans   unknown      10       DB00152   
+10 BE0001141 Vitamin D-binding protein         Humans   no           1        DB00153   
+# … with 806 more rows
+
+$carriers_actions
+# A tibble: 107 x 2
+   action    parent_id
+   <chr>     <chr>    
+ 1 inhibitor BE0000537
+ 2 inhibitor BE0000530
+ 3 binder    BE0000530
+ 4 binder    BE0001141
+ 5 agonist   BE0001821
+ 6 binder    BE0000682
+ 7 binder    BE0000532
+ 8 binder    BE0000314
+ 9 binder    BE0000505
+10 binder    BE0000786
+# … with 97 more rows
+
+$carriers_polypeptides
+# A tibble: 81 x 20
+   id    source name  general_function specific_functi… gene_name locus cellular_locati… transmembrane_r… signal_regions theoretical_pi molecular_weight chromosome_loca… organism
+   <chr> <chr>  <chr> <chr>            <chr>            <chr>     <chr> <chr>            <chr>            <chr>          <chr>          <chr>            <chr>            <chr>   
+ 1 P055… Swiss… Thyr… Serine-type end… Major thyroid h… SERPINA7  Xq22… Secreted         ""               "1-20"         6.27           46324.12         NA               Humans  
+ 2 P027… Swiss… Seru… Toxic substance… Serum albumin, … ALB       4q11… Secreted         ""               "1-18"         6.21           69365.94         NA               Humans  
+ 3 O155… Swiss… Fatt… Transporter act… B-FABP could be… FABP7     6q22… Cytoplasm        ""               ""             5.25           14888.855        NA               Humans  
+ 4 P027… Swiss… Vita… Vitamin transpo… Involved in vit… GC        4q12… Secreted         ""               "1-16"         5.21           52963.025        NA               Humans  
+ 5 P829… Swiss… Reti… Transporter act… Intracellular t… RBP5      12p1… Cytoplasm        ""               ""             6.51           15931.17         NA               Humans  
+ 6 Q96R… Swiss… Reti… Transporter act… Intracellular t… RBP7      1p36… Cytoplasm        ""               ""             7.96           15535.585        NA               Humans  
+ 7 P027… Swiss… Reti… Retinol transpo… Delivers retino… RBP4      10q2… Secreted         ""               "1-18"         5.85           23009.8          NA               Humans  
+ 8 P501… Swiss… Reti… Transporter act… Intracellular t… RBP2      3q23  Cytoplasm        ""               ""             5.04           15706.595        NA               Humans  
+ 9 P122… Swiss… Reti… Transporter act… Soluble retinoi… RLBP1     15q26 Cytoplasm        ""               ""             4.7            36474.02         NA               Humans  
+10 P107… Swiss… Reti… Serine-type pep… IRBP shuttles 1… RBP3      10q1… Secreted         ""               "1-17"         4.76           135361.46        NA               Humans  
+# … with 71 more rows, and 6 more variables: organism_ncbi_taxonomy_id <chr>, amino_acid_sequence <chr>, amino_acid_format <chr>, gene_sequence <chr>, gene_format <chr>,
+#   parent_id <chr>
+
+$carriers_polypep_ex_ident
+# A tibble: 418 x 3
+   resource                                identifier parent_key
+   <chr>                                   <chr>      <chr>     
+ 1 HUGO Gene Nomenclature Committee (HGNC) HGNC:11583 BE0000537 
+ 2 GenAtlas                                SERPINA7   BE0000537 
+ 3 GenBank Gene Database                   M14091     BE0000537 
+ 4 GenBank Protein Database                338697     BE0000537 
+ 5 UniProtKB                               P05543     BE0000537 
+ 6 UniProt Accession                       THBG_HUMAN BE0000537 
+ 7 HUGO Gene Nomenclature Committee (HGNC) HGNC:399   BE0000530 
+ 8 GenAtlas                                ALB        BE0000530 
+ 9 GenBank Gene Database                   V00494     BE0000530 
+10 GenBank Protein Database                28590      BE0000530 
+# … with 408 more rows
+
+$carriers_polypeptides_syn
+# A tibble: 329 x 2
+   synonym                               parent_key
+   <chr>                                 <chr>     
+ 1 Serpin A7                             BE0000537 
+ 2 T4-binding globulin                   BE0000537 
+ 3 TBG                                   BE0000537 
+ 4 Serum albumin precursor               BE0000530 
+ 5 B-FABP                                BE0001821 
+ 6 BLBP                                  BE0001821 
+ 7 Brain lipid-binding protein           BE0001821 
+ 8 Brain-type fatty acid-binding protein BE0001821 
+ 9 FABPB                                 BE0001821 
+10 Fatty acid-binding protein 7          BE0001821 
+# … with 319 more rows
+
+$carriers_polypeptides_pfams
+# A tibble: 132 x 3
+   identifier name          parent_key
+   <chr>      <chr>         <chr>     
+ 1 PF00079    Serpin        BE0000537 
+ 2 PF00273    Serum_albumin BE0000530 
+ 3 PF00061    Lipocalin     BE0001821 
+ 4 PF00273    Serum_albumin BE0001141 
+ 5 PF09164    VitD-bind_III BE0001141 
+ 6 PF00061    Lipocalin     BE0000682 
+ 7 PF00061    Lipocalin     BE0000532 
+ 8 PF00061    Lipocalin     BE0000314 
+ 9 PF00061    Lipocalin     BE0000505 
+10 PF00650    CRAL_TRIO     BE0000786 
+# … with 122 more rows
+
+$carriers_polypeptides_go
+# A tibble: 1,824 x 3
+   category  description                                   parent_key
+   <chr>     <chr>                                         <chr>     
+ 1 component extracellular exosome                         BE0000537 
+ 2 component extracellular region                          BE0000537 
+ 3 component extracellular space                           BE0000537 
+ 4 function  hormone binding                               BE0000537 
+ 5 function  serine-type endopeptidase inhibitor activity  BE0000537 
+ 6 process   aging                                         BE0000537 
+ 7 process   negative regulation of endopeptidase activity BE0000537 
+ 8 process   post-embryonic development                    BE0000537 
+ 9 process   response to corticosterone                    BE0000537 
+10 process   response to drug                              BE0000537 
+# … with 1,814 more rows
+
+$enzymes
+# A tibble: 5,238 x 8
+   id        name                       organism known_action position parent_key `inhibition-strength` `induction-strength`
+   <chr>     <chr>                      <chr>    <chr>        <chr>    <chr>      <chr>                 <chr>               
+ 1 BE0001075 Myeloperoxidase            Humans   unknown      1        DB00006    "unknown"             ""                  
+ 2 BE0002433 Cytochrome P450 1A2        Humans   unknown      1        DB00008    "unknown"             ""                  
+ 3 BE0002433 Cytochrome P450 1A2        Humans   unknown      3        DB00011    "unknown"             ""                  
+ 4 BE0001198 Macrophage metalloelastase Humans   unknown      9        DB00013    ""                    ""                  
+ 5 BE0002433 Cytochrome P450 1A2        Humans   unknown      1        DB00018    "unknown"             ""                  
+ 6 BE0000394 Neutrophil elastase        Humans   no           1        DB00019    ""                    ""                  
+ 7 BE0002433 Cytochrome P450 1A2        Humans   unknown      1        DB00022    "unknown"             ""                  
+ 8 BE0002363 Cytochrome P450 2D6        Humans   unknown      2        DB00022    "weak"                ""                  
+ 9 BE0002793 Cytochrome P450 2C9        Humans   unknown      3        DB00022    ""                    "weak"              
+10 BE0000048 Prothrombin                Humans   unknown      12       DB00025    ""                    ""                  
+# … with 5,228 more rows
+
+$enzymes_actions
+# A tibble: 660 x 2
+   action      parent_id
+   <chr>       <chr>    
+ 1 inhibitor   BE0001075
+ 2 inhibitor   BE0002433
+ 3 substrate   BE0001198
+ 4 substrate   BE0000394
+ 5 inhibitor   BE0002363
+ 6 inducer     BE0002793
+ 7 activator   BE0000048
+ 8 inactivator BE0000380
+ 9 cleavage    BE0001183
+10 activator   BE0002124
+# … with 650 more rows
+
+$enzymes_polypeptides
+# A tibble: 452 x 20
+   id    source name  general_function specific_functi… gene_name locus cellular_locati… transmembrane_r… signal_regions theoretical_pi molecular_weight chromosome_loca… organism
+   <chr> <chr>  <chr> <chr>            <chr>            <chr>     <chr> <chr>            <chr>            <chr>          <chr>          <chr>            <chr>            <chr>   
+ 1 P051… Swiss… Myel… Peroxidase acti… Part of the hos… MPO       17q2… Lysosome         ""               "1-48"         9.14           83867.71         NA               Humans  
+ 2 P051… Swiss… Cyto… Oxidoreductase … Cytochromes P45… CYP1A2    15q24 Endoplasmic ret… ""               ""             9.43           58293.76         NA               Humans  
+ 3 P399… Swiss… Macr… Zinc ion binding May be involved… MMP12     11q2… Secreted         ""               "1-16"         8.98           54001.175        NA               Humans  
+ 4 P082… Swiss… Neut… Serine-type end… Modifies the fu… ELANE     19p1… Cytoplasmic      ""               "1-27"         9.41           28517.81         NA               Humans  
+ 5 P106… Swiss… Cyto… Steroid hydroxy… Responsible for… CYP2D6    22q1… Endoplasmic ret… ""               ""             7.26           55768.94         NA               Humans  
+ 6 P117… Swiss… Cyto… Steroid hydroxy… Cytochromes P45… CYP2C9    10q24 Endoplasmic ret… ""               ""             7.99           55627.365        NA               Humans  
+ 7 P007… Swiss… Prot… Thrombospondin … Thrombin, which… F2        11p1… Secreted         ""               "1-24"         5.7            70036.295        NA               Humans  
+ 8 P040… Swiss… Vita… Serine-type end… Protein C is a … PROC      2q13… Secreted         ""               "1-18"         6.23           52070.82         NA               Humans  
+ 9 P147… Swiss… Insu… Zinc ion binding Plays a role in… IDE       10q2… Cytoplasm        ""               ""             6.74           117967.49        NA               Humans  
+10 P165… Swiss… Neur… Serine-type end… Involved in the… PCSK2     20p1… Cytoplasmic ves… ""               "1-25"         6.47           70564.735        NA               Humans  
+# … with 442 more rows, and 6 more variables: organism_ncbi_taxonomy_id <chr>, amino_acid_sequence <chr>, amino_acid_format <chr>, gene_sequence <chr>, gene_format <chr>,
+#   parent_id <chr>
+
+$enzymes_polypep_ex_ident
+# A tibble: 2,367 x 3
+   resource                                identifier parent_key
+   <chr>                                   <chr>      <chr>     
+ 1 HUGO Gene Nomenclature Committee (HGNC) HGNC:7218  BE0001075 
+ 2 GenAtlas                                MPO        BE0001075 
+ 3 GenBank Gene Database                   J02694     BE0001075 
+ 4 GenBank Protein Database                189040     BE0001075 
+ 5 Guide to Pharmacology                   2789       BE0001075 
+ 6 UniProtKB                               P05164     BE0001075 
+ 7 UniProt Accession                       PERM_HUMAN BE0001075 
+ 8 HUGO Gene Nomenclature Committee (HGNC) HGNC:2596  BE0002433 
+ 9 GenAtlas                                CYP1A2     BE0002433 
+10 GenBank Gene Database                   Z00036     BE0002433 
+# … with 2,357 more rows
+
+$enzymes_polypeptides_syn
+# A tibble: 2,361 x 2
+   synonym                    parent_key
+   <chr>                      <chr>     
+ 1 1.11.2.2                   BE0001075 
+ 2 MPO                        BE0001075 
+ 3 1.14.14.1                  BE0002433 
+ 4 Cholesterol 25-hydroxylase BE0002433 
+ 5 CYPIA2                     BE0002433 
+ 6 Cytochrome P(3)450         BE0002433 
+ 7 Cytochrome P450 4          BE0002433 
+ 8 Cytochrome P450-P3         BE0002433 
+ 9 3.4.24.65                  BE0001198 
+10 HME                        BE0001198 
+# … with 2,351 more rows
+
+$enzymes_polypeptides_pfams
+# A tibble: 706 x 3
+   identifier name          parent_key
+   <chr>      <chr>         <chr>     
+ 1 PF03098    An_peroxidase BE0001075 
+ 2 PF00067    p450          BE0002433 
+ 3 PF00045    Hemopexin     BE0001198 
+ 4 PF00413    Peptidase_M10 BE0001198 
+ 5 PF01471    PG_binding_1  BE0001198 
+ 6 PF00089    Trypsin       BE0000394 
+ 7 PF00067    p450          BE0002363 
+ 8 PF00067    p450          BE0002793 
+ 9 PF00594    Gla           BE0000048 
+10 PF00051    Kringle       BE0000048 
+# … with 696 more rows
+
+$enzymes_polypeptides_go
+# A tibble: 8,509 x 3
+   category  description           parent_key
+   <chr>     <chr>                 <chr>     
+ 1 component azurophil granule     BE0001075 
+ 2 component extracellular exosome BE0001075 
+ 3 component extracellular space   BE0001075 
+ 4 component lysosome              BE0001075 
+ 5 component mitochondrion         BE0001075 
+ 6 component nucleus               BE0001075 
+ 7 component secretory granule     BE0001075 
+ 8 function  chromatin binding     BE0001075 
+ 9 function  heme binding          BE0001075 
+10 function  heparin binding       BE0001075 
+# … with 8,499 more rows
+
+$transporters
+# A tibble: 3,094 x 6
+   id        name                                                  organism known_action position parent_key
+   <chr>     <chr>                                                 <chr>    <chr>        <chr>    <chr>     
+ 1 BE0001032 P-glycoprotein 1                                      Humans   unknown      1        DB00027   
+ 2 BE0001069 Canalicular multispecific organic anion transporter 1 Humans   unknown      4        DB00067   
+ 3 BE0001032 P-glycoprotein 1                                      Humans   unknown      4        DB00091   
+ 4 BE0000703 Bile salt export pump                                 Humans   unknown      5        DB00091   
+ 5 BE0003643 Ileal sodium/bile acid cotransporter                  Humans   unknown      6        DB00091   
+ 6 BE0003644 Sodium/bile acid cotransporter                        Humans   unknown      7        DB00091   
+ 7 BE0001066 Solute carrier family 22 member 6                     Humans   unknown      8        DB00091   
+ 8 BE0003651 Multidrug resistance-associated protein 7             Humans   unknown      9        DB00091   
+ 9 BE0001069 Canalicular multispecific organic anion transporter 1 Humans   unknown      10       DB00091   
+10 BE0001067 ATP-binding cassette sub-family G member 2            Humans   unknown      11       DB00091   
+# … with 3,084 more rows
+
+$transporters_actions
+# A tibble: 339 x 2
+   action    parent_id
+   <chr>     <chr>    
+ 1 substrate BE0001032
+ 2 inhibitor BE0001032
+ 3 substrate BE0001069
+ 4 substrate BE0000703
+ 5 inhibitor BE0000703
+ 6 inhibitor BE0003643
+ 7 inhibitor BE0003644
+ 8 substrate BE0001066
+ 9 inhibitor BE0001066
+10 substrate BE0003651
+# … with 329 more rows
+
+$transporters_polypeptides
+# A tibble: 272 x 20
+   id    source name  general_function specific_functi… gene_name locus cellular_locati… transmembrane_r… signal_regions theoretical_pi molecular_weight chromosome_loca… organism
+   <chr> <chr>  <chr> <chr>            <chr>            <chr>     <chr> <chr>            <chr>            <chr>          <chr>          <chr>            <chr>            <chr>   
+ 1 P081… Swiss… Mult… Xenobiotic-tran… Energy-dependen… ABCB1     "7q2… Cell membrane    "45-67\n117-137… ""             9.44           141477.255       NA               Humans  
+ 2 Q928… Swiss… Cana… Organic anion t… Mediates hepato… ABCC2     "10q… Apical cell mem… "28-48\n69-89\n… ""             8.46           174205.64        NA               Humans  
+ 3 O953… Swiss… Bile… Transporter act… Involved in the… ABCB11    "2q2… Membrane         "63-83\n148-168… ""             6.52           146405.83        NA               Humans  
+ 4 Q129… Swiss… Ilea… Bile acid:sodiu… Plays a critica… SLC10A2   "13q… Membrane         "29-49\n83-103\… ""             7.13           37713.405        NA               Humans  
+ 5 Q149… Swiss… Sodi… Virus receptor … The hepatic sod… SLC10A1   "14q… Membrane         "25-45\n60-80\n… ""             8.94           38118.64         NA               Humans  
+ 6 Q4U2… Swiss… Solu… Sodium-independ… Involved in the… SLC22A6   ""    Cell membrane    "10-30\n136-156… ""             8.78           61815.78         NA               Humans  
+ 7 Q5T3… Swiss… Mult… Atpase activity… ATP-dependent t… ABCC10    "6p2… Cell membrane    "32-52\n70-90\n… ""             7.07           161627.375       NA               Humans  
+ 8 Q9UN… Swiss… ATP-… Xenobiotic-tran… High-capacity u… ABCG2     "4q2… Cell membrane    "396-416\n429-4… ""             8.9            72313.47         NA               Humans  
+ 9 Q9Y6… Swiss… Solu… Sodium-independ… Mediates the Na… SLCO1B1   "12p" Basolateral cel… "29-48\n68-88\n… ""             8.68           76447.99         NA               Humans  
+10 Q9NP… Swiss… Solu… Sodium-independ… Mediates the Na… SLCO1B3   "12p… Basolateral cel… "29-48\n68-88\n… ""             8.95           77402.175        NA               Humans  
+# … with 262 more rows, and 6 more variables: organism_ncbi_taxonomy_id <chr>, amino_acid_sequence <chr>, amino_acid_format <chr>, gene_sequence <chr>, gene_format <chr>,
+#   parent_id <chr>
+
+$transporters_polypep_ex_ident
+# A tibble: 1,290 x 3
+   resource                                identifier parent_key
+   <chr>                                   <chr>      <chr>     
+ 1 HUGO Gene Nomenclature Committee (HGNC) HGNC:40    BE0001032 
+ 2 GenAtlas                                ABCB1      BE0001032 
+ 3 GenBank Gene Database                   M14758     BE0001032 
+ 4 GenBank Protein Database                307180     BE0001032 
+ 5 UniProtKB                               P08183     BE0001032 
+ 6 UniProt Accession                       MDR1_HUMAN BE0001032 
+ 7 HUGO Gene Nomenclature Committee (HGNC) HGNC:53    BE0001069 
+ 8 GenAtlas                                ABCC2      BE0001069 
+ 9 GenBank Gene Database                   U63970     BE0001069 
+10 GenBank Protein Database                1764162    BE0001069 
+# … with 1,280 more rows
+
+$transporters_polypeptides_syn
+# A tibble: 1,328 x 2
+   synonym                                    parent_key
+   <chr>                                      <chr>     
+ 1 3.6.3.44                                   BE0001032 
+ 2 ATP-binding cassette sub-family B member 1 BE0001032 
+ 3 MDR1                                       BE0001032 
+ 4 P-glycoprotein 1                           BE0001032 
+ 5 PGY1                                       BE0001032 
+ 6 ATP-binding cassette sub-family C member 2 BE0001069 
+ 7 Canalicular multidrug resistance protein   BE0001069 
+ 8 CMOAT                                      BE0001069 
+ 9 CMOAT1                                     BE0001069 
+10 CMRP                                       BE0001069 
+# … with 1,318 more rows
+
+$transporters_polypeptides_pfams
+# A tibble: 410 x 3
+   identifier name         parent_key
+   <chr>      <chr>        <chr>     
+ 1 PF00005    ABC_tran     BE0001032 
+ 2 PF00664    ABC_membrane BE0001032 
+ 3 PF00005    ABC_tran     BE0001069 
+ 4 PF00664    ABC_membrane BE0001069 
+ 5 PF00005    ABC_tran     BE0000703 
+ 6 PF00664    ABC_membrane BE0000703 
+ 7 PF01758    SBF          BE0003643 
+ 8 PF01758    SBF          BE0003644 
+ 9 PF00083    Sugar_tr     BE0001066 
+10 PF00005    ABC_tran     BE0003651 
+# … with 400 more rows
+
+$transporters_polypeptides_go
+# A tibble: 4,764 x 3
+   category  description                                                      parent_key
+   <chr>     <chr>                                                            <chr>     
+ 1 component cell surface                                                     BE0001032 
+ 2 component extracellular exosome                                            BE0001032 
+ 3 component integral component of membrane                                   BE0001032 
+ 4 component membrane                                                         BE0001032 
+ 5 component plasma membrane                                                  BE0001032 
+ 6 function  ATP binding                                                      BE0001032 
+ 7 function  ATPase activity, coupled to transmembrane movement of substances BE0001032 
+ 8 function  transporter activity                                             BE0001032 
+ 9 function  xenobiotic-transporting ATPase activity                          BE0001032 
+10 process   drug transmembrane transport                                     BE0001032 
+# … with 4,754 more rows
+
+$targets
+# A tibble: 18,866 x 6
+   id        name                                                       organism known_action position parent_key
+   <chr>     <chr>                                                      <chr>    <chr>        <chr>    <chr>     
+ 1 BE0000048 Prothrombin                                                Humans   yes          NA       DB00001   
+ 2 BE0000767 Epidermal growth factor receptor                           Humans   yes          1        DB00002   
+ 3 BE0000901 Low affinity immunoglobulin gamma Fc region receptor III-B Humans   unknown      2        DB00002   
+ 4 BE0002094 Complement C1q subcomponent subunit A                      Humans   unknown      3        DB00002   
+ 5 BE0002095 Complement C1q subcomponent subunit B                      Humans   unknown      4        DB00002   
+ 6 BE0002096 Complement C1q subcomponent subunit C                      Humans   unknown      5        DB00002   
+ 7 BE0002097 Low affinity immunoglobulin gamma Fc region receptor III-A Humans   unknown      6        DB00002   
+ 8 BE0000710 High affinity immunoglobulin gamma Fc receptor I           Humans   unknown      7        DB00002   
+ 9 BE0002098 Low affinity immunoglobulin gamma Fc region receptor II-a  Humans   unknown      8        DB00002   
+10 BE0004796 DNA                                                        Humans   yes          NA       DB00003   
+# … with 18,856 more rows
+
+$targets_actions
+# A tibble: 3,432 x 2
+   action     parent_id
+   <chr>      <chr>    
+ 1 inhibitor  BE0000048
+ 2 antagonist BE0000767
+ 3 binder     BE0000658
+ 4 agonist    BE0000651
+ 5 antibody   BE0000704
+ 6 ligand     BE0000710
+ 7 ligand     BE0002098
+ 8 ligand     BE0002099
+ 9 ligand     BE0002100
+10 ligand     BE0002097
+# … with 3,422 more rows
+
+$targets_polypeptides
+# A tibble: 4,788 x 20
+   id    source name  general_function specific_functi… gene_name locus cellular_locati… transmembrane_r… signal_regions theoretical_pi molecular_weight chromosome_loca… organism
+   <chr> <chr>  <chr> <chr>            <chr>            <chr>     <chr> <chr>            <chr>            <chr>          <chr>          <chr>            <chr>            <chr>   
+ 1 P007… Swiss… Prot… "Thrombospondin… Thrombin, which… F2        11p1… Secreted         ""               1-24           5.7            70036.295        NA               Humans  
+ 2 P005… Swiss… Epid… "Ubiquitin prot… Receptor tyrosi… EGFR      7p12  Cell membrane    "646-668"        1-24           6.67           134276.185       NA               Humans  
+ 3 O750… Swiss… Low … ""               Receptor for th… FCGR3B    1q23  Cell membrane    ""               1-16           6.71           26215.64         NA               Humans  
+ 4 P027… Swiss… Comp… ""               C1q associates … C1QA      1p36… Secreted         ""               1-22           9.45           26016.47         NA               Humans  
+ 5 P027… Swiss… Comp… ""               C1q associates … C1QB      1p36… Secreted         ""               1-27           8.87           26721.62         NA               Humans  
+ 6 P027… Swiss… Comp… ""               C1q associates … C1QC      1p36… Secreted         ""               1-28           8.58           25773.56         NA               Humans  
+ 7 P086… Swiss… Low … ""               Receptor for th… FCGR3A    1q23  Cell membrane    "209-229"        1-16           8.21           29088.895        NA               Humans  
+ 8 P123… Swiss… High… "Receptor signa… High affinity r… FCGR1A    1q21… Cell membrane    "293-313"        1-15           8.08           42631.525        NA               Humans  
+ 9 P123… Swiss… Low … ""               Binds to the Fc… FCGR2A    1q23  Cell membrane    "218-240"        1-33           6.78           35000.42         NA               Humans  
+10 P015… Swiss… Inte… "Interleukin-2 … Receptor for in… IL2RA     10p1… Membrane         "241-259"        1-21           6.49           30818.915        NA               Humans  
+# … with 4,778 more rows, and 6 more variables: organism_ncbi_taxonomy_id <chr>, amino_acid_sequence <chr>, amino_acid_format <chr>, gene_sequence <chr>, gene_format <chr>,
+#   parent_id <chr>
+
+$targets_polypep_ex_ident
+# A tibble: 21,787 x 3
+   resource                                identifier parent_key
+   <chr>                                   <chr>      <chr>     
+ 1 HUGO Gene Nomenclature Committee (HGNC) HGNC:3535  BE0000048 
+ 2 GenAtlas                                F2         BE0000048 
+ 3 GenBank Gene Database                   M17262     BE0000048 
+ 4 GenBank Protein Database                339641     BE0000048 
+ 5 Guide to Pharmacology                   2362       BE0000048 
+ 6 UniProtKB                               P00734     BE0000048 
+ 7 UniProt Accession                       THRB_HUMAN BE0000048 
+ 8 HUGO Gene Nomenclature Committee (HGNC) HGNC:3236  BE0000767 
+ 9 GenAtlas                                EGFR       BE0000767 
+10 GenBank Gene Database                   X00588     BE0000767 
+# … with 21,777 more rows
+
+$targets_polypeptides_syn
+# A tibble: 18,005 x 2
+   synonym                                 parent_key
+   <chr>                                   <chr>     
+ 1 3.4.21.5                                BE0000048 
+ 2 Coagulation factor II                   BE0000048 
+ 3 2.7.10.1                                BE0000767 
+ 4 ERBB                                    BE0000767 
+ 5 ERBB1                                   BE0000767 
+ 6 HER1                                    BE0000767 
+ 7 Proto-oncogene c-ErbB-1                 BE0000767 
+ 8 Receptor tyrosine-protein kinase erbB-1 BE0000767 
+ 9 CD16B                                   BE0000901 
+10 Fc-gamma RIII                           BE0000901 
+# … with 17,995 more rows
+
+$targets_polypeptides_pfams
+# A tibble: 8,402 x 3
+   identifier name           parent_key
+   <chr>      <chr>          <chr>     
+ 1 PF00594    Gla            BE0000048 
+ 2 PF00051    Kringle        BE0000048 
+ 3 PF00089    Trypsin        BE0000048 
+ 4 PF09396    Thrombin_light BE0000048 
+ 5 PF07714    Pkinase_Tyr    BE0000767 
+ 6 PF00757    Furin-like     BE0000767 
+ 7 PF01030    Recep_L_domain BE0000767 
+ 8 PF14843    GF_recep_IV    BE0000767 
+ 9 PF13895    Ig_2           BE0000901 
+10 PF01391    Collagen       BE0002094 
+# … with 8,392 more rows
+
+$targets_polypeptides_go
+# A tibble: 79,385 x 3
+   category  description                 parent_key
+   <chr>     <chr>                       <chr>     
+ 1 component blood microparticle         BE0000048 
+ 2 component cytosol                     BE0000048 
+ 3 component endoplasmic reticulum lumen BE0000048 
+ 4 component extracellular exosome       BE0000048 
+ 5 component extracellular matrix        BE0000048 
+ 6 component extracellular region        BE0000048 
+ 7 component extracellular space         BE0000048 
+ 8 component Golgi lumen                 BE0000048 
+ 9 component plasma membrane             BE0000048 
+10 function  calcium ion binding         BE0000048 
+# … with 79,375 more rows

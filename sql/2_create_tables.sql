@@ -30,8 +30,8 @@ CREATE TABLE drug(
 	route_of_elimination TEXT,
 	volume_of_distribution TEXT,
 	clearance TEXT,
-	articles_count INT,
-	drug_interactions_count INT
+	synonym TEXT,
+	pubmed_id TEXT
 );
 
 --set primary key
@@ -51,9 +51,9 @@ ALTER TABLE drug_mapper ADD PRIMARY KEY (drugbank_id);
 
 --********************************DRUG TARGET, ENZYME, TRANSPORTER, CARRIER, PATHWAY EXTRACTION********************************--
 
---create drug_target table
-DROP TABLE IF EXISTS drug_target;
-CREATE TABLE drug_target(
+--create target table
+DROP TABLE IF EXISTS target;
+CREATE TABLE target(
     drug_id TEXT,
 	target_id TEXT,
 	target_name TEXT,
@@ -62,15 +62,16 @@ CREATE TABLE drug_target(
 	polypeptide_name TEXT,
 	gene_name TEXT,
 	general_function TEXT,
-	specific_function TEXT
+	specific_function TEXT,
+	pubmed_id TEXT
 );
 
 --set primary key
-ALTER TABLE drug_target ADD PRIMARY KEY (drug_id, target_id);
+ALTER TABLE target ADD PRIMARY KEY (drug_id, target_id);
 
---create drug_enzyme table
-DROP TABLE IF EXISTS drug_enzyme;
-CREATE TABLE drug_enzyme(
+--create enzyme table
+DROP TABLE IF EXISTS enzyme;
+CREATE TABLE enzyme(
     drug_id TEXT,
 	enzyme_id TEXT,
 	enzyme_name TEXT,
@@ -79,15 +80,16 @@ CREATE TABLE drug_enzyme(
 	polypeptide_name TEXT,
 	gene_name TEXT,
 	general_function TEXT,
-	specific_function TEXT
+	specific_function TEXT,
+	pubmed_id TEXT
 );
 
 --set primary key
-ALTER TABLE drug_enzyme ADD PRIMARY KEY (drug_id, enzyme_id);
+ALTER TABLE enzyme ADD PRIMARY KEY (drug_id, enzyme_id);
 
---create drug_transporter table
-DROP TABLE IF EXISTS drug_transporter;
-CREATE TABLE drug_transporter(
+--create transporter table
+DROP TABLE IF EXISTS transporter;
+CREATE TABLE transporter(
     drug_id TEXT,
 	transporter_id TEXT,
 	transporter_name TEXT,
@@ -96,15 +98,16 @@ CREATE TABLE drug_transporter(
 	polypeptide_name TEXT,
 	gene_name TEXT,
 	general_function TEXT,
-	specific_function TEXT
+	specific_function TEXT,
+	pubmed_id TEXT
 );
 
 --set primary key
-ALTER TABLE drug_transporter ADD PRIMARY KEY (drug_id, transporter_id);
+ALTER TABLE transporter ADD PRIMARY KEY (drug_id, transporter_id);
 
---create drug_carrier table
-DROP TABLE IF EXISTS drug_carrier;
-CREATE TABLE drug_carrier(
+--create carrier table
+DROP TABLE IF EXISTS carrier;
+CREATE TABLE carrier(
     drug_id TEXT,
 	carrier_id TEXT,
 	carrier_name TEXT,
@@ -113,26 +116,12 @@ CREATE TABLE drug_carrier(
 	polypeptide_name TEXT,
 	gene_name TEXT,
 	general_function TEXT,
-	specific_function TEXT
+	specific_function TEXT,
+	pubmed_id TEXT
 );
 
 --set primary key
-ALTER TABLE drug_carrier ADD PRIMARY KEY (drug_id, carrier_id);
-
-/* TODO:
---pathway extraction
---create drug_pathway table
-DROP TABLE IF EXISTS drug_pathway;
-CREATE TABLE drug_pathway(
-    drug_id TEXT,
-	pathway_id TEXT,
-	category TEXT,
-	enzyme TEXT
-);
-
---set primary key
-ALTER TABLE drug_pathway ADD PRIMARY KEY (drug_id, pathway_id, category, enzyme);
-*/
+ALTER TABLE carrier ADD PRIMARY KEY (drug_id, carrier_id);
 
 --********************************DDI EXTRACTION********************************--
 --create  table
@@ -156,24 +145,16 @@ CREATE TABLE drug_snp(
 	id SERIAL PRIMARY KEY,
 	drug_id TEXT,
 	snp_id TEXT,
+	uniprot_id TEXT,
 	gene_name TEXT,
-	chromosome TEXT
-);
-
---TODO: create unique index
---CREATE UNIQUE INDEX CONCURRENTLY unique_drug_snp ON drug_snp (drug_id, snp_id, gene_name, chromosome);
-
---create drug_snp_detail table
-DROP TABLE IF EXISTS drug_snp_detail;
-CREATE TABLE drug_snp_detail(
-	drug_snp_id INT REFERENCES drug_snp,
+	chromosome TEXT,
 	phenotype TEXT,
 	significance TEXT,
 	description TEXT,
+	description2 TEXT,
 	severity TEXT,
 	pubmed_id TEXT
 );
-
 
 
 end;$BODY$;
