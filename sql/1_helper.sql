@@ -44,7 +44,7 @@ OPTIONS (user 'postgres', password 'terlik');
 IMPORT FOREIGN SCHEMA public
 LIMIT TO
 (
-    clinical_ann_metadata, drug_external_identifiers
+    clinical_ann_metadata, drug_external_identifiers, primary_chemicals
 )
 FROM SERVER fdw_server_2 INTO public;
 

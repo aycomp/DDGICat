@@ -17,3 +17,12 @@ end;$BODY$;
 
 ALTER FUNCTION public."5_import_clinvar"()
     OWNER TO postgres;
+
+
+/*
+
+OUTPUT:
+
+
+
+*/

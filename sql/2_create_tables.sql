@@ -16,6 +16,7 @@ DROP TABLE IF EXISTS drug;
 CREATE TABLE drug(
     drug_id TEXT,
 	name TEXT,
+	synonym TEXT,
 	type TEXT,
 	description TEXT,
 	state TEXT,
@@ -30,7 +31,6 @@ CREATE TABLE drug(
 	route_of_elimination TEXT,
 	volume_of_distribution TEXT,
 	clearance TEXT,
-	synonym TEXT,
 	pubmed_id TEXT
 );
 

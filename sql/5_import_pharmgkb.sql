@@ -1,27 +1,17 @@
--- FUNCTION: public."4_import_pharmgkb"()
+-- FUNCTION: public."5_import_pharmgkb"()
 
--- DROP FUNCTION public."4_import_pharmgkb"();
+-- DROP FUNCTION public."5_import_pharmgkb"();
 
-CREATE OR REPLACE FUNCTION public."4_import_pharmgkb"(
+CREATE OR REPLACE FUNCTION public."5_import_pharmgkb"(
 	)
     RETURNS void
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE
-AS $BODY$BEGIN
-
-
-/*********************************DRUG MAPPER IMPORT*********************************/
-/*
-	Note:
-
-SELECT
-	distinct(split_part(TRIM(split_part("Chemical", '(', 2), ')'), ')', 1))
-FROM public.var_drug_ann --546 distinct drug
-WHERE split_part(TRIM(split_part("Chemical", '(', 2), ')'), ')', 1)
-	IN (SELECT pharmgkb_id FROM drug_mapper);
-
-*/
+AS $BODY$
+DECLARE
+	 v_cnt INT;
+BEGIN
 
 /*********************************DRUG SNP IMPORT***********************************/
 
@@ -75,13 +65,28 @@ INNER JOIN dm
 WHERE dm.drugbank_id || sub.snp_id || sub.gene_name
 		NOT IN (SELECT drug_id || snp_id || gene_name FROM drug_snp)
 ORDER BY dm.drugbank_id, gene_name, snp_id;
+GET DIAGNOSTICS v_cnt = ROW_COUNT;
+
+IF v_cnt > 0 THEN
+    RAISE NOTICE '% row inserted into drug_snp table', v_cnt;
+    v_cnt = 0;
+END IF;
 
 END;$BODY$;
 
-ALTER FUNCTION public."4_import_pharmgkb"()
+ALTER FUNCTION public."5_import_pharmgkb"()
     OWNER TO postgres;
 
 
 
 --run function
-SELECT public."4_import_pharmgkb"();
+SELECT public."5_import_pharmgkb"();
+
+
+/*
+
+OUTPUT:
+NOTICE:  5900 row inserted into drug_snp table
+
+
+*/
