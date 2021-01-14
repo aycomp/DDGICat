@@ -11,6 +11,11 @@ CREATE OR REPLACE FUNCTION public."3_import_drugbank"(
 AS $BODY$
 DECLARE
 	 v_cnt INT;
+
+	 v_target_cnt INT;
+	 v_enzyme_cnt INT;
+	 v_carrier_cnt INT;
+	 v_transporter_cnt INT;
 BEGIN
 
 --********************************DRUG IMPORT********************************--
@@ -96,124 +101,143 @@ END IF;
 
 --********************************DRUG TARGET, ENZYME, TRANSPORTER, CARRIER IMPORT********************************--
 
---target
-WITH sub AS (
-	SELECT *
-	FROM public.targets
-	WHERE parent_key IN(SELECT drug_id FROM drug)
-		AND organism in ('Humans', 'Mouse', 'Rat')
-)
-INSERT INTO target
-SELECT
-	sub.parent_key AS drug_id,
-	sub.id AS target_id,
-	sub.name AS target_name,
-	tp.source AS polypeptide_source,
-	tp.id AS polypeptide_uniprot_id,
-	tp.name AS polypeptide_name,
-	tp.gene_name,
-	tp.general_function,
-	tp.specific_function
-FROM sub
-LEFT JOIN public.targets_polypeptides tp
-	ON sub.id = tp.parent_id
-ORDER BY sub.parent_key;
-GET DIAGNOSTICS v_cnt = ROW_COUNT;
 
-IF v_cnt > 0 THEN
-    RAISE NOTICE '% row inserted into target table', v_cnt;
-    v_cnt = 0;
+WITH target AS (
+	WITH sub AS (
+		SELECT *
+		FROM public.targets
+		WHERE parent_key IN(SELECT drug_id FROM drug)
+			AND organism in ('Humans', 'Mouse', 'Rat')
+	)
+	SELECT
+		sub.parent_key AS drug_id,
+		sub.id AS drug_protein_id,
+		1 AS drug_protein_type,
+		sub.name AS drug_protein_name,
+		tp.source AS polypeptide_source,
+		tp.id AS polypeptide_uniprot_id,
+		tp.name AS polypeptide_name,
+		tp.gene_name,
+		tp.general_function,
+		tp.specific_function
+	FROM sub
+	LEFT JOIN public.targets_polypeptides tp
+		ON sub.id = tp.parent_id
+	ORDER BY sub.parent_key
+),
+enzyme AS (
+	WITH sub AS (
+		SELECT *
+		FROM public.enzymes
+		WHERE parent_key IN(SELECT drug_id FROM drug)
+			AND organism in ('Humans', 'Mouse', 'Rat')
+	)
+	SELECT
+		sub.parent_key AS drug_id,
+		sub.id AS drug_protein_id,
+		2 AS drug_protein_type,
+		sub.name AS drug_protein_name,
+		ep.source AS polypeptide_source,
+		ep.id AS polypeptide_uniprot_id,
+		ep.name AS polypeptide_name,
+		ep.gene_name,
+		ep.general_function,
+		ep.specific_function
+	FROM sub
+	LEFT JOIN public.enzymes_polypeptides ep
+		ON sub.id = ep.parent_id
+	ORDER BY sub.parent_key
+),
+carrier AS (
+	WITH sub AS (
+		SELECT *
+		FROM public.carriers
+		WHERE parent_key IN(SELECT drug_id FROM drug)
+			AND organism in ('Humans', 'Mouse', 'Rat')
+	)
+	SELECT
+		sub.parent_key AS drug_id,
+		sub.id AS drug_protein_id,
+		3 AS drug_protein_type,
+		sub.name AS drug_protein_name,
+		cp.source AS polypeptide_source,
+		cp.id AS polypeptide_uniprot_id,
+		cp.name AS polypeptide_name,
+		cp.gene_name,
+		cp.general_function,
+		cp.specific_function
+	FROM sub
+	LEFT JOIN public.carriers_polypeptides cp
+		ON sub.id = cp.parent_id
+	ORDER BY sub.parent_key
+),
+transporter AS (
+	WITH sub AS (
+		SELECT *
+		FROM public.transporters
+		WHERE parent_key IN(SELECT drug_id FROM drug)
+			AND organism in ('Humans', 'Mouse', 'Rat')
+	)
+	SELECT
+		sub.parent_key AS drug_id,
+		sub.id AS drug_protein_id,
+		4 AS drug_protein_type,
+		sub.name AS drug_protein_name,
+		tp.source AS polypeptide_source,
+		tp.id AS polypeptide_uniprot_id,
+		tp.name AS polypeptide_name,
+		tp.gene_name,
+		tp.general_function,
+		tp.specific_function
+	FROM sub
+	LEFT JOIN public.transporters_polypeptides tp
+		ON sub.id = tp.parent_id
+	ORDER BY sub.parent_key
+)
+INSERT INTO drug_protein
+(
+	drug_id,
+	drug_protein_id,
+	drug_protein_type,
+	drug_protein_name,
+	polypeptide_source,
+	polypeptide_uniprot_id,
+	polypeptide_name,
+	gene_name,
+	general_function,
+	specific_function
+)
+SELECT * FROM target
+UNION ALL
+SELECT * FROM enzyme
+UNION ALL
+SELECT * FROM carrier
+UNION ALL
+SELECT * FROM transporter;
+
+
+PERFORM v_target_cnt = COUNT(1) FROM drug_protein WHERE drug_protein_type = 1;
+PERFORM v_enzyme_cnt = COUNT(1) FROM drug_protein WHERE drug_protein_type = 2;
+PERFORM v_carrier_cnt = COUNT(1) FROM drug_protein WHERE drug_protein_type = 3;
+PERFORM v_transporter_cnt = COUNT(1) FROM drug_protein WHERE drug_protein_type = 4;
+
+--Raise imported record counts
+IF v_target_cnt > 0 THEN
+    RAISE NOTICE '% target record imported into drug_protein table', v_target_cnt;
 END IF;
 
-
---enzyme
-WITH sub AS (
-	SELECT *
-	FROM public.enzymes
-	WHERE parent_key IN(SELECT drug_id FROM drug)
-		AND organism in ('Humans', 'Mouse', 'Rat')
-)
-INSERT INTO enzyme
-SELECT
-	sub.parent_key AS drug_id,
-	sub.id,
-	sub.name AS enzyme_name,
-	ep.source AS polypeptide_source,
-	ep.id AS polypeptide_uniprot_id,
-	ep.name AS polypeptide_name,
-	ep.gene_name,
-	ep.general_function,
-	ep.specific_function
-FROM sub
-LEFT JOIN public.enzymes_polypeptides ep
-	ON sub.id = ep.parent_id
-ORDER BY sub.parent_key;
-GET DIAGNOSTICS v_cnt = ROW_COUNT;
-
-IF v_cnt > 0 THEN
-    RAISE NOTICE '% row inserted into enzyme table', v_cnt;
-    v_cnt = 0;
+IF v_enzyme_cnt > 0 THEN
+    RAISE NOTICE '% enzyme record imported into drug_protein table', v_enzyme_cnt;
 END IF;
 
-
---transporter
-WITH sub AS (
-	SELECT *
-	FROM public.transporters
-	WHERE parent_key IN(SELECT drug_id FROM drug)
-		AND organism in ('Humans', 'Mouse', 'Rat')
-)
-INSERT INTO transporter
-SELECT
-	sub.parent_key AS drug_id,
-	sub.id,
-	sub.name AS transporter_name,
-	tp.source AS polypeptide_source,
-	tp.id AS polypeptide_uniprot_id,
-	tp.name AS polypeptide_name,
-	tp.gene_name,
-	tp.general_function,
-	tp.specific_function
-FROM sub
-LEFT JOIN public.transporters_polypeptides tp
-	ON sub.id = tp.parent_id
-ORDER BY sub.parent_key;
-GET DIAGNOSTICS v_cnt = ROW_COUNT;
-
-IF v_cnt > 0 THEN
-    RAISE NOTICE '% row inserted into transporter table', v_cnt;
-    v_cnt = 0;
+IF v_carrier_cnt > 0 THEN
+    RAISE NOTICE '% carrier record imported into drug_protein table', v_carrier_cnt;
 END IF;
 
-
---carrier
-WITH sub AS (
-	SELECT *
-	FROM public.carriers
-	WHERE parent_key IN(SELECT drug_id FROM drug)
-		AND organism in ('Humans', 'Mouse', 'Rat')
-)
-INSERT INTO carrier
-SELECT
-	sub.parent_key AS drug_id,
-	sub.id,
-	sub.name AS carrier_name,
-	cp.source AS polypeptide_source,
-	cp.id AS polypeptide_uniprot_id,
-	cp.name AS polypeptide_name,
-	cp.gene_name,
-	cp.general_function,
-	cp.specific_function
-FROM sub
-LEFT JOIN public.carriers_polypeptides cp
-	ON sub.id = cp.parent_id
-ORDER BY sub.parent_key;
-GET DIAGNOSTICS v_cnt = ROW_COUNT;
-
-IF v_cnt > 0 THEN
-    RAISE NOTICE '% row inserted into carrier table', v_cnt;
-    v_cnt = 0;
+IF v_transporter_cnt > 0 THEN
+    RAISE NOTICE '% transporter record imported into drug_protein table', v_transporter_cnt;
 END IF;
+
 
 
 --********************************DDI IMPORT********************************--
@@ -252,7 +276,6 @@ INSERT INTO drug_snp
 	uniprot_id,
 	gene_name,
 	chromosome,
-	phenotype,
 	significance,
 	description,
 	description2,
@@ -265,10 +288,9 @@ SELECT
 	"uniprot-id" AS uniprot_id,
 	"gene-symbol" AS gene_name,
 	'' AS chromosome,
-	'allele: ' || allele AS phenotype,
 	'' AS significance,
 	description,
-	'defining-change' AS description2,
+	'allele: ' || allele || 'defining-change: ' AS description2,
 	'Minor' AS severity,
 	"pubmed-id" AS pubmed_id
 FROM public.drug_snp_effects
@@ -291,7 +313,6 @@ INSERT INTO drug_snp
 	uniprot_id,
 	gene_name,
 	chromosome,
-	phenotype,
 	significance,
 	description,
 	description2,
@@ -304,10 +325,9 @@ SELECT
 	"uniprot-id" AS uniprot_id,
 	"gene-symbol" AS gene_name,
 	'' AS chromosome,
-	'allele: ' || allele AS phenotype,
 	'' AS significance,
 	description,
-	'adverse-reaction: ' || 'adverse-reaction' AS description2,
+	'allele: ' || allele || 'adverse-reaction: ' || 'adverse-reaction' AS description2,
 	'Major' AS severity,
 	"pubmed-id" AS pubmed_id
 FROM public.snp_adverse_reactions

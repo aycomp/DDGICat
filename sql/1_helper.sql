@@ -44,9 +44,27 @@ OPTIONS (user 'postgres', password 'terlik');
 IMPORT FOREIGN SCHEMA public
 LIMIT TO
 (
-    clinical_ann_metadata, drug_external_identifiers, primary_chemicals
+    clinical_ann_metadata, drug_external_identifiers,
+    primary_chemicals, primary_genes
 )
 FROM SERVER fdw_server_2 INTO public;
+
+
+CREATE SERVER fdw_server_3
+FOREIGN DATA WRAPPER postgres_fdw
+OPTIONS (host 'localhost', dbname 'BioMart', port '5432');
+
+CREATE USER MAPPING FOR postgres
+SERVER fdw_server_3
+OPTIONS (user 'postgres', password 'terlik');
+
+IMPORT FOREIGN SCHEMA public
+LIMIT TO
+(
+    mart_export
+)
+FROM SERVER fdw_server_3 INTO public;
+
 
 --DROP FOREIGN TABLE drug_pathways
 

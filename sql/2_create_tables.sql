@@ -49,78 +49,30 @@ CREATE TABLE drug_mapper(
 ALTER TABLE drug_mapper ADD PRIMARY KEY (drugbank_id);
 
 
---************************************************TARGET, ENZYME, TRANSPORTER, CARRIER************************************************-
---create target table
-DROP TABLE IF EXISTS target;
-CREATE TABLE target(
+--************************************************DRUG_PROTEIN************************************************-
+--DRUG_PROTEIN_TYPE:
+	--TARGET		:1
+	--ENZYME		:2
+	--CARRIER		:3
+	--TRANSPORTER	:4
+
+DROP TABLE IF EXISTS drug_protein;
+CREATE TABLE drug_protein(
     drug_id TEXT,
-	target_id TEXT,
-	target_name TEXT,
+	drug_protein_id TEXT,
+	drug_protein_type INT,
+	drug_protein_name TEXT,
 	polypeptide_source TEXT,
 	polypeptide_uniprot_id TEXT,
 	polypeptide_name TEXT,
 	gene_name TEXT,
 	general_function TEXT,
-	specific_function TEXT,
-	pubmed_id TEXT
+	specific_function TEXT
+	--pubmed_id TEXT TODO: Will be added soon.
 );
 
 --set primary key
-ALTER TABLE target ADD PRIMARY KEY (drug_id, target_id);
-
---create enzyme table
-DROP TABLE IF EXISTS enzyme;
-CREATE TABLE enzyme(
-    drug_id TEXT,
-	enzyme_id TEXT,
-	enzyme_name TEXT,
-	polypeptide_source TEXT,
-	polypeptide_uniprot_id TEXT,
-	polypeptide_name TEXT,
-	gene_name TEXT,
-	general_function TEXT,
-	specific_function TEXT,
-	pubmed_id TEXT
-);
-
---set primary key
-ALTER TABLE enzyme ADD PRIMARY KEY (drug_id, enzyme_id);
-
---create transporter table
-DROP TABLE IF EXISTS transporter;
-CREATE TABLE transporter(
-    drug_id TEXT,
-	transporter_id TEXT,
-	transporter_name TEXT,
-	polypeptide_source TEXT,
-	polypeptide_uniprot_id TEXT,
-	polypeptide_name TEXT,
-	gene_name TEXT,
-	general_function TEXT,
-	specific_function TEXT,
-	pubmed_id TEXT
-);
-
---set primary key
-ALTER TABLE transporter ADD PRIMARY KEY (drug_id, transporter_id);
-
---create carrier table
-DROP TABLE IF EXISTS carrier;
-CREATE TABLE carrier(
-    drug_id TEXT,
-	carrier_id TEXT,
-	carrier_name TEXT,
-	polypeptide_source TEXT,
-	polypeptide_uniprot_id TEXT,
-	polypeptide_name TEXT,
-	gene_name TEXT,
-	general_function TEXT,
-	specific_function TEXT,
-	pubmed_id TEXT
-);
-
---set primary key
-ALTER TABLE carrier ADD PRIMARY KEY (drug_id, carrier_id);
+ALTER TABLE drug_protein ADD PRIMARY KEY (drug_id, drug_protein_id, drug_protein_type);
 
 --************************************************************DDI****************************************************************-
 --create  table
@@ -140,13 +92,11 @@ ALTER TABLE ddi ADD PRIMARY KEY (drug1_id, drug2_id);
 --create drug_snp table
 DROP TABLE IF EXISTS drug_snp;
 CREATE TABLE drug_snp(
-	id SERIAL PRIMARY KEY,
 	drug_id TEXT,
 	snp_id TEXT,
 	uniprot_id TEXT,
 	gene_name TEXT,
 	chromosome TEXT,
-	phenotype TEXT,
 	significance TEXT,
 	description TEXT,
 	description2 TEXT,
@@ -155,21 +105,23 @@ CREATE TABLE drug_snp(
 );
 
 --set primary key
-ALTER TABLE ddi ADD PRIMARY KEY (drug_id, snp_id, pubmed_id);
+ALTER TABLE drug_snp ADD PRIMARY KEY (drug_id, snp_id, uniprot_id, gene_name, chromosome, description, description2, pubmed_id);
 
 --****************************************************************GENE****************************************************************--
 --create gene table
 DROP TABLE IF EXISTS gene;
 CREATE TABLE gene(
 	ensembl_id TEXT,
-	symbol TEXT,
+	uniprot_id TEXT,
+	name TEXT,
+	description TEXT,
 	chromosome TEXT,
-	start TEXT,
-	end TEXT
+	start_position TEXT,
+	end_position TEXT
 );
 
 --set primary key
-ALTER TABLE gene ADD PRIMARY KEY (ensembl_id);
+ALTER TABLE gene ADD PRIMARY KEY (ensembl_id, uniprot_id);
 
 --****************************************************************SNP****************************************************************--
 --create snp table
@@ -180,18 +132,17 @@ CREATE TABLE snp(
 );
 
 --set primary key
-ALTER TABLE gene ADD PRIMARY KEY (snp_id, allele);
+ALTER TABLE snp ADD PRIMARY KEY (snp_id, allele);
 
 --****************************************************************GENE_SNP****************************************************************--
 --create gene_snp table
 DROP TABLE IF EXISTS gene_snp;
 CREATE TABLE gene_snp(
-	id SERIAL PRIMARY KEY,
 	ensembl_id TEXT,
 	snp_id TEXT
 );
 --set primary key
-ALTER TABLE gene ADD PRIMARY KEY (ensembl_id, snp_id);
+ALTER TABLE gene_snp ADD PRIMARY KEY (ensembl_id, snp_id);
 
 
 end;$BODY$;
