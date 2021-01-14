@@ -27,7 +27,7 @@ CREATE TABLE ddi_same_target(
 	gene_name TEXT,
 	general_function TEXT,
 	specific_function TEXT,
-	ddi_desc_cat INT
+	ddi_cat INT
 );
 --set primary key
 ALTER TABLE ddi_same_target ADD PRIMARY KEY (drug1_id, drug2_id, target_id);
@@ -47,7 +47,7 @@ CREATE TABLE ddi_same_enzyme(
 	gene_name TEXT,
 	general_function TEXT,
 	specific_function TEXT,
-	ddi_desc_cat INT
+	ddi_cat INT
 );
 --set primary key
 ALTER TABLE ddi_same_enzyme ADD PRIMARY KEY (drug1_id, drug2_id, enzyme_id);
@@ -67,7 +67,7 @@ CREATE TABLE ddi_same_carrier(
 	gene_name TEXT,
 	general_function TEXT,
 	specific_function TEXT,
-	ddi_desc_cat INT
+	ddi_cat INT
 );
 --set primary key
 ALTER TABLE ddi_same_carrier ADD PRIMARY KEY (drug1_id, drug2_id, carrier_id);
@@ -87,7 +87,7 @@ CREATE TABLE ddi_same_transporter(
 	gene_name TEXT,
 	general_function TEXT,
 	specific_function TEXT,
-	ddi_desc_cat INT
+	ddi_cat INT
 );
 --set primary key
 ALTER TABLE ddi_same_transporter ADD PRIMARY KEY (drug1_id, drug2_id, transporter_id);

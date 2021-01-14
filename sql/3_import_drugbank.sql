@@ -18,8 +18,8 @@ BEGIN
 --affected organism different from 'Humans', 'Humans and other mammals' are eliminated
 INSERT INTO drug
 	(drug_id, name, "type", description, state, indication, toxicity, pharmacodynamics,
-	mechanism_of_action, metabolism, absorption, half_life, protein_binding,
-	route_of_elimination, volume_of_distribution, clearance)
+	 absorption, half_life, metabolism, mechanism_of_action, volume_of_distribution,
+	 protein_binding, route_of_elimination)
 SELECT
 	d.primary_key,
 	d.name,
@@ -29,14 +29,13 @@ SELECT
 	p.indication,
 	p.toxicity,
 	p.pharmacodynamics,
-	p.mechanism_of_action,
-	p.metabolism,
 	p.absorption,
 	p.half_life,
-	p.protein_binding,
-	p.route_of_elimination,
+	p.metabolism,
+	p.mechanism_of_action,
 	p.volume_of_distribution,
-	p.clearance
+	p.protein_binding,
+	p.route_of_elimination
 FROM public.drugs d
 INNER JOIN public.drug_pharmacology p
 	ON d.primary_key = p.drugbank_id

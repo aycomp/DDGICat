@@ -1,40 +1,40 @@
 --********************************DDI CATEGORY********************************--
 
 --12 rows inserted.
-INSERT INTO description_category (id, category_id, category, description) VALUES (1,  1, 'The risk or severity%', 'The risk or severity of adverse effects can be increased when Drug A is combined with Drug B.');
-INSERT INTO description_category (id, category_id, category, description) VALUES (2,  1, 'The risk of a hypersensitivity reaction to%', 'The risk of a hypersensitivity reaction to Drug A is increased when it is combined with Drug B.');
-INSERT INTO description_category (id, category_id, category, description) VALUES (3,  2, '%may decrease% and %activities%', 'Drug A may increase/decrease the … activities of Drug B.');
-INSERT INTO description_category (id, category_id, category, description) VALUES (4,  2, '%may increase% and %activities%', 'Drug A may increase/decrease the … activities of Drug B.');
-INSERT INTO description_category (id, category_id, category, description) VALUES (5,  3, 'The serum concentration of%', 'The serum concentration of Drug A can be increased/decreased when it is combined with Drug B.');
-INSERT INTO description_category (id, category_id, category, description) VALUES (6,  3, '%can cause an increase in the absorption of%', 'Drug A can cause an increase in the absorption of Drug B resulting in an increased serum concentration and potentially a worsening adverse effect.');
-INSERT INTO description_category (id, category_id, category, description) VALUES (7,  3, 'The absorption of%', 'The absorption of Drug A can be decreased when combined with Drug B.');
-INSERT INTO description_category (id, category_id, category, description) VALUES (8,  3, 'The bioavailability of%', 'The bioavailability of Drug A can be increased when combined with Drug B.');
-INSERT INTO description_category (id, category_id, category, description) VALUES (9,  3, 'The protein binding of%', 'The protein binding of  Drug A can be decreased when combined with Drug B.');
-INSERT INTO description_category (id, category_id, category, description) VALUES (10, 3, 'The excretion of%', 'The excretionof Drug A can be decreased when combined with Drug B.');
-INSERT INTO description_category (id, category_id, category, description) VALUES (11, 4, 'The metabolism of%', 'The metabolism of Drug A can be increased/decreased when combined with Drug B.');
-INSERT INTO description_category (id, category_id, category, description) VALUES (12, 5, 'The therapeutic efficacy of %', 'The therapeutic efficacy of Drug A can be decreased when used in combination with Drug B.');
+INSERT INTO ddi_category (id, category_id, category, description) VALUES (1,  1, 'The risk or severity%', 'The risk or severity of adverse effects can be increased when Drug A is combined with Drug B.');
+INSERT INTO ddi_category (id, category_id, category, description) VALUES (2,  1, 'The risk of a hypersensitivity reaction to%', 'The risk of a hypersensitivity reaction to Drug A is increased when it is combined with Drug B.');
+INSERT INTO ddi_category (id, category_id, category, description) VALUES (3,  2, '%may decrease% and %activities%', 'Drug A may increase/decrease the … activities of Drug B.');
+INSERT INTO ddi_category (id, category_id, category, description) VALUES (4,  2, '%may increase% and %activities%', 'Drug A may increase/decrease the … activities of Drug B.');
+INSERT INTO ddi_category (id, category_id, category, description) VALUES (5,  3, 'The serum concentration of%', 'The serum concentration of Drug A can be increased/decreased when it is combined with Drug B.');
+INSERT INTO ddi_category (id, category_id, category, description) VALUES (6,  3, '%can cause an increase in the absorption of%', 'Drug A can cause an increase in the absorption of Drug B resulting in an increased serum concentration and potentially a worsening adverse effect.');
+INSERT INTO ddi_category (id, category_id, category, description) VALUES (7,  3, 'The absorption of%', 'The absorption of Drug A can be decreased when combined with Drug B.');
+INSERT INTO ddi_category (id, category_id, category, description) VALUES (8,  3, 'The bioavailability of%', 'The bioavailability of Drug A can be increased when combined with Drug B.');
+INSERT INTO ddi_category (id, category_id, category, description) VALUES (9,  3, 'The protein binding of%', 'The protein binding of  Drug A can be decreased when combined with Drug B.');
+INSERT INTO ddi_category (id, category_id, category, description) VALUES (10, 3, 'The excretion of%', 'The excretionof Drug A can be decreased when combined with Drug B.');
+INSERT INTO ddi_category (id, category_id, category, description) VALUES (11, 4, 'The metabolism of%', 'The metabolism of Drug A can be increased/decreased when combined with Drug B.');
+INSERT INTO ddi_category (id, category_id, category, description) VALUES (12, 5, 'The therapeutic efficacy of %', 'The therapeutic efficacy of Drug A can be decreased when used in combination with Drug B.');
 
 
 --484925 + 1077 +
 --40812 + 142410 +
 --36532 + 183 + 246 + 931 + 1358 + 4682 + 135175 + 24693 + 7594 + 154317 +
 --453 + 116470 = 1151858 rows updated.
-UPDATE ddi SET desc_cat = 1 WHERE description like 'The risk or severity%';
-UPDATE ddi SET desc_cat = 1 WHERE description like 'The risk of a hypersensitivity reaction to%';
-UPDATE ddi SET desc_cat = 2 WHERE description like '%may decrease%' and description like '%activities%';
-UPDATE ddi SET desc_cat = 2 WHERE description like '%may increase%' and description like '%activities%';
-UPDATE ddi SET desc_cat = 3 WHERE description like 'The serum concentration of%';
-UPDATE ddi SET desc_cat = 3 WHERE description like '%can cause an increase in the absorption of%';
-UPDATE ddi SET desc_cat = 3 WHERE description like 'The absorption of%';
-UPDATE ddi SET desc_cat = 3 WHERE description like 'The bioavailability of%';
-UPDATE ddi SET desc_cat = 3 WHERE description like 'The protein binding of%';
-UPDATE ddi SET desc_cat = 3 WHERE description like 'The excretion of%';
-UPDATE ddi SET desc_cat = 3 WHERE description like '%which could result in a higher serum level.%';
-UPDATE ddi SET desc_cat = 3 WHERE description like '%which could result in a lower serum level and potentially a reduction in efficacy%';
-UPDATE ddi SET desc_cat = 3 WHERE description like '%resulting in a reduced serum concentration and potentially a decrease in efficacy%';
-UPDATE ddi SET desc_cat = 3 WHERE description like '%may decrease effectiveness of%';
-UPDATE ddi SET desc_cat = 4 WHERE description like 'The metabolism of%';
-UPDATE ddi SET desc_cat = 5 WHERE description like 'The therapeutic efficacy of %';
+UPDATE ddi SET category = 1 WHERE description like 'The risk or severity%';
+UPDATE ddi SET category = 1 WHERE description like 'The risk of a hypersensitivity reaction to%';
+UPDATE ddi SET category = 2 WHERE description like '%may decrease%' and description like '%activities%';
+UPDATE ddi SET category = 2 WHERE description like '%may increase%' and description like '%activities%';
+UPDATE ddi SET category = 3 WHERE description like 'The serum concentration of%';
+UPDATE ddi SET category = 3 WHERE description like '%can cause an increase in the absorption of%';
+UPDATE ddi SET category = 3 WHERE description like 'The absorption of%';
+UPDATE ddi SET category = 3 WHERE description like 'The bioavailability of%';
+UPDATE ddi SET category = 3 WHERE description like 'The protein binding of%';
+UPDATE ddi SET category = 3 WHERE description like 'The excretion of%';
+UPDATE ddi SET category = 3 WHERE description like '%which could result in a higher serum level.%';
+UPDATE ddi SET category = 3 WHERE description like '%which could result in a lower serum level and potentially a reduction in efficacy%';
+UPDATE ddi SET category = 3 WHERE description like '%resulting in a reduced serum concentration and potentially a decrease in efficacy%';
+UPDATE ddi SET category = 3 WHERE description like '%may decrease effectiveness of%';
+UPDATE ddi SET category = 4 WHERE description like 'The metabolism of%';
+UPDATE ddi SET category = 5 WHERE description like 'The therapeutic efficacy of %';
 
 
 
@@ -132,9 +132,9 @@ INSERT INTO ddi_same_target
 	gene_name,
 	general_function,
 	specific_function,
-	ddi_desc_cat
+	ddi_cat
 )
-SELECT targ.*, d.desc_cat
+SELECT targ.*, d.category
 FROM same_target targ
 INNER JOIN ddi d
 	ON targ.drug1_id = d.drug1_id AND targ.drug2_id = d.drug2_id
@@ -233,9 +233,9 @@ INSERT INTO ddi_same_enzyme
 	gene_name,
 	general_function,
 	specific_function,
-	ddi_desc_cat
+	ddi_category
 )
-SELECT e.*, d.desc_cat
+SELECT e.*, d.cat
 FROM same_enzyme e
 INNER JOIN ddi d
 	ON e.drug1_id = d.drug1_id AND e.drug2_id = d.drug2_id
@@ -334,9 +334,9 @@ INSERT INTO ddi_same_carrier
 	gene_name,
 	general_function,
 	specific_function,
-	ddi_desc_cat
+	ddi_cat
 )
-SELECT c.*, d.desc_cat
+SELECT c.*, d.category
 FROM same_carrier c
 INNER JOIN ddi d
 	ON c.drug1_id = d.drug1_id AND c.drug2_id = d.drug2_id
@@ -436,9 +436,9 @@ INSERT INTO ddi_same_transporter
 	gene_name,
 	general_function,
 	specific_function,
-	ddi_desc_cat
+	ddi_cat
 )
-SELECT t.*, d.desc_cat
+SELECT t.*, d.category
 FROM same_transporter t
 INNER JOIN ddi d
 	ON t.drug1_id = d.drug1_id AND t.drug2_id = d.drug2_id

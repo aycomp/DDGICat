@@ -10,7 +10,7 @@ CREATE OR REPLACE FUNCTION public."2_create_tables"(
     VOLATILE
 AS $BODY$begin
 
---********************************DRUG EXTRACTION********************************--
+--*******************************************************DRUG***************************************************************************-
 --create drug table
 DROP TABLE IF EXISTS drug;
 CREATE TABLE drug(
@@ -23,14 +23,14 @@ CREATE TABLE drug(
 	indication TEXT,
 	toxicity TEXT,
 	pharmacodynamics TEXT,
-	mechanism_of_action TEXT,
-	metabolism TEXT,
 	absorption TEXT,
 	half_life TEXT,
-	protein_binding TEXT,
-	route_of_elimination TEXT,
+	metabolism TEXT,
+	mechanism_of_action TEXT,
 	volume_of_distribution TEXT,
+	protein_binding TEXT,
 	clearance TEXT,
+	route_of_elimination TEXT,
 	pubmed_id TEXT
 );
 
@@ -49,8 +49,7 @@ CREATE TABLE drug_mapper(
 ALTER TABLE drug_mapper ADD PRIMARY KEY (drugbank_id);
 
 
---********************************DRUG TARGET, ENZYME, TRANSPORTER, CARRIER, PATHWAY EXTRACTION********************************--
-
+--************************************************TARGET, ENZYME, TRANSPORTER, CARRIER************************************************-
 --create target table
 DROP TABLE IF EXISTS target;
 CREATE TABLE target(
@@ -123,22 +122,21 @@ CREATE TABLE carrier(
 --set primary key
 ALTER TABLE carrier ADD PRIMARY KEY (drug_id, carrier_id);
 
---********************************DDI EXTRACTION********************************--
+--************************************************************DDI****************************************************************-
 --create  table
 DROP TABLE IF EXISTS ddi;
 CREATE TABLE ddi(
 	drug1_id TEXT,
 	drug2_id TEXT,
 	description TEXT,
-	desc_cat TEXT
+	category TEXT
 );
 
 --set primary key
 ALTER TABLE ddi ADD PRIMARY KEY (drug1_id, drug2_id);
 
 
---********************************DRUG_SNP EXTRACTION********************************--
-
+--************************************************************DRUG_SNP****************************************************************-
 --create drug_snp table
 DROP TABLE IF EXISTS drug_snp;
 CREATE TABLE drug_snp(
@@ -155,6 +153,45 @@ CREATE TABLE drug_snp(
 	severity TEXT,
 	pubmed_id TEXT
 );
+
+--set primary key
+ALTER TABLE ddi ADD PRIMARY KEY (drug_id, snp_id, pubmed_id);
+
+--****************************************************************GENE****************************************************************--
+--create gene table
+DROP TABLE IF EXISTS gene;
+CREATE TABLE gene(
+	ensembl_id TEXT,
+	symbol TEXT,
+	chromosome TEXT,
+	start TEXT,
+	end TEXT
+);
+
+--set primary key
+ALTER TABLE gene ADD PRIMARY KEY (ensembl_id);
+
+--****************************************************************SNP****************************************************************--
+--create snp table
+DROP TABLE IF EXISTS snp;
+CREATE TABLE snp(
+	snp_id TEXT,
+	allele TEXT
+);
+
+--set primary key
+ALTER TABLE gene ADD PRIMARY KEY (snp_id, allele);
+
+--****************************************************************GENE_SNP****************************************************************--
+--create gene_snp table
+DROP TABLE IF EXISTS gene_snp;
+CREATE TABLE gene_snp(
+	id SERIAL PRIMARY KEY,
+	ensembl_id TEXT,
+	snp_id TEXT
+);
+--set primary key
+ALTER TABLE gene ADD PRIMARY KEY (ensembl_id, snp_id);
 
 
 end;$BODY$;
