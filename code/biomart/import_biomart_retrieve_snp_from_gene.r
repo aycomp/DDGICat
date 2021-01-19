@@ -12,7 +12,7 @@ snpmart = useEnsembl(biomart = "snp", dataset="hsapiens_snp")
 for (i in 1:nrow(data)){
     flag <- TRUE
     tryCatch({
-      message(list(data$chr[i], data$start[i], data$end[i]))
+      message("Chromosome: " || data$chr[i] || "  Start: " || data$start[i] || "  End: " || data$end[i])
       result  <- getBM(
         attributes=c( 'refsnp_id','refsnp_source', 'chr_name','chrom_start','chrom_end'), 
         filters = c('chr_name','start','end'), 
