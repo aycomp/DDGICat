@@ -1,8 +1,8 @@
--- FUNCTION: public."4_3_fill_drug_mapper"()
+-- FUNCTION: public."3_1_4_fill_drug_mapper"()
 
--- DROP FUNCTION public."4_3_fill_drug_mapper"();
+-- DROP FUNCTION public."3_1_4_fill_drug_mapper"();
 
-CREATE OR REPLACE FUNCTION public."4_3_fill_drug_mapper"(
+CREATE OR REPLACE FUNCTION public."3_1_4_fill_drug_mapper"(
 	)
     RETURNS void
     LANGUAGE 'plpgsql'
@@ -60,22 +60,18 @@ BEGIN
 
 end;$BODY$;
 
-ALTER FUNCTION public."4_3_fill_drug_mapper"()
+ALTER FUNCTION public."3_1_4_fill_drug_mapper"()
     OWNER TO postgres;
 
 
 --run function
-SELECT public."4_3_fill_drug_mapper"();
+SELECT public."3_1_4_fill_drug_mapper"();
 
 /*
 
 OUTPUT:
-NOTICE:  Record:  PubChem Compound:2540 is updated with: DB00796
-NOTICE:  Record:  PubChem Compound:5359271 is updated with: DB01466
 NOTICE:  Record:  ChemSpider:5864 is updated with: DB01488
-NOTICE:  Record:  PubChem Compound:6128 is updated with: DB01536
 NOTICE:  Record:  PubChem Compound:13308 is updated with: DB01541
-NOTICE:  Record:  PubChem Compound:5359421 is updated with: DB01565
 NOTICE:  Record:  PubChem Compound:7339 is updated with: DB01632
 NOTICE:  Record:  PubChem Compound:9700 is updated with: DB01643
 NOTICE:  Record:  PubChem Compound:19 is updated with: DB01672
@@ -100,14 +96,12 @@ NOTICE:  Record:  PDB:G is updated with: DB01972
 NOTICE:  Record:  PubChem Compound:107 is updated with: DB02024
 NOTICE:  Record:  ChemSpider:1389 is updated with: DB02044
 NOTICE:  Record:  PubChem Compound:77982 is updated with: DB02053
-NOTICE:  Record:  PubChem Compound:448457 is updated with: DB02056
 NOTICE:  Record:  BindingDB:6 is updated with: DB02060
 NOTICE:  Record:  PubChem Compound:91493 is updated with: DB02076
 NOTICE:  Record:  ChemSpider:280 is updated with: DB02079
 NOTICE:  Record:  PubChem Compound:673 is updated with: DB02083
 NOTICE:  Record:  PubChem Compound:535 is updated with: DB02085
 NOTICE:  Record:  PubChem Compound:218 is updated with: DB02119
-NOTICE:  Record:  PubChem Compound:1188 is updated with: DB02134
 NOTICE:  Record:  PubChem Compound:1053 is updated with: DB02142
 NOTICE:  Record:  PubChem Compound:289 is updated with: DB02232
 NOTICE:  Record:  PubChem Compound:5139 is updated with: DB02234
@@ -117,16 +111,11 @@ NOTICE:  Record:  PubChem Compound:955 is updated with: DB02251
 NOTICE:  Record:  PubChem Compound:1021 is updated with: DB02272
 NOTICE:  Record:  PubChem Compound:5287971 is updated with: DB02306
 NOTICE:  Record:  PubChem Compound:5884 is updated with: DB02338
-NOTICE:  Record:  PubChem Compound:978 is updated with: DB02362
 NOTICE:  Record:  PubChem Compound:1318 is updated with: DB02365
 NOTICE:  Record:  PubChem Compound:1667 is updated with: DB02395
 NOTICE:  Record:  ChemSpider:1457 is updated with: DB02463
-NOTICE:  Record:  PubChem Compound:6076 is updated with: DB02527
-NOTICE:  Record:  PubChem Compound:119 is updated with: DB02530
 NOTICE:  Record:  PubChem Compound:6590 is updated with: DB02531
 NOTICE:  Record:  PubChem Compound:445992 is updated with: DB02544
-NOTICE:  Record:  PubChem Compound:445995 is updated with: DB02552
-NOTICE:  Record:  PubChem Compound:6581 is updated with: DB02579
 NOTICE:  Record:  PubChem Compound:675 is updated with: DB02591
 NOTICE:  Record:  BindingDB:359 is updated with: DB02629
 NOTICE:  Record:  ChemSpider:1874 is updated with: DB02642
@@ -157,14 +146,11 @@ NOTICE:  Record:  ChemSpider:1876 is updated with: DB03098
 NOTICE:  Record:  PubChem Compound:239 is updated with: DB03107
 NOTICE:  Record:  ChemSpider:1331 is updated with: DB03121
 NOTICE:  Record:  ChemSpider:1105 is updated with: DB03145
-NOTICE:  Record:  PubChem Compound:643975 is updated with: DB03147
 NOTICE:  Record:  PubChem Compound:490 is updated with: DB03174
 NOTICE:  Record:  PubChem Compound:5281 is updated with: DB03193
 NOTICE:  Record:  PubChem Compound:70 is updated with: DB03229
-NOTICE:  Record:  PubChem Compound:643976 is updated with: DB03247
 NOTICE:  Record:  PubChem Compound:171 is updated with: DB03304
 NOTICE:  Record:  PubChem Compound:65359 is updated with: DB03310
-NOTICE:  Record:  PubChem Compound:446727 is updated with: DB03312
 NOTICE:  Record:  PubChem Compound:6535 is updated with: DB03347
 NOTICE:  Record:  PubChem Compound:3991 is updated with: DB03359
 NOTICE:  Record:  ChemSpider:5485 is updated with: DB03365
@@ -189,10 +175,7 @@ NOTICE:  Record:  PubChem Compound:1032 is updated with: DB03766
 NOTICE:  Record:  PubChem Compound:64727 is updated with: DB03785
 NOTICE:  Record:  PubChem Compound:38 is updated with: DB03795
 NOTICE:  Record:  PubChem Compound:985 is updated with: DB03796
-NOTICE:  Record:  PubChem Compound:65063 is updated with: DB03800
-NOTICE:  Record:  PubChem Compound:151170 is updated with: DB03849
 NOTICE:  Record:  PubChem Compound:273 is updated with: DB03854
-NOTICE:  Record:  PubChem Compound:5280883 is updated with: DB03866
 NOTICE:  Record:  PubChem Compound:5438 is updated with: DB03876
 NOTICE:  Record:  PubChem Compound:997 is updated with: DB03884
 NOTICE:  Record:  PubChem Compound:983 is updated with: DB03896
@@ -206,20 +189,17 @@ NOTICE:  Record:  PubChem Compound:5172 is updated with: DB03980
 NOTICE:  Record:  BindingDB:11 is updated with: DB03995
 NOTICE:  Record:  PubChem Compound:1511 is updated with: DB04010
 NOTICE:  Record:  PubChem Compound:49 is updated with: DB04074
-NOTICE:  Record:  PubChem Compound:790 is updated with: DB04076
 NOTICE:  Record:  PubChem Compound:1290 is updated with: DB04123
 NOTICE:  Record:  PubChem Compound:6830 is updated with: DB04137
 NOTICE:  Record:  PubChem Compound:6578 is updated with: DB04161
 NOTICE:  Record:  PubChem Compound:487 is updated with: DB04183
 NOTICE:  Record:  PubChem Compound:378 is updated with: DB04214
-NOTICE:  Record:  PubChem Compound:5280343 is updated with: DB04216
 NOTICE:  Record:  PubChem Compound:135 is updated with: DB04242
 NOTICE:  Record:  PubChem Compound:277 is updated with: DB04261
 NOTICE:  Record:  PubChem Compound:36 is updated with: DB04279
 NOTICE:  Record:  PubChem Compound:8977 is updated with: DB04315
 NOTICE:  Record:  PubChem Compound:1001 is updated with: DB04325
 NOTICE:  Record:  PubChem Compound:668 is updated with: DB04326
-NOTICE:  Record:  PubChem Compound:193653 is updated with: DB04339
 NOTICE:  Record:  PubChem Compound:6675 is updated with: DB04348
 NOTICE:  Record:  PubChem Compound:2359 is updated with: DB04360
 NOTICE:  Record:  PubChem Compound:612 is updated with: DB04398
@@ -232,12 +212,9 @@ NOTICE:  Record:  PubChem Compound:1609 is updated with: DB04459
 NOTICE:  Record:  PubChem Compound:321 is updated with: DB04461
 NOTICE:  Record:  PubChem Compound:449459 is updated with: DB04468
 NOTICE:  Record:  BindingDB:1 is updated with: DB04485
-NOTICE:  Record:  PubChem Compound:69507 is updated with: DB04493
 NOTICE:  Record:  ChemSpider:5479 is updated with: DB04513
 NOTICE:  Record:  PubChem Compound:1493 is updated with: DB04528
-NOTICE:  Record:  PubChem Compound:5997 is updated with: DB04540
 NOTICE:  Record:  PubChem Compound:58 is updated with: DB04553
-NOTICE:  Record:  PubChem Compound:444899 is updated with: DB04557
 NOTICE:  Record:  PubChem Compound:1698 is updated with: DB04560
 NOTICE:  Record:  PubChem Compound:8582 is updated with: DB04566
 NOTICE:  Record:  PubChem Compound:5753 is updated with: DB04652
@@ -245,25 +222,12 @@ NOTICE:  Record:  PubChem Compound:1195 is updated with: DB04714
 NOTICE:  Record:  PubChem Compound:2406 is updated with: DB04813
 NOTICE:  Record:  PubChem Compound:4472 is updated with: DB04820
 NOTICE:  Record:  PubChem Compound:4619 is updated with: DB04822
-NOTICE:  Record:  PubChem Compound:3036505 is updated with: DB04938
-NOTICE:  Record:  PubChem Compound:176077 is updated with: DB05018
 NOTICE:  Record:  ChemSpider:1621 is updated with: DB05105
-NOTICE:  Record:  PubChem Compound:4644 is updated with: DB05262
 NOTICE:  Record:  PubChem Compound:1082 is updated with: DB05446
 NOTICE:  Record:  PubChem Compound:104842 is updated with: DB05482
-NOTICE:  Record:  PubChem Substance:347910183 is updated with: DB05578
-NOTICE:  Record:  PubChem Compound:11561674 is updated with: DB05676
-NOTICE:  Record:  PubChem Compound:11154555 is updated with: DB06016
-NOTICE:  Record:  PubChem Compound:9930049 is updated with: DB06217
-NOTICE:  Record:  PubChem Compound:9869929 is updated with: DB06237
 NOTICE:  Record:  ChemSpider:3571 is updated with: DB06255
-NOTICE:  Record:  PubChem Compound:154257 is updated with: DB06401
-NOTICE:  Record:  PubChem Compound:9829523 is updated with: DB06595
-NOTICE:  Record:  PubChem Substance:99443265 is updated with: DB06713
-NOTICE:  Record:  UniProtKB:P04062 is updated with: DB06720
 NOTICE:  Record:  PubChem Compound:3058751 is updated with: DB06731
 NOTICE:  Record:  ChemSpider:2271 is updated with: DB06732
-NOTICE:  Record:  PubChem Compound:10101 is updated with: DB06738
 NOTICE:  Record:  PubChem Compound:247 is updated with: DB06756
 NOTICE:  Record:  PubChem Compound:44564 is updated with: DB06794
 NOTICE:  Record:  ChemSpider:5135 is updated with: DB06821
@@ -274,17 +238,13 @@ NOTICE:  Record:  ChemSpider:1485 is updated with: DB06948
 NOTICE:  Record:  PubChem Compound:1701 is updated with: DB07347
 NOTICE:  Record:  ChemSpider:2169 is updated with: DB07392
 NOTICE:  Record:  PubChem Compound:255 is updated with: DB07418
-NOTICE:  Record:  PubChem Compound:247304 is updated with: DB07706
 NOTICE:  Record:  PubChem Compound:979 is updated with: DB07718
-NOTICE:  Record:  PubChem Compound:445713 is updated with: DB07780
 NOTICE:  Record:  PubChem Compound:4447 is updated with: DB07816
 NOTICE:  Record:  ChemSpider:3339 is updated with: DB07820
-NOTICE:  Record:  PubChem Compound:447277 is updated with: DB07841
 NOTICE:  Record:  ChemSpider:1810 is updated with: DB07862
 NOTICE:  Record:  PubChem Compound:802 is updated with: DB07950
 NOTICE:  Record:  BindingDB:2581 is updated with: DB08036
 NOTICE:  Record:  PubChem Compound:780 is updated with: DB08327
-NOTICE:  Record:  PubChem Compound:5356 is updated with: DB08329
 NOTICE:  Record:  PDB:CEF is updated with: DB08375
 NOTICE:  Record:  PubChem Compound:1028 is updated with: DB08427
 NOTICE:  Record:  PubChem Compound:5894 is updated with: DB08473
@@ -295,51 +255,28 @@ NOTICE:  Record:  PubChem Compound:1498 is updated with: DB08713
 NOTICE:  Record:  PubChem Compound:1613 is updated with: DB08772
 NOTICE:  Record:  PubChem Compound:98614 is updated with: DB08777
 NOTICE:  Record:  PubChem Compound:199 is updated with: DB08838
-NOTICE:  Record:  PubChem Compound:1175 is updated with: DB08844
 NOTICE:  Record:  ChemSpider:50 is updated with: DB08845
 NOTICE:  Record:  KEGG Drug:D09675 is updated with: DB08876
-NOTICE:  Record:  PubChem Compound:9865528 is updated with: DB08893
-NOTICE:  Record:  PubChem Compound:9926791 is updated with: DB08895
-NOTICE:  Record:  PubChem Compound:6917779 is updated with: DB08918
-NOTICE:  Record:  PubChem Compound:11304743 is updated with: DB08931
 NOTICE:  Record:  PubChem Compound:3374 is updated with: DB08972
 NOTICE:  Record:  PubChem Compound:6469 is updated with: DB08988
 NOTICE:  Record:  ChemSpider:3123 is updated with: DB08992
 NOTICE:  Record:  PubChem Compound:6475 is updated with: DB09007
-NOTICE:  Record:  PubChem Compound:32170 is updated with: DB09009
 NOTICE:  Record:  PubChem Compound:2577 is updated with: DB09010
-NOTICE:  Record:  PubChem Compound:2451 is updated with: DB09017
 NOTICE:  Record:  PubChem Compound:2391 is updated with: DB09020
-NOTICE:  Record:  PubChem Compound:644019 is updated with: DB09061
-NOTICE:  Record:  PubChem Compound:11519070 is updated with: DB09076
 NOTICE:  Record:  PDB:CTC is updated with: DB09093
-NOTICE:  Record:  PubChem Compound:16129681 is updated with: DB09099
-NOTICE:  Record:  PubChem Compound:5277135 is updated with: DB09101
 NOTICE:  Record:  PubChem Compound:598 is updated with: DB09110
-NOTICE:  Record:  PubChem Compound:5311454 is updated with: DB09118
 NOTICE:  Record:  PubChem Compound:6104 is updated with: DB09121
 NOTICE:  Record:  ChemSpider:3612 is updated with: DB09135
-NOTICE:  Record:  PubChem Compound:962 is updated with: DB09145
 NOTICE:  Record:  PubChem Compound:4260 is updated with: DB09205
 NOTICE:  Record:  PubChem Compound:28718 is updated with: DB09218
-NOTICE:  Record:  PubChem Compound:47528 is updated with: DB09220
 NOTICE:  Record:  PubChem Compound:5736 is updated with: DB09225
-NOTICE:  Record:  PubChem Compound:5311217 is updated with: DB09236
 NOTICE:  Record:  ChemSpider:4645 is updated with: DB09242
 NOTICE:  Record:  PubChem Compound:68802 is updated with: DB09244
-NOTICE:  Record:  PubChem Compound:5386 is updated with: DB09256
-NOTICE:  Record:  PubChem Compound:54679224 is updated with: DB09257
 NOTICE:  Record:  PubChem Compound:297 is updated with: DB09278
-NOTICE:  Record:  PubChem Compound:68870 is updated with: DB09289
-NOTICE:  Record:  KEGG Drug:D00954 is updated with: DB09389
-NOTICE:  Record:  PubChem Compound:1004 is updated with: DB09394
 NOTICE:  Record:  PDB:EAL is updated with: DB09477
 NOTICE:  Record:  PubChem Compound:1089 is updated with: DB11068
-NOTICE:  Record:  PubChem Compound:784 is updated with: DB11091
-NOTICE:  Record:  ChemSpider:199 is updated with: DB11100
 NOTICE:  Record:  PubChem Compound:2723 is updated with: DB11121
 NOTICE:  Record:  PubChem Compound:1091 is updated with: DB11127
-NOTICE:  Record:  PDB:MO is updated with: DB11137
 NOTICE:  Record:  PubChem Compound:2482 is updated with: DB11148
 NOTICE:  Record:  PubChem Compound:2202 is updated with: DB11157
 NOTICE:  Record:  PDB:XYL is updated with: DB11195
@@ -347,85 +284,42 @@ NOTICE:  Record:  PDB:F is updated with: DB11257
 NOTICE:  Record:  PubChem Compound:6880 is updated with: DB11323
 NOTICE:  Record:  PubChem Compound:460 is updated with: DB11359
 NOTICE:  Record:  ChemSpider:4925 is updated with: DB11458
-NOTICE:  Record:  PubChem Compound:638072 is updated with: DB11460
 NOTICE:  Record:  PubChem Compound:281 is updated with: DB11588
 NOTICE:  Record:  PubChem Compound:10090 is updated with: DB11609
 NOTICE:  Record:  PubChem Compound:6674 is updated with: DB11622
-NOTICE:  Record:  PubChem Compound:11001318 is updated with: DB11644
-NOTICE:  Record:  PubChem Compound:11977753 is updated with: DB11651
-NOTICE:  Record:  PubChem Compound:51039094 is updated with: DB11652
-NOTICE:  Record:  PubChem Compound:49836058 is updated with: DB11655
-NOTICE:  Record:  PubChem Compound:10445549 is updated with: DB11676
-NOTICE:  Record:  PubChem Compound:71226662 is updated with: DB11703
 NOTICE:  Record:  PubChem Compound:457 is updated with: DB11710
-NOTICE:  Record:  PubChem Compound:46199646 is updated with: DB11712
-NOTICE:  Record:  PubChem Compound:123805 is updated with: DB11720
 NOTICE:  Record:  PDB:PZQ is updated with: DB11749
-NOTICE:  Record:  PubChem Compound:11285792 is updated with: DB11758
-NOTICE:  Record:  PubChem Compound:25145656 is updated with: DB11791
-NOTICE:  Record:  PubChem Compound:44205240 is updated with: DB11817
-NOTICE:  Record:  PubChem Compound:9915743 is updated with: DB11828
 NOTICE:  Record:  PubChem Compound:6 is updated with: DB11831
 NOTICE:  Record:  PubChem Compound:4261 is updated with: DB11841
 NOTICE:  Record:  PubChem Compound:588 is updated with: DB11846
-NOTICE:  Record:  PubChem Compound:5280878 is updated with: DB11858
-NOTICE:  Record:  PubChem Compound:24795069 is updated with: DB11915
 NOTICE:  Record:  PubChem Compound:3885 is updated with: DB11948
-NOTICE:  Record:  PubChem Compound:50905713 is updated with: DB11952
-NOTICE:  Record:  PubChem Compound:11250647 is updated with: DB11979
-NOTICE:  Record:  PubChem Compound:25141092 is updated with: DB11986
-NOTICE:  Record:  PubChem Compound:23582412 is updated with: DB12011
-NOTICE:  Record:  PubChem Compound:56649450 is updated with: DB12015
 NOTICE:  Record:  PubChem Compound:5663 is updated with: DB12082
 NOTICE:  Record:  PDB:GD is updated with: DB12091
 NOTICE:  Record:  PubChem Compound:4418 is updated with: DB12092
 NOTICE:  Record:  PubChem Compound:1355 is updated with: DB12110
-NOTICE:  Record:  PubChem Compound:71731823 is updated with: DB12130
-NOTICE:  Record:  PubChem Compound:49803313 is updated with: DB12141
-NOTICE:  Record:  PubChem Compound:67462786 is updated with: DB12147
-NOTICE:  Record:  PubChem Compound:73442840 is updated with: DB12161
 NOTICE:  Record:  PubChem Compound:10850 is updated with: DB12176
 NOTICE:  Record:  ChemSpider:5199 is updated with: DB12231
-NOTICE:  Record:  PubChem Compound:124246 is updated with: DB12233
 NOTICE:  Record:  PubChem Compound:4450 is updated with: DB12293
-NOTICE:  Record:  PubChem Compound:42642645 is updated with: DB12307
-NOTICE:  Record:  ChemSpider:2243 is updated with: DB12319
-NOTICE:  Record:  PubChem Compound:24978538 is updated with: DB12340
-NOTICE:  Record:  PubChem Compound:44599207 is updated with: DB12371
-NOTICE:  Record:  PubChem Compound:16123056 is updated with: DB12400
-NOTICE:  Record:  PubChem Compound:2448 is updated with: DB12401
 NOTICE:  Record:  PubChem Compound:4410 is updated with: DB12447
 NOTICE:  Record:  PubChem Compound:957 is updated with: DB12452
-NOTICE:  Record:  PubChem Compound:51049968 is updated with: DB12457
-NOTICE:  Record:  PubChem Compound:492405 is updated with: DB12466
-NOTICE:  Record:  PubChem Compound:4413 is updated with: DB12598
 NOTICE:  Record:  PubChem Compound:2214 is updated with: DB12618
-NOTICE:  Record:  PubChem Compound:4820 is updated with: DB12712
-NOTICE:  Record:  PubChem Compound:11282283 is updated with: DB12742
 NOTICE:  Record:  PubChem Compound:525 is updated with: DB12751
 NOTICE:  Record:  PubChem Compound:16685 is updated with: DB12838
 NOTICE:  Record:  ChemSpider:3581 is updated with: DB12881
 NOTICE:  Record:  PubChem Compound:359 is updated with: DB12944
-NOTICE:  Record:  PubChem Compound:1329 is updated with: DB12946
 NOTICE:  Record:  PubChem Compound:18343 is updated with: DB12947
-NOTICE:  Record:  PubChem Compound:5280492 is updated with: DB12961
 NOTICE:  Record:  PubChem Compound:5467 is updated with: DB13025
 NOTICE:  Record:  PubChem Compound:5524 is updated with: DB13064
 NOTICE:  Record:  PubChem Compound:10114 is updated with: DB13089
-NOTICE:  Record:  PubChem Compound:45266826 is updated with: DB13108
-NOTICE:  Record:  PubChem Compound:20313 is updated with: DB13114
-NOTICE:  Record:  PubChem Compound:49843517 is updated with: DB13125
 NOTICE:  Record:  ChemSpider:567 is updated with: DB13191
 NOTICE:  Record:  ChemSpider:2204 is updated with: DB13206
 NOTICE:  Record:  ChemSpider:1997 is updated with: DB13233
 NOTICE:  Record:  ChemSpider:5999 is updated with: DB13304
-NOTICE:  Record:  PubChem Compound:5284613 is updated with: DB13307
 NOTICE:  Record:  ChemSpider:2236 is updated with: DB13309
 NOTICE:  Record:  ChemSpider:307 is updated with: DB13366
 NOTICE:  Record:  KEGG Compound:C04623 is updated with: DB13424
 NOTICE:  Record:  ChemSpider:3901 is updated with: DB13437
 NOTICE:  Record:  ChemSpider:4321 is updated with: DB13441
-NOTICE:  Record:  PDB:XE is updated with: DB13453
 NOTICE:  Record:  ChemSpider:6506 is updated with: DB13469
 NOTICE:  Record:  ChemSpider:2373 is updated with: DB13510
 NOTICE:  Record:  ChemSpider:4719 is updated with: DB13514
@@ -435,7 +329,6 @@ NOTICE:  Record:  ChemSpider:3057 is updated with: DB13785
 NOTICE:  Record:  ChemSpider:8271 is updated with: DB13819
 NOTICE:  Record:  ChemSpider:3160 is updated with: DB13845
 NOTICE:  Record:  PubChem Compound:2194 is updated with: DB13853
-NOTICE:  Record:  PubChem Compound:89683805 is updated with: DB13874
 NOTICE:  Record:  PubChem Compound:44571 is updated with: DB13876
 NOTICE:  Record:  KEGG Compound:C01733 is updated with: DB13972
 NOTICE:  Record:  ChemSpider:3812 is updated with: DB14065
@@ -461,10 +354,9 @@ NOTICE:  Record:  ChemSpider:1101 is updated with: DB15429
 NOTICE:  Record:  ChemSpider:46 is updated with: DB15831
 NOTICE:  Record:  ChemSpider:291 is updated with: DB15994
 NOTICE:  Record:  ChemSpider:919 is updated with: DB15995
-NOTICE:  <613> number of rows updated in drug_mapper table
+NOTICE:  <NULL> number of rows updated in drug_mapper table
 
-Successfully run. Total query runtime: 16 min.
+Successfully run. Total query runtime: 12 min 43 secs.
 1 rows affected.
-
 
 */

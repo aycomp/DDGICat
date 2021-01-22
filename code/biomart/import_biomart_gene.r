@@ -5,10 +5,10 @@
 library(biomaRt)
 library(DBI)
 
-con <- dbConnect(RPostgres::Postgres(),user="postgres",password="terlik",host="localhost",port=5432, dbname="DDGICat")
-
+con1 <- dbConnect(RPostgres::Postgres(),user="postgres",password="terlik",host="localhost",port=5432, dbname="DDGICat")
 data = NULL
-data <- dbGetQuery(con,"SELECT DISTINCT(gene_name) AS gene_name FROM drug_snp");
+data <- dbGetQuery(con1,"SELECT DISTINCT(gene_name) AS gene_name FROM drug_snp");
+dbDisconnect(con1)
 drug_related_genes = c(data$gene_name)
 
 ensembl = useEnsembl(biomart="ensembl", dataset="hsapiens_gene_ensembl", GRCh = 37)
@@ -28,7 +28,8 @@ resultset <-
         values = drug_related_genes, 
         mart = ensembl)
 
+con2 <- dbConnect(RPostgres::Postgres(),user="postgres",password="terlik",host="localhost",port=5432, dbname="BioMart")
+dbWriteTable(con2, "gene", resultset)
+dbDisconnect(con2)
 
-dbWriteTable(con, "gene", resultset)
-dbDisconnect(con)
-
+##RESULT: 1979 rows inserted

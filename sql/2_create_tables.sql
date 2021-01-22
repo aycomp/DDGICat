@@ -81,7 +81,7 @@ CREATE TABLE ddi(
 	drug1_id TEXT,
 	drug2_id TEXT,
 	description TEXT,
-	category TEXT
+	category_id INT
 );
 
 --set primary key
@@ -99,13 +99,13 @@ CREATE TABLE drug_snp(
 	chromosome TEXT,
 	significance TEXT,
 	description TEXT,
-	description2 TEXT,
 	severity TEXT,
 	pubmed_id TEXT
 );
 
 --set primary key
-ALTER TABLE drug_snp ADD PRIMARY KEY (drug_id, snp_id, uniprot_id, gene_name, chromosome, description, description2, pubmed_id);
+--ALTER TABLE drug_snp ADD PRIMARY KEY (drug_id, snp_id, uniprot_id, gene_name, chromosome, description, pubmed_id);
+ALTER TABLE drug_snp ADD PRIMARY KEY (drug_id, snp_id, uniprot_id, description, pubmed_id);
 
 --****************************************************************GENE****************************************************************--
 --create gene table
@@ -139,10 +139,61 @@ ALTER TABLE snp ADD PRIMARY KEY (snp_id, allele);
 DROP TABLE IF EXISTS gene_snp;
 CREATE TABLE gene_snp(
 	ensembl_id TEXT,
+	uniprot_id TEXT,
 	snp_id TEXT
 );
 --set primary key
-ALTER TABLE gene_snp ADD PRIMARY KEY (ensembl_id, snp_id);
+ALTER TABLE gene_snp ADD PRIMARY KEY (ensembl_id, uniprot_id, snp_id);
+
+
+--***************************************************************DDI********************************--
+--ddi category  table
+DROP TABLE IF EXISTS ddi_category;
+CREATE TABLE ddi_category(
+	id INT,
+	category_id INT,
+	category TEXT,
+	description TEXT
+);
+--set primary key
+ALTER TABLE ddi_category ADD PRIMARY KEY (id);
+
+
+--*********************************************DDI_SAME_DRUG_PROTEIN*********************************************--
+
+
+DROP TABLE IF EXISTS ddi_same_drug_protein;
+CREATE TABLE ddi_same_drug_protein(
+	drug1_id TEXT,
+	drug2_id TEXT,
+	drug_protein_type INT,
+	drug_protein_id TEXT,
+	drug_protein_name TEXT,
+	polypeptide_source TEXT,
+	polypeptide_uniprot_id TEXT,
+	polypeptide_name TEXT,
+	gene_name TEXT,
+	general_function TEXT,
+	specific_function TEXT,
+	ddi_cat INT
+);
+--set primary key
+ALTER TABLE ddi_same_drug_protein ADD PRIMARY KEY (drug1_id, drug2_id, drug_protein_type, drug_protein_id);
+
+
+--**********************************************DRUG_DRUG_GENE EXTRACTION***************************************************************--
+
+--create ddgi table
+DROP TABLE IF EXISTS ddgi;
+CREATE TABLE ddgi(
+	drug1_id TEXT,
+	drug2_id TEXT,
+	snp TEXT,
+	interaction_severity TEXT
+);
+--set primary key
+ALTER TABLE ddgi ADD PRIMARY KEY (drug1_id, drug2_id, snp, interaction_severity);
+
 
 
 end;$BODY$;

@@ -1,8 +1,8 @@
--- FUNCTION: public."3_import_drugbank"()
+-- FUNCTION: public."3_1_1_import_drugbank"()
 
--- DROP FUNCTION public."3_import_drugbank"();
+-- DROP FUNCTION public."3_1_1_import_drugbank"();
 
-CREATE OR REPLACE FUNCTION public."3_import_drugbank"(
+CREATE OR REPLACE FUNCTION public."3_1_1_import_drugbank"(
 	)
     RETURNS void
     LANGUAGE 'plpgsql'
@@ -278,7 +278,6 @@ INSERT INTO drug_snp
 	chromosome,
 	significance,
 	description,
-	description2,
 	severity,
 	pubmed_id
 )
@@ -289,8 +288,7 @@ SELECT
 	"gene-symbol" AS gene_name,
 	'' AS chromosome,
 	'' AS significance,
-	description,
-	'allele: ' || allele || 'defining-change: ' AS description2,
+	description || 'allele: ' || allele || 'defining-change: ' || "defining-change" AS description,
 	'Minor' AS severity,
 	"pubmed-id" AS pubmed_id
 FROM public.drug_snp_effects
@@ -315,7 +313,6 @@ INSERT INTO drug_snp
 	chromosome,
 	significance,
 	description,
-	description2,
 	severity,
 	pubmed_id
 )
@@ -326,8 +323,7 @@ SELECT
 	"gene-symbol" AS gene_name,
 	'' AS chromosome,
 	'' AS significance,
-	description,
-	'allele: ' || allele || 'adverse-reaction: ' || 'adverse-reaction' AS description2,
+	description || 'allele: ' || allele || 'adverse-reaction: ' || "adverse-reaction" AS description,
 	'Major' AS severity,
 	"pubmed-id" AS pubmed_id
 FROM public.snp_adverse_reactions
@@ -344,12 +340,12 @@ END IF;
 
 end;$BODY$;
 
-ALTER FUNCTION public."3_import_drugbank"()
+ALTER FUNCTION public."3_1_1_import_drugbank"()
     OWNER TO postgres;
 
 
 --run function
-SELECT public."3_import_drugbank"();
+SELECT public."3_1_1_import_drugbank"();
 
 
 
@@ -360,28 +356,11 @@ OUTPUT:
 NOTICE:  13914 row inserted into drug table
 NOTICE:  2812 row updated from drug table - pubmed ids
 NOTICE:  6259 row updated from drug table - drug synonyms
-NOTICE:  14230 row inserted into target table
-NOTICE:  4594 row inserted into enzyme table
-NOTICE:  2567 row inserted into transporter table
-NOTICE:  731 row inserted into carrier table
 NOTICE:  1154667 row inserted into ddi table
 NOTICE:  201 row inserted into drup_snp table from drug_snp_effects
 NOTICE:  107 row inserted into drup_snp table from snp_adverse_reactions
 
-Successfully run. Total query runtime: 1 min 27 secs.
+Successfully run. Total query runtime: 1 min 18 secs.
 1 rows affected.
 
-*/
-
-
-
-
-/* TODO: Will be opened if needed
---drug_dosages table
---83665 records inserted.
-DROP TABLE IF EXISTS helper_drug_dosage;
-CREATE TABLE helper_drug_dosage AS
-SELECT parent_key AS drug_id, form, route, strength
-FROM public.drug_dosages
-WHERE parent_key IN(SELECT drug_id FROM drug);
 */

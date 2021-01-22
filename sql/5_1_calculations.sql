@@ -1,5 +1,5 @@
 /*
-	NOTE:	What percentages of interacted drugs have same protein.
+	NOTE:	What percentages of interacting drugs have the same protein.
 
 
 */
@@ -9,8 +9,8 @@
 --etkileşimi olan kayıtlardan 565583 tanesinin target protein kaydı var.
 --580673
 SELECT COUNT(DISTINCT(drug1_id || drug2_id)) FROM ddi
-where drug1_id in (select DISTINCT(drug_id) FROM public.drug_target)
-	AND drug2_id in (select DISTINCT(drug_id) FROM public.drug_target)
+where drug1_id in (select DISTINCT(drug_id) FROM public.drug_protein WHERE drug_protein_type = 1)
+	AND drug2_id in (select DISTINCT(drug_id) FROM public.drug_protein WHERE drug_protein_type = 1)
 
 --39684
 SELECT COUNT(DISTINCT(drug1_id || drug2_id)) FROM public.ddi_same_target
@@ -20,8 +20,8 @@ SELECT COUNT(DISTINCT(drug1_id || drug2_id)) FROM public.ddi_same_target
 
 --369434
 SELECT COUNT(DISTINCT(drug1_id || drug2_id)) FROM ddi
-where drug1_id in (select DISTINCT(drug_id) FROM public.drug_enzyme)
-	AND drug2_id in (select DISTINCT(drug_id) FROM public.drug_enzyme)
+where drug1_id in (select DISTINCT(drug_id) FROM public.drug_protein WHERE drug_protein_type = 2)
+	AND drug2_id in (select DISTINCT(drug_id) FROM public.drug_protein WHERE drug_protein_type = 2)
 
 --237440
 SELECT COUNT(DISTINCT(drug1_id || drug2_id)) FROM public.ddi_same_enzyme
@@ -32,8 +32,8 @@ SELECT COUNT(DISTINCT(drug1_id || drug2_id)) FROM public.ddi_same_enzyme
 
 --35219
 SELECT COUNT(DISTINCT(drug1_id || drug2_id)) FROM ddi
-where drug1_id in (select DISTINCT(drug_id) FROM public.drug_carrier)
-	AND drug2_id in (select DISTINCT(drug_id) FROM public.drug_carrier)
+where drug1_id in (select DISTINCT(drug_id) FROM public.drug_protein WHERE drug_protein_type = 3)
+	AND drug2_id in (select DISTINCT(drug_id) FROM public.drug_protein WHERE drug_protein_type = 3)
 
 --24468
 SELECT COUNT(DISTINCT(drug1_id || drug2_id)) FROM public.ddi_same_carrier
@@ -44,8 +44,8 @@ SELECT COUNT(DISTINCT(drug1_id || drug2_id)) FROM public.ddi_same_carrier
 
 --369434
 SELECT COUNT(DISTINCT(drug1_id || drug2_id)) FROM ddi
-where drug1_id in (select DISTINCT(drug_id) FROM public.drug_transporter)
-	AND drug2_id in (select DISTINCT(drug_id) FROM public.drug_transporter)
+where drug1_id in (select DISTINCT(drug_id) FROM public.drug_protein WHERE drug_protein_type = 4)
+	AND drug2_id in (select DISTINCT(drug_id) FROM public.drug_protein WHERE drug_protein_type = 4)
 
 --62207
 SELECT COUNT(DISTINCT(drug1_id || drug2_id)) FROM public.ddi_same_transporter

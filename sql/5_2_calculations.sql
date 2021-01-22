@@ -1,5 +1,6 @@
 /*
-    NOTE:   What percentage of drugs which is interacted and same target has polymorphism.
+    NOTE:   What percentage of [interacting drug pairs having the same protein] have polymorphism.
+
 
 
 */
