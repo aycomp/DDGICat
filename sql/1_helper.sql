@@ -23,7 +23,8 @@ OPTIONS (user 'postgres', password 'terlik');
 IMPORT FOREIGN SCHEMA public
 LIMIT TO
 (
-	drugs, drug_pharmacology, drug_groups, drug_affected_organisms, drug_syn, drugs_articles, drug_external_identifiers, drug_dosages,
+	drugs, drug_pharmacology, drug_groups, drug_affected_organisms, drug_syn,
+    drugs_articles, drug_external_identifiers, drug_dosages, drug_atc_codes,
 	targets, targets_actions, targets_polypeptides, drug_targ_articles,
     enzymes, enzymes_polypeptides, enzymes_actions, drug_enzymes_articles,
     transporters, transporters_polypeptides, transporters_actions, drug_trans_articles,
