@@ -38,7 +38,7 @@ drug1_enzyme AS (
 	FROM x
 	INNER JOIN public.drug_protein d
 		ON d.drug_id = x.drug_id AND d.drug_protein_id = x.drug_protein_id
-	ORDER BY drug_id, enzyme_id
+	ORDER BY drug_id, drug_protein_id
 ),
 drug2_enzyme AS (
 	WITH x AS(
@@ -60,7 +60,7 @@ drug2_enzyme AS (
 	FROM x
 	INNER JOIN public.drug_protein d
 		ON d.drug_id = x.drug_id AND d.drug_protein_id = x.drug_protein_id
-	ORDER BY drug_id, enzyme_id
+	ORDER BY drug_id, drug_protein_id
 )
 INSERT INTO ddi_predicted
 (
@@ -82,3 +82,14 @@ INNER JOIN drug2_enzyme d2
 		AND d1.drug_id != d2.drug_id
 ORDER BY d1.drug_id, d2.drug_id
 ON CONFLICT DO NOTHING;
+
+
+
+/*
+	OUTPUT:
+	NOTICE:  table "ddi_predicted" does not exist, skipping
+	INSERT 0 270
+
+	Query returned successfully in 754 msec.
+
+*/

@@ -480,3 +480,14 @@ INNER JOIN ddi d
 	ON targ.drug1_id = d.drug1_id
 		AND targ.drug2_id = d.drug2_id
 ON CONFLICT DO NOTHING;
+
+
+/*
+
+OUTPUT:
+INSERT 0 90484
+
+Query returned successfully in 2 min 24 secs.
+
+
+*/

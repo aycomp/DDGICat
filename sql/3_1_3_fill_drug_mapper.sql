@@ -50,7 +50,7 @@ SELECT public."3_1_3_fill_drug_mapper"();
 /*
 
 OUTPUT:
-NOTICE:  222 row for pharmgkbk_id column updated in drug_mapper table.
+NOTICE:  329 row for pharmgkbk_id column updated in drug_mapper table.
 
 
 */

@@ -67,9 +67,6 @@ LIMIT TO
 FROM SERVER fdw_server_3 INTO public;
 
 
---DROP FOREIGN TABLE drug_pathways
-
-
 end;$BODY$;
 
 ALTER FUNCTION public."1_helper"()
@@ -103,6 +100,49 @@ CREATE AGGREGATE sum (text)
     stype = text,
     initcond = ''
 );
+
+
+
+-- FUNCTION: public.calculate_shared_protein_percentage_of_interacted_drugs(INTEGER)
+
+-- DROP FUNCTION public.calculate_shared_protein_percentage_of_interacted_drugs(INTEGER);
+
+CREATE OR REPLACE FUNCTION public.calculate_shared_protein_percentage_of_interacted_drugs(
+	a INTEGER)
+    RETURNS DECIMAL
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE
+AS $BODY$
+DECLARE
+cnt_ddi INTEGER;
+cnt_same_drug_protein INTEGER;
+final_percentage DECIMAL;
+    BEGIN
+
+        --CALCULATION: 39684 * 100 / 580673 = 7 %
+        --etkileşimi olan kayıtlardan 565583 tanesinin drug protein kaydı var.
+        --580673
+        SELECT
+            COUNT(DISTINCT(drug1_id || drug2_id)) INTO cnt_ddi
+        FROM ddi
+        WHERE drug1_id IN (SELECT DISTINCT(drug_id) FROM public.drug_protein WHERE drug_protein_type = a)
+            AND drug2_id IN (SELECT DISTINCT(drug_id) FROM public.drug_protein WHERE drug_protein_type = a);
+
+        --39684
+        SELECT COUNT(DISTINCT(drug1_id || drug2_id)) INTO cnt_same_drug_protein
+        FROM public.ddi_same_drug_protein WHERE drug_protein_type = a;
+
+        final_percentage := cnt_same_drug_protein * 100 / cnt_ddi;
+        RAISE NOTICE 'cnt_ddi: % , cnt_same_drug_protein: %, final_percentage: %',
+                cnt_ddi, cnt_same_drug_protein, final_percentage;
+
+        RETURN final_percentage;
+    END;
+$BODY$;
+
+ALTER FUNCTION public.calculate_shared_protein_percentage_of_interacted_drugs(INTEGER)
+    OWNER TO postgres;
 
 
 

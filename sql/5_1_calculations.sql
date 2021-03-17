@@ -4,48 +4,43 @@
 
 */
 -------------TARGET
---CALCULATION: 39684 * 100 / 580673 = 7 %
+SELECT public.calculate_shared_protein_percentage_of_interacted_drugs(1);
 
---etkileşimi olan kayıtlardan 565583 tanesinin target protein kaydı var.
---580673
-SELECT COUNT(DISTINCT(drug1_id || drug2_id)) FROM ddi
-where drug1_id in (select DISTINCT(drug_id) FROM public.drug_protein WHERE drug_protein_type = 1)
-	AND drug2_id in (select DISTINCT(drug_id) FROM public.drug_protein WHERE drug_protein_type = 1)
+/*
+	NOTICE:  cnt_ddi: 590436 , cnt_same_drug_protein: 40341, final_percentage: 6
 
---39684
-SELECT COUNT(DISTINCT(drug1_id || drug2_id)) FROM public.ddi_same_target
+	Successfully run. Total query runtime: 5 secs 544 msec.
+	1 rows affected.
+*/
 
 -------------ENZYME
---CALCULATION: 237440 * 100 / 369434 = 64 %
+SELECT public.calculate_shared_protein_percentage_of_interacted_drugs(2);
 
---369434
-SELECT COUNT(DISTINCT(drug1_id || drug2_id)) FROM ddi
-where drug1_id in (select DISTINCT(drug_id) FROM public.drug_protein WHERE drug_protein_type = 2)
-	AND drug2_id in (select DISTINCT(drug_id) FROM public.drug_protein WHERE drug_protein_type = 2)
+/*
+	NOTICE:  cnt_ddi: 373947 , cnt_same_drug_protein: 241754, final_percentage: 64
 
---237440
-SELECT COUNT(DISTINCT(drug1_id || drug2_id)) FROM public.ddi_same_enzyme
+	Successfully run. Total query runtime: 5 secs 695 msec.
+	1 rows affected.
+*/
 
 
 -------------CARRIER
---CALCULATION: 24468 * 100 / 35219 = 69 %
+SELECT public.calculate_shared_protein_percentage_of_interacted_drugs(3);
 
---35219
-SELECT COUNT(DISTINCT(drug1_id || drug2_id)) FROM ddi
-where drug1_id in (select DISTINCT(drug_id) FROM public.drug_protein WHERE drug_protein_type = 3)
-	AND drug2_id in (select DISTINCT(drug_id) FROM public.drug_protein WHERE drug_protein_type = 3)
+/*
+	NOTICE:  cnt_ddi: 36586 , cnt_same_drug_protein: 25626, final_percentage: 70
 
---24468
-SELECT COUNT(DISTINCT(drug1_id || drug2_id)) FROM public.ddi_same_carrier
+	Successfully run. Total query runtime: 617 msec.
+	1 rows affected.
+*/
 
 
 -------------TRANSPORTER
---CALCULATION: 62207 * 100 / 369434 = 16 %
+SELECT public.calculate_shared_protein_percentage_of_interacted_drugs(4);
 
---369434
-SELECT COUNT(DISTINCT(drug1_id || drug2_id)) FROM ddi
-where drug1_id in (select DISTINCT(drug_id) FROM public.drug_protein WHERE drug_protein_type = 4)
-	AND drug2_id in (select DISTINCT(drug_id) FROM public.drug_protein WHERE drug_protein_type = 4)
+/*
+	NOTICE:  cnt_ddi: 115086 , cnt_same_drug_protein: 65208, final_percentage: 56
 
---62207
-SELECT COUNT(DISTINCT(drug1_id || drug2_id)) FROM public.ddi_same_transporter
+	Successfully run. Total query runtime: 1 secs 508 msec.
+	1 rows affected.
+*/

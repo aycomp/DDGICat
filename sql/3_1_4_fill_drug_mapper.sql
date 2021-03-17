@@ -10,6 +10,8 @@ CREATE OR REPLACE FUNCTION public."3_1_4_fill_drug_mapper"(
     VOLATILE
 AS $BODY$
 
+--retrieve records from drugbank drug_external_identifiers
+	--which are related with empty pharmgkb_ids of drug_mapper table
 DECLARE
 	cursor_keyword CURSOR
 	FOR
@@ -21,7 +23,7 @@ DECLARE
 	rec_keyword RECORD;
 
 	v_cnt INT;
-	v_total INT;
+	v_total INT := 0;
 
 BEGIN
 
@@ -32,7 +34,7 @@ BEGIN
 	EXIT WHEN NOT FOUND;
 
 	v_cnt := 0;
-
+	--update empty pharmgkb_ids of drug_mapper table
 	WITH sub AS (
 		SELECT
 			"PharmGKB.Accession.Id" AS pharmgkbk_id
@@ -69,7 +71,6 @@ SELECT public."3_1_4_fill_drug_mapper"();
 
 /*
 
-OUTPUT:
 NOTICE:  Record:  ChemSpider:5864 is updated with: DB01488
 NOTICE:  Record:  PubChem Compound:13308 is updated with: DB01541
 NOTICE:  Record:  PubChem Compound:7339 is updated with: DB01632
@@ -356,7 +357,7 @@ NOTICE:  Record:  ChemSpider:291 is updated with: DB15994
 NOTICE:  Record:  ChemSpider:919 is updated with: DB15995
 NOTICE:  <NULL> number of rows updated in drug_mapper table
 
-Successfully run. Total query runtime: 12 min 43 secs.
+Successfully run. Total query runtime: 15 min 31 secs.
 1 rows affected.
 
 */

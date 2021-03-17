@@ -10,12 +10,11 @@ CREATE OR REPLACE FUNCTION public."3_2_1_import_pharmgkb"(
     VOLATILE
 AS $BODY$
 DECLARE
-	 v_cnt INT;
+	 v_cnt INT := 0;
 BEGIN
 
 /*********************************DRUG SNP IMPORT***********************************/
 
---5162 records inserted. prev:-- 6460 rows inserted.
 WITH sub AS (
 	SELECT
 		split_part(TRIM(split_part(unnest(string_to_array("Related.Chemicals", ';')), '(', 2), ')'), ')', 1) AS drug,
@@ -24,7 +23,7 @@ WITH sub AS (
 		"Chromosome" AS chromosome,
 		"Evidence.Count" AS evidence_count,
 		"Level.of.Evidence" AS level_of_evidence,
-		"Variant.Annotations" || 'Text: ' || "Annotation.Text" || 'Type: ' || "Clinical.Annotation.Types" AS description,
+		'CAId:' || "Clinical.Annotation.ID" || 'Text: ' || "Annotation.Text" AS description,
 		"Related.Diseases" AS related_diseases,
 		"Biogeographical.Groups" AS ethnicity,
 		"PMIDs" AS pubmed_id
@@ -46,12 +45,12 @@ INSERT INTO drug_snp
 SELECT
 	dm.drugbank_id AS drug_id,
 	snp_id,
-	'',
+	'' AS uniprot_id,
 	gene_name,
 	chromosome,
-	'',
+	'' AS significance,
 	description,
-	'',
+	'' AS severity,
 	pubmed_id
 FROM sub
 INNER JOIN dm
@@ -63,7 +62,6 @@ GET DIAGNOSTICS v_cnt = ROW_COUNT;
 
 IF v_cnt > 0 THEN
     RAISE NOTICE '% row inserted into drug_snp table', v_cnt;
-    v_cnt = 0;
 END IF;
 
 END;$BODY$;
@@ -80,7 +78,10 @@ SELECT public."3_2_1_import_pharmgkb"();
 /*
 
 OUTPUT:
-NOTICE:  5900 row inserted into drug_snp table
+NOTICE:  5897 row inserted into drug_snp table
+
+Successfully run. Total query runtime: 391 msec.
+1 rows affected.
 
 
 */
