@@ -195,6 +195,18 @@ CREATE TABLE ddgi(
 ALTER TABLE ddgi ADD PRIMARY KEY (drug1_id, drug2_id, snp, interaction_severity);
 
 
+--**********************************************TEMP_DDI***************************************************************--
+
+--create temp_ddi temporary table
+DROP TABLE IF EXISTS temp_ddi;
+CREATE TABLE temp_ddi(
+	drug1_id TEXT,
+	drug2_id TEXT,
+	drug1_rxcui TEXT,
+	drug2_rxcui TEXT
+);
+--set primary key
+ALTER TABLE temp_ddi ADD PRIMARY KEY (drug1_id, drug2_id);
 
 end;$BODY$;
 

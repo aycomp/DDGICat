@@ -121,17 +121,21 @@ final_percentage DECIMAL;
     BEGIN
 
         --CALCULATION: 39684 * 100 / 580673 = 7 %
-        --etkileşimi olan kayıtlardan 565583 tanesinin drug protein kaydı var.
-        --580673
+
+
+        --cnt_same_drug_protein : 39684 (interact eden ilaçlardan aynı protein e sahip  ? tane var)
+        SELECT COUNT(DISTINCT(drug1_id || drug2_id)) INTO cnt_same_drug_protein
+        FROM public.ddi_same_drug_protein WHERE drug_protein_type = a;
+
+
+        --cnt_ddi : 580673 (interact eden ilaçlardan ? tanesinin drug protein kaydı var)
         SELECT
             COUNT(DISTINCT(drug1_id || drug2_id)) INTO cnt_ddi
         FROM ddi
         WHERE drug1_id IN (SELECT DISTINCT(drug_id) FROM public.drug_protein WHERE drug_protein_type = a)
             AND drug2_id IN (SELECT DISTINCT(drug_id) FROM public.drug_protein WHERE drug_protein_type = a);
 
-        --39684
-        SELECT COUNT(DISTINCT(drug1_id || drug2_id)) INTO cnt_same_drug_protein
-        FROM public.ddi_same_drug_protein WHERE drug_protein_type = a;
+
 
         final_percentage := cnt_same_drug_protein * 100 / cnt_ddi;
         RAISE NOTICE 'cnt_ddi: % , cnt_same_drug_protein: %, final_percentage: %',
