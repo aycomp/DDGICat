@@ -265,6 +265,15 @@ IF v_cnt > 0 THEN
     v_cnt = 0;
 END IF;
 
+UPDATE ddi
+SET drug1_name = drug.name
+FROM drug
+WHERE drug.drug_id = ddi.drug1_id;
+
+UPDATE ddi
+SET drug2_name = drug.name
+FROM drug
+WHERE drug.drug_id = ddi.drug2_id;
 
 --********************************DRUG_SNP IMPORT********************************--
 
@@ -337,6 +346,55 @@ IF v_cnt > 0 THEN
     v_cnt = 0;
 END IF;
 
+
+--********************************GENE IMPORT********************************--
+--gene
+INSERT INTO gene
+(
+ 	ensembl_id,
+    uniprot_id,
+    name,
+    description,
+    chromosome,
+    start_position,
+    end_position
+)
+SELECT
+	DISTINCT(ensembl_gene_id),
+	uniprot_gn_id,
+	hgnc_symbol,
+	description,
+	chromosome_name,
+	start_position,
+	end_position
+FROM public.geneb
+GET DIAGNOSTICS v_cnt = ROW_COUNT;
+
+IF v_cnt > 0 THEN
+    RAISE NOTICE '% row inserted into gene table from biomart gene table', v_cnt;
+    v_cnt = 0;
+END IF;
+----------------------
+
+
+--********************************SNP IMPORT********************************--
+--snp
+INSERT INTO snp
+(
+ 	snp_id,
+    allele
+)
+SELECT
+	DISTINCT(refsnp_id),
+	chr_name
+FROM public.snpb
+GET DIAGNOSTICS v_cnt = ROW_COUNT;
+
+IF v_cnt > 0 THEN
+    RAISE NOTICE '% row inserted into snp table from biomart snp table', v_cnt;
+    v_cnt = 0;
+END IF;
+----------------------
 
 end;$BODY$;
 

@@ -62,7 +62,7 @@ OPTIONS (user 'postgres', password 'terlik');
 IMPORT FOREIGN SCHEMA public
 LIMIT TO
 (
-    mart_export
+    mart_export, geneb, snpb
 )
 FROM SERVER fdw_server_3 INTO public;
 

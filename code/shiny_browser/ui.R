@@ -16,11 +16,11 @@ shinyUI(fluidPage(
          tabsetPanel(type="tab",
                      tabPanel("Table",
                               DT::dataTableOutput("tableDrug")),
-                     tabPanel("Summary"),
+                     tabPanel("Summary",
+                              verbatimTextOutput("summaryDrug")),
                      tabPanel("Plot", 
-                              plotOutput("histDrug")),
+                              plotOutput("plotDrug")),
                      tabPanel("Statistics")))
-     
                     ),
             ),
     tabPanel("Gene",
@@ -33,26 +33,27 @@ shinyUI(fluidPage(
                tabsetPanel(type="tab",
                            tabPanel("Table",
                                     DT::dataTableOutput("tableGene")),
-                           tabPanel("Summary"),
+                           tabPanel("Summary",
+                                    verbatimTextOutput("summaryGene")),
                            tabPanel("Plot", 
-                                    plotOutput("histGene")),
+                                    plotOutput("plotGene")),
                            tabPanel("Statistics")))
-             
            ),           
             ),
     tabPanel("SNP",
              sidebarLayout(
                sidebarPanel(width=2,
-                            textInput("nameSNP", "Please enter SNP name", value="")
+                            textInput("nameSnp", "Please enter SNP name", value="")
                ),
                
                mainPanel(
                  tabsetPanel(type="tab",
                              tabPanel("Table",
-                                      DT::dataTableOutput("tableSNP")),
-                             tabPanel("Summary"),
+                                      DT::dataTableOutput("tableSnp")),
+                             tabPanel("Summary",
+                                      verbatimTextOutput("summarySnp")),
                              tabPanel("Plot", 
-                                      plotOutput("histSNP")),
+                                      plotOutput("plotSnp")),
                              tabPanel("Statistics"))))          
           ),
     tabPanel("DDI",
@@ -65,10 +66,11 @@ shinyUI(fluidPage(
                mainPanel(
                  tabsetPanel(type="tab",
                              tabPanel("Table",
-                                      DT::dataTableOutput("tableDDI")),
-                             tabPanel("Summary"),
+                                      DT::dataTableOutput("tableDdi")),
+                             tabPanel("Summary", 
+                                      verbatimTextOutput("summaryDdi")),
                              tabPanel("Plot", 
-                                      plotOutput("histDDI")),
+                                      plotOutput("plotDdi")),
                              tabPanel("Statistics"))))        
           ),
     tabPanel("DGI",

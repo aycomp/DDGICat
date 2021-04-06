@@ -20,9 +20,9 @@ for (i in 1:nrow(data)){
         uniqueRows=TRUE)
       
       if(i < 2){
-        dbWriteTable(con, "snp", result)  
+        dbWriteTable(con, "snpb", result)  
       } else {
-        dbWriteTable(con, "snp", result, append = TRUE, row.names = FALSE) }
+        dbWriteTable(con, "snpb", result, append = TRUE, row.names = FALSE) }
       
     }, warning = function(cond) {
       flag<<-FALSE

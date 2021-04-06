@@ -79,7 +79,9 @@ ALTER TABLE drug_protein ADD PRIMARY KEY (drug_id, drug_protein_id, drug_protein
 DROP TABLE IF EXISTS ddi;
 CREATE TABLE ddi(
 	drug1_id TEXT,
+	drug1_name TEXT,
 	drug2_id TEXT,
+	drug2_name TEXT,
 	description TEXT,
 	category_id INT
 );

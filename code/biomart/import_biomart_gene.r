@@ -29,7 +29,7 @@ resultset <-
         mart = ensembl)
 
 con2 <- dbConnect(RPostgres::Postgres(),user="postgres",password="terlik",host="localhost",port=5432, dbname="BioMart")
-dbWriteTable(con2, "gene", resultset)
+dbWriteTable(con2, "geneb", resultset)
 dbDisconnect(con2)
 
 ##RESULT: 1979 rows inserted
