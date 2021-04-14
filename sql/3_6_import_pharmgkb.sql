@@ -1,8 +1,8 @@
--- FUNCTION: public."3_2_1_import_pharmgkb"()
+-- FUNCTION: public."3_4_import_pharmgkb"()
 
--- DROP FUNCTION public."3_2_1_import_pharmgkb"();
+-- DROP FUNCTION public."3_4_import_pharmgkb"();
 
-CREATE OR REPLACE FUNCTION public."3_2_1_import_pharmgkb"(
+CREATE OR REPLACE FUNCTION public."3_4_import_pharmgkb"(
 	)
     RETURNS void
     LANGUAGE 'plpgsql'
@@ -66,13 +66,13 @@ END IF;
 
 END;$BODY$;
 
-ALTER FUNCTION public."3_2_1_import_pharmgkb"()
+ALTER FUNCTION public."3_4_import_pharmgkb"()
     OWNER TO postgres;
 
 
 
 --run function
-SELECT public."3_2_1_import_pharmgkb"();
+SELECT public."3_4_import_pharmgkb"();
 
 
 /*

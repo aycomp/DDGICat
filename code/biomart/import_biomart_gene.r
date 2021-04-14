@@ -24,7 +24,7 @@ resultset <-
     'chromosome_name',
     'start_position',
     'end_position'), 
-        filters = 'hgnc_symbol', 
+        filters = 'hgnc_symbol',
         values = drug_related_genes, 
         mart = ensembl)
 

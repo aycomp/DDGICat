@@ -42,7 +42,9 @@ ALTER TABLE drug ADD PRIMARY KEY (drug_id);
 DROP TABLE IF EXISTS drug_mapper;
 CREATE TABLE drug_mapper(
     drugbank_id TEXT,
-	pharmgkb_id TEXT NULL
+	pharmgkb_id TEXT NULL,
+	onchigh_id TEXT NULL,
+	kegg_id TEXT NULL
 );
 
 --set primary key
@@ -82,12 +84,22 @@ CREATE TABLE ddi(
 	drug1_name TEXT,
 	drug2_id TEXT,
 	drug2_name TEXT,
+	severity TEXT,
+	severity_desc TEXT,
 	description TEXT,
 	category_id INT
 );
-
---set primary key
 ALTER TABLE ddi ADD PRIMARY KEY (drug1_id, drug2_id);
+
+--ddi category  table
+DROP TABLE IF EXISTS ddi_category;
+CREATE TABLE ddi_category(
+	id INT,
+	category_id INT,
+	category TEXT,
+	description TEXT
+);
+ALTER TABLE ddi_category ADD PRIMARY KEY (id);
 
 
 --************************************************************DRUG_SNP****************************************************************-
@@ -129,12 +141,17 @@ ALTER TABLE gene ADD PRIMARY KEY (ensembl_id, uniprot_id);
 --create snp table
 DROP TABLE IF EXISTS snp;
 CREATE TABLE snp(
-	snp_id TEXT,
-	allele TEXT
+	refsnp_id TEXT,
+    refsnp_source TEXT,
+    chr_name INT,
+    chrom_start INT,
+    chrom_end INT,
+    chrom_strand INT,
+    allele TEXT
 );
 
 --set primary key
-ALTER TABLE snp ADD PRIMARY KEY (snp_id, allele);
+ALTER TABLE snp ADD PRIMARY KEY (refsnp_id);
 
 --****************************************************************GENE_SNP****************************************************************--
 --create gene_snp table
@@ -146,19 +163,6 @@ CREATE TABLE gene_snp(
 );
 --set primary key
 ALTER TABLE gene_snp ADD PRIMARY KEY (ensembl_id, uniprot_id, snp_id);
-
-
---***************************************************************DDI********************************--
---ddi category  table
-DROP TABLE IF EXISTS ddi_category;
-CREATE TABLE ddi_category(
-	id INT,
-	category_id INT,
-	category TEXT,
-	description TEXT
-);
---set primary key
-ALTER TABLE ddi_category ADD PRIMARY KEY (id);
 
 
 --*********************************************DDI_SAME_DRUG_PROTEIN*********************************************--
@@ -199,16 +203,28 @@ ALTER TABLE ddgi ADD PRIMARY KEY (drug1_id, drug2_id, snp, interaction_severity)
 
 --**********************************************TEMP_DDI***************************************************************--
 
---create temp_ddi temporary table
-DROP TABLE IF EXISTS temp_ddi;
-CREATE TABLE temp_ddi(
+--create temp_ddi_rxcui temporary table
+DROP TABLE IF EXISTS temp_ddi_rxcui;
+CREATE TABLE temp_ddi_rxcui(
 	drug1_id TEXT,
 	drug2_id TEXT,
 	drug1_rxcui TEXT,
 	drug2_rxcui TEXT
 );
 --set primary key
-ALTER TABLE temp_ddi ADD PRIMARY KEY (drug1_id, drug2_id);
+ALTER TABLE temp_ddi_rxcui ADD PRIMARY KEY (drug1_id, drug2_id);
+
+
+--create temp_ddi_kegg temporary table
+DROP TABLE IF EXISTS temp_ddi_kegg;
+CREATE TABLE temp_ddi_kegg(
+	drug1_id TEXT,
+	drug2_id TEXT,
+	drug1_kegg TEXT,
+	drug2_kegg TEXT
+);
+--set primary key
+ALTER TABLE temp_ddi_kegg ADD PRIMARY KEY (drug1_id, drug2_id);
 
 end;$BODY$;
 

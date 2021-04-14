@@ -302,6 +302,7 @@ SELECT
 	"pubmed-id" AS pubmed_id
 FROM public.drug_snp_effects
 WHERE parent_key IN (SELECT drug_id FROM drug)
+	AND "rs-id" != ''
 	AND parent_key || "rs-id" || "gene-symbol"
 		NOT IN (SELECT drug_id || snp_id || gene_name FROM drug_snp);
 GET DIAGNOSTICS v_cnt = ROW_COUNT;
@@ -337,6 +338,7 @@ SELECT
 	"pubmed-id" AS pubmed_id
 FROM public.snp_adverse_reactions
 WHERE parent_key IN (SELECT drug_id FROM drug)
+	AND "rs-id" != ''
 	AND parent_key || "rs-id" || "gene-symbol"
 		NOT IN (SELECT drug_id || snp_id || gene_name FROM drug_snp);
 GET DIAGNOSTICS v_cnt = ROW_COUNT;
@@ -381,12 +383,22 @@ END IF;
 --snp
 INSERT INTO snp
 (
- 	snp_id,
+ 	refsnp_id,
+    refsnp_source,
+    chr_name,
+    chrom_start,
+    chrom_end,
+    chrom_strand,
     allele
 )
 SELECT
 	DISTINCT(refsnp_id),
-	chr_name
+	refsnp_source,
+    chr_name,
+    chrom_start,
+    chrom_end,
+    chrom_strand,
+    allele
 FROM public.snpb
 GET DIAGNOSTICS v_cnt = ROW_COUNT;
 

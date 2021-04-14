@@ -67,6 +67,37 @@ LIMIT TO
 FROM SERVER fdw_server_3 INTO public;
 
 
+CREATE SERVER  fdw_server_4
+FOREIGN DATA WRAPPER postgres_fdw
+OPTIONS (host 'localhost', dbname 'ONCHigh', port '5432');
+
+CREATE USER MAPPING FOR postgres
+SERVER fdw_server_4
+OPTIONS (user 'postgres', password 'terlik');
+
+IMPORT FOREIGN SCHEMA public
+LIMIT TO
+(
+	ddi_onchigh
+)
+FROM SERVER fdw_server_4 INTO public;
+
+
+CREATE SERVER  fdw_server_5
+FOREIGN DATA WRAPPER postgres_fdw
+OPTIONS (host 'localhost', dbname 'KEGG', port '5432');
+
+CREATE USER MAPPING FOR postgres
+SERVER fdw_server_5
+OPTIONS (user 'postgres', password 'terlik');
+
+IMPORT FOREIGN SCHEMA public
+LIMIT TO
+(
+	ddi_kegg
+)
+FROM SERVER fdw_server_5 INTO public;
+
 end;$BODY$;
 
 ALTER FUNCTION public."1_helper"()
