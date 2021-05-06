@@ -20,7 +20,9 @@ shinyServer(
         	synonym, indication,description,toxicity,
         	pharmacodynamics, absorption, half_life, 
         	metabolism, mechanism_of_action, volume_of_distribution, 
-        	protein_binding, clearance, route_of_elimination, pubmed_id
+        	protein_binding, clearance, route_of_elimination, 
+        	'<a href=https://pubmed.ncbi.nlm.nih.gov/' || '16466327' || '/>' || '16466327' || '</a>' AS pubmed_id
+        	--pubmed_id
         FROM public.drug d
         INNER JOIN drug_groups dg 
           ON d.drug_id = dg.",
@@ -30,6 +32,7 @@ shinyServer(
                   " AND d.state = '", input$stateDrug, "'", sep=""),sep=""))
       
       outp <- dbGetQuery(pool, query)
+      
       ret <- DT::datatable(outp, width = "100%",
                            extensions= c("Responsive", "ColReorder", "Buttons", "KeyTable", 
                                          "Scroller"),
@@ -38,8 +41,6 @@ shinyServer(
                                           #scrollX = TRUE,
                                           keys = TRUE,
                                           deferRender = TRUE,
-                                          
-                                         
                                           columnDefs = list(list(visible = FALSE, targets=8:11)),
                                           rowCallback = JS(
                                             "function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {",
@@ -49,7 +50,7 @@ shinyServer(
                                             full_text).css('background-color', aData[i+4]);",
                                             '}',
                                             "}")
-                                          ),  rownames = FALSE
+                                          ),  rownames = FALSE, escape = FALSE
                            )
       return(ret) })
     
@@ -93,7 +94,7 @@ shinyServer(
           legend.position = "bottom",
           legend.direction = "horizontal",
           plot.title = element_text(family= "Times New Roman", size=18, face="bold", hjust = 0.5)) +
-        ggtitle("TODO")
+        ggtitle("")
     
     })
 ##############DRUG END#####################
@@ -360,7 +361,7 @@ shinyServer(
           legend.position = "bottom",
           legend.direction = "horizontal",
           plot.title = element_text(family= "Times New Roman", size=18, face="bold", hjust = 0.5)) +
-        ggtitle("TODO")
+        ggtitle("")
       }
       else if(input$plotDgi == "protein_type"){
       
@@ -373,7 +374,7 @@ shinyServer(
             legend.position = "bottom",
             legend.direction = "horizontal",
             plot.title = element_text(family= "Times New Roman", size=18, face="bold", hjust = 0.5)) +
-          ggtitle("TODO")
+          ggtitle("")
       }
       
     })
@@ -382,15 +383,474 @@ shinyServer(
  
         
 ##############DDGI BEGIN###################
-
+    #Disease
+    sqlOutputDisease <- reactive({
+      query <- sqlInterpolate(ANSI(), "SELECT DISTINCT(name) AS disease FROM disease ORDER BY name")
+      outp <- dbGetQuery(pool, query)
+    })
+    observe ({
+      updateSelectInput(session, "disease", choices = sqlOutputDisease()) })
+    
+    #Drug 1
+    sqlOutputDrug1 <- reactive({
+      query <- sqlInterpolate(ANSI(), paste0("
+          SELECT 
+          	  DISTINCT(chemicals) AS drug_name
+          FROM public.clinical_variants
+          WHERE phenotypes LIKE ", "'%", input$disease, "%' ORDER BY chemicals " , sep=""))
+      outp <- dbGetQuery(pool, query)
+    })
+    observe ({
+      updateSelectInput(session, "drug1", choices = sqlOutputDrug1()) })
+    
+    #Drug 2
+    sqlOutputDrug2 <- reactive({
+      query <- sqlInterpolate(ANSI(), paste0("
+          WITH q AS (
+	            SELECT 
+            		\"Entity1_name\" AS drug_name
+            	FROM public.relationships
+            	WHERE \"Entity2_type\" = 'Chemical'
+            		AND \"Entity1_type\" = 'Chemical'
+            		AND (\"Entity1_name\" = '", input$drug1, "' OR \"Entity2_name\" = '", input$drug1, "' )
+            	UNION ALL 
+            	SELECT 
+            		\"Entity2_name\" AS drug_name
+            	FROM public.relationships
+            	WHERE \"Entity2_type\" = 'Chemical'
+            		AND \"Entity1_type\" = 'Chemical'
+            		AND (\"Entity1_name\" = '", input$drug1, "' OR \"Entity2_name\" = '", input$drug1, "' )
+          )
+          SELECT DISTINCT(drug_name) FROM q ", sep=""))
+      outp <- dbGetQuery(pool, query)
+    })
+    observe ({
+      updateSelectInput(session, "drug2", choices = sqlOutputDrug2()) })
+    
+    #Fill Data Table
+    output$tableDdgi <- DT::renderDataTable({
+        if(input$intersectionSet == "0"){ #Chromosome
+            qsub <- paste0("
+              WITH q1 AS (
+                  SELECT 
+                    	ge.chromosome AS name,
+                    	dp.gene_name,
+                    	d.name AS drug_name
+                  FROM public.drug_protein dp
+                  INNER JOIN public.drug d
+                  	ON dp.drug_id = d.drug_id
+                  INNER JOIN public.gene ge
+                  	ON dp.gene_name = ge.name ", paste(" 
+                  WHERE lower(d.name) LIKE ", "'%", tolower(input$drug1), "%'
+                    AND ge.chromosome NOT LIKE 'H%'
+                  ORDER BY ge.chromosome ) ", sep=""), ", 
+               q2 AS (
+                  SELECT 
+                      ge.chromosome AS name,
+                      dp.gene_name,
+                      d.name AS drug_name
+                  FROM public.drug_protein dp
+                  INNER JOIN public.drug d
+                    ON dp.drug_id = d.drug_id
+                  INNER JOIN public.gene ge
+                    ON dp.gene_name = ge.name ", paste(" 
+                  WHERE lower(d.name) LIKE ", "'%", tolower(input$drug2), "%'
+                    AND ge.chromosome NOT LIKE 'H%'
+                  ORDER BY ge.chromosome ) ", sep=""), "
+              SELECT 
+                  q1.name AS name,
+                  q1.drug_name AS drug1_name, 
+                  q2.drug_name AS drug2_name,
+                  q1.gene_name AS drug1_gene,
+                  q2.gene_name AS drug2_gene
+              FROM q1
+              INNER JOIN q2
+                ON lower(q1.name) = lower(q2.name) ", sep="")
+            
+            #print(gsub("[\r\n\t]", "", qsub))
+            
+        }
+        else if(input$intersectionSet == "1"){ #Gene
+            qsub <- paste0("
+                WITH q1 AS (
+                    SELECT 
+                      dp.gene_name,
+                    	d.name AS drug_name,
+            	        CASE 
+                        WHEN drug_protein_type = 1 THEN 'Target'
+                        WHEN drug_protein_type = 2 THEN 'Enzyme'
+                        WHEN drug_protein_type = 3 THEN 'Transporter'
+                        WHEN drug_protein_type = 4 THEN 'Carrier' 
+                      END AS drug_protein_type, 
+                    	dp.drug_protein_name, 
+                    	dp.polypeptide_uniprot_id, 
+                    	dp.polypeptide_name, 
+                    	dp.general_function, 
+                    	dp.specific_function
+                    FROM public.drug_protein dp
+                    INNER JOIN public.drug d
+                    	ON dp.drug_id = d.drug_id ", paste(" 
+                    WHERE lower(d.name) LIKE ", "'%", tolower(input$drug1), "%' ", sep=""), "), 
+                q2 AS (
+                   SELECT 
+                      dp.gene_name,
+                    	d.name AS drug_name,
+            	        CASE 
+                        WHEN drug_protein_type = 1 THEN 'Target'
+                        WHEN drug_protein_type = 2 THEN 'Enzyme'
+                        WHEN drug_protein_type = 3 THEN 'Transporter'
+                        WHEN drug_protein_type = 4 THEN 'Carrier' 
+                      END AS drug_protein_type, 
+                    	dp.drug_protein_name, 
+                    	dp.polypeptide_uniprot_id, 
+                    	dp.polypeptide_name, 
+                    	dp.general_function, 
+                    	dp.specific_function
+                    FROM public.drug_protein dp
+                    INNER JOIN public.drug d
+                    	ON dp.drug_id = d.drug_id ", paste(" 
+                    WHERE lower(d.name) LIKE ", "'%", tolower(input$drug2), "%' ", sep=""), ")
+              SELECT 
+                  q1.gene_name AS name,
+                  q1.drug_name AS drug1_name, 
+                  q2.drug_name AS drug2_name,
+                  q1.drug_protein_type,
+                  q1.drug_protein_name
+              FROM q1
+              INNER JOIN q2
+                ON lower(q1.gene_name) = lower(q2.gene_name) ", sep="")
+                
+            #print(gsub("[\r\n\t]", "", qsub))
+        }
+        else if(input$intersectionSet == "2"){ #Protein
+          qsub <- paste0("
+                WITH q1 AS (
+                    SELECT 
+                      dp.gene_name,
+                    	d.name AS drug_name,
+            	        CASE 
+                        WHEN drug_protein_type = 1 THEN 'Target'
+                        WHEN drug_protein_type = 2 THEN 'Enzyme'
+                        WHEN drug_protein_type = 3 THEN 'Transporter'
+                        WHEN drug_protein_type = 4 THEN 'Carrier' 
+                      END AS drug_protein_type, 
+                    	dp.drug_protein_name, 
+                    	dp.polypeptide_uniprot_id, 
+                    	dp.polypeptide_name, 
+                    	dp.general_function, 
+                    	dp.specific_function
+                    FROM public.drug_protein dp
+                    INNER JOIN public.drug d
+                    	ON dp.drug_id = d.drug_id ", paste(" 
+                    WHERE lower(d.name) LIKE ", "'%", tolower(input$drug1), "%' ", sep=""), "), 
+                q2 AS (
+                   SELECT 
+                      dp.gene_name,
+                    	d.name AS drug_name,
+            	        CASE 
+                        WHEN drug_protein_type = 1 THEN 'Target'
+                        WHEN drug_protein_type = 2 THEN 'Enzyme'
+                        WHEN drug_protein_type = 3 THEN 'Transporter'
+                        WHEN drug_protein_type = 4 THEN 'Carrier' 
+                      END AS drug_protein_type, 
+                    	dp.drug_protein_name, 
+                    	dp.polypeptide_uniprot_id, 
+                    	dp.polypeptide_name, 
+                    	dp.general_function, 
+                    	dp.specific_function
+                    FROM public.drug_protein dp
+                    INNER JOIN public.drug d
+                    	ON dp.drug_id = d.drug_id ", paste(" 
+                    WHERE lower(d.name) LIKE ", "'%", tolower(input$drug2), "%' ", sep=""), ")
+              SELECT 
+                  q1.polypeptide_uniprot_id AS name,
+                  q1.gene_name,
+                  q1.drug_protein_type,
+                  q1.drug_name AS drug1_name, 
+                  q2.drug_name AS drug2_name
+              FROM q1
+              INNER JOIN q2
+                ON lower(q1.polypeptide_uniprot_id) = lower(q2.polypeptide_uniprot_id) ", sep="")
+          
+          #print(gsub("[\r\n\t]", "", qsub))
+          
+        }
+        else if(input$intersectionSet == "3"){ #SNP
+          qsub <- paste0("
+             WITH q1 AS (
+                  SELECT 
+                    ds.uniprot_id,
+                    ds.drug_id,
+                    d.name,
+                    ds.snp_id,
+                    ds.chromosome,
+                    ds.gene_name,
+                    LEFT(ds.description, 70) || '...' AS description,
+                    ds.description
+                  FROM public.drug_snp ds 
+                  INNER JOIN public.drug d 
+                    ON d.drug_id = ds.drug_id ", paste(" 
+                  WHERE lower(d.name) LIKE ", "'%", tolower(input$drug1), "%' ", sep=""), "),
+              q2 AS (
+                  SELECT 
+                    ds.uniprot_id,
+                    ds.drug_id,
+                    d.name,
+                    ds.snp_id,
+                    ds.chromosome,
+                    ds.gene_name,
+                    LEFT(ds.description, 70) || '...' AS description,
+                    ds.description
+                  FROM public.drug_snp ds 
+                  INNER JOIN public.drug d 
+                    ON d.drug_id = ds.drug_id ", paste(" 
+                  WHERE lower(d.name) LIKE ", "'%", tolower(input$drug2), "%' ", sep=""), ")
+              SELECT 
+                  q1.snp_id AS name,
+                  q1.chromosome,
+                  q1.gene_name,
+                  q1.name AS drug1_name, 
+                  q2.name AS drug2_name
+              FROM q1
+              INNER JOIN q2
+                ON lower(q1.snp_id) = lower(q2.snp_id) ", sep="")
+          
+          #print(gsub("[\r\n\t]", "", qsub))
+        }
+      
+        query <- sqlInterpolate(ANSI(), qsub)
+        outp <- dbGetQuery(pool, query)
+        ret <- DT::datatable(outp, width = "100%",
+                             extensions= c("Responsive", "ColReorder", "Buttons", "KeyTable"),
+                             options = list(colReorder = TRUE, dom = 'Bfrtip',
+                                            buttons = c('copy', 'csv', 'excel', 'pdf', 'print'), 
+                                            keys = TRUE
+                             ),  rownames = FALSE,
+                             print(gsub("[\r\n\t]", "", qsub))
+                             
+      )
+      return(ret) })
+    
+    ddgi_data <- reactive({
+      qsub <- ""
+      
+      if(input$intersectionSet == "0"){ #Chromosome
+        qsub <- paste0("
+              WITH q1 AS (
+                  SELECT 
+                    	ge.chromosome AS name,
+                    	dp.gene_name,
+                    	d.name AS drug_name
+                  FROM public.drug_protein dp
+                  INNER JOIN public.drug d
+                  	ON dp.drug_id = d.drug_id
+                  INNER JOIN public.gene ge
+                  	ON dp.gene_name = ge.name ", paste(" 
+                  WHERE lower(d.name) LIKE ", "'%", tolower(input$drug1), "%'
+                    AND ge.chromosome NOT LIKE 'H%'
+                  ORDER BY ge.chromosome ) ", sep=""), ", 
+               q2 AS (
+                  SELECT 
+                      ge.chromosome AS name,
+                      dp.gene_name,
+                      d.name AS drug_name
+                  FROM public.drug_protein dp
+                  INNER JOIN public.drug d
+                    ON dp.drug_id = d.drug_id
+                  INNER JOIN public.gene ge
+                    ON dp.gene_name = ge.name ", paste(" 
+                  WHERE lower(d.name) LIKE ", "'%", tolower(input$drug2), "%'
+                    AND ge.chromosome NOT LIKE 'H%'
+                  ORDER BY ge.chromosome ) ", sep=""), "
+              SELECT 
+                  q1.name AS name,
+                  q1.drug_name AS drug1_name, 
+                  q2.drug_name AS drug2_name,
+                  q1.gene_name AS drug1_gene,
+                  q2.gene_name AS drug2_gene
+              FROM q1
+              INNER JOIN q2
+                ON lower(q1.name) = lower(q2.name) ", sep="")
+        
+        #print(gsub("[\r\n\t]", "", qsub))
+        
+      }
+      else if(input$intersectionSet == "1"){ #Gene
+        qsub <- paste0("
+                WITH q1 AS (
+                    SELECT 
+                      dp.gene_name,
+                    	d.name AS drug_name,
+            	        CASE 
+                        WHEN drug_protein_type = 1 THEN 'Target'
+                        WHEN drug_protein_type = 2 THEN 'Enzyme'
+                        WHEN drug_protein_type = 3 THEN 'Transporter'
+                        WHEN drug_protein_type = 4 THEN 'Carrier' 
+                      END AS drug_protein_type, 
+                    	dp.drug_protein_name, 
+                    	dp.polypeptide_uniprot_id, 
+                    	dp.polypeptide_name, 
+                    	dp.general_function, 
+                    	dp.specific_function
+                    FROM public.drug_protein dp
+                    INNER JOIN public.drug d
+                    	ON dp.drug_id = d.drug_id ", paste(" 
+                    WHERE lower(d.name) LIKE ", "'%", tolower(input$drug1), "%' ", sep=""), "), 
+                q2 AS (
+                   SELECT 
+                      dp.gene_name,
+                    	d.name AS drug_name,
+            	        CASE 
+                        WHEN drug_protein_type = 1 THEN 'Target'
+                        WHEN drug_protein_type = 2 THEN 'Enzyme'
+                        WHEN drug_protein_type = 3 THEN 'Transporter'
+                        WHEN drug_protein_type = 4 THEN 'Carrier' 
+                      END AS drug_protein_type, 
+                    	dp.drug_protein_name, 
+                    	dp.polypeptide_uniprot_id, 
+                    	dp.polypeptide_name, 
+                    	dp.general_function, 
+                    	dp.specific_function
+                    FROM public.drug_protein dp
+                    INNER JOIN public.drug d
+                    	ON dp.drug_id = d.drug_id ", paste(" 
+                    WHERE lower(d.name) LIKE ", "'%", tolower(input$drug2), "%' ", sep=""), ")
+              SELECT 
+                  q1.gene_name AS name,
+                  q1.drug_protein_type,
+                  q1.drug_protein_name,
+                  q1.drug_name AS drug1_name, 
+                  q2.drug_name AS drug2_name
+              FROM q1
+              INNER JOIN q2
+                ON lower(q1.gene_name) = lower(q2.gene_name) ", sep="")
+        
+        #print(gsub("[\r\n\t]", "", qsub))
+      }
+      else if(input$intersectionSet == "2"){ #Protein
+        qsub <- paste0("
+                WITH q1 AS (
+                    SELECT 
+                      dp.gene_name,
+                    	d.name AS drug_name,
+            	        CASE 
+                        WHEN drug_protein_type = 1 THEN 'Target'
+                        WHEN drug_protein_type = 2 THEN 'Enzyme'
+                        WHEN drug_protein_type = 3 THEN 'Transporter'
+                        WHEN drug_protein_type = 4 THEN 'Carrier' 
+                      END AS drug_protein_type, 
+                    	dp.drug_protein_name, 
+                    	dp.polypeptide_uniprot_id, 
+                    	dp.polypeptide_name, 
+                    	dp.general_function, 
+                    	dp.specific_function
+                    FROM public.drug_protein dp
+                    INNER JOIN public.drug d
+                    	ON dp.drug_id = d.drug_id ", paste(" 
+                    WHERE lower(d.name) LIKE ", "'%", tolower(input$drug1), "%' ", sep=""), "), 
+                q2 AS (
+                   SELECT 
+                      dp.gene_name,
+                    	d.name AS drug_name,
+            	        CASE 
+                        WHEN drug_protein_type = 1 THEN 'Target'
+                        WHEN drug_protein_type = 2 THEN 'Enzyme'
+                        WHEN drug_protein_type = 3 THEN 'Transporter'
+                        WHEN drug_protein_type = 4 THEN 'Carrier' 
+                      END AS drug_protein_type, 
+                    	dp.drug_protein_name, 
+                    	dp.polypeptide_uniprot_id, 
+                    	dp.polypeptide_name, 
+                    	dp.general_function, 
+                    	dp.specific_function
+                    FROM public.drug_protein dp
+                    INNER JOIN public.drug d
+                    	ON dp.drug_id = d.drug_id ", paste(" 
+                    WHERE lower(d.name) LIKE ", "'%", tolower(input$drug2), "%' ", sep=""), ")
+              SELECT 
+                  q1.polypeptide_uniprot_id AS name,
+                  q1.gene_name,
+                  q1.drug_protein_type,
+                  q1.drug_name AS drug1_name, 
+                  q2.drug_name AS drug2_name
+              FROM q1
+              INNER JOIN q2
+                ON lower(q1.polypeptide_uniprot_id) = lower(q2.polypeptide_uniprot_id) ", sep="")
+        
+        #print(gsub("[\r\n\t]", "", qsub))
+        
+      }
+      else if(input$intersectionSet == "3"){ #SNP
+        qsub <- paste0("
+             WITH q1 AS (
+                  SELECT 
+                    ds.uniprot_id,
+                    ds.drug_id,
+                    d.name,
+                    ds.snp_id,
+                    ds.chromosome,
+                    ds.gene_name,
+                    LEFT(ds.description, 70) || '...' AS description,
+                    ds.description
+                  FROM public.drug_snp ds 
+                  INNER JOIN public.drug d 
+                    ON d.drug_id = ds.drug_id ", paste(" 
+                  WHERE lower(d.name) LIKE ", "'%", tolower(input$drug1), "%' ", sep=""), "),
+              q2 AS (
+                  SELECT 
+                    ds.uniprot_id,
+                    ds.drug_id,
+                    d.name,
+                    ds.snp_id,
+                    ds.chromosome,
+                    ds.gene_name,
+                    LEFT(ds.description, 70) || '...' AS description,
+                    ds.description
+                  FROM public.drug_snp ds 
+                  INNER JOIN public.drug d 
+                    ON d.drug_id = ds.drug_id ", paste(" 
+                  WHERE lower(d.name) LIKE ", "'%", tolower(input$drug2), "%' ", sep=""), ")
+              SELECT 
+                  q1.snp_id AS name,
+                  q1.chromosome,
+                  q1.gene_name,
+                  q1.name AS drug1_name, 
+                  q2.name AS drug2_name
+              FROM q1
+              INNER JOIN q2
+                ON lower(q1.snp_id) = lower(q2.snp_id) ", sep="")
+      }
+      
+      query <- sqlInterpolate(ANSI(), qsub)
+      
+      ddgi_data <- dbGetQuery(pool, query)
+      
+      ddgi_data <- ddgi_data %>% group_by(name) %>% 
+        summarise(count = n(), res = name)
+    })
+    
+    output$plotDdgi <- renderPlot({
+      
+      ddgi_data <- ddgi_data()
+      
+      ggplot(ddgi_data, aes(x = name, y=count)) +
+        geom_col(width = 0.8) +
+        labs(x= "Name" , y = "Count", fill = "") +
+        theme(
+          text = element_text(family= "Times New Roman", size=16),
+          title = element_text(family= "Times New Roman", size=16, face="bold"),
+          legend.position = "bottom",
+          legend.direction = "horizontal",
+          plot.title = element_text(family= "Times New Roman", size=18, face="bold", hjust = 0.5)) +
+        ggtitle("")
+      
+    })
 ##############DDGI END#####################
     
 
 ##############STATISTICS BEGIN###################
 #statisticId
     
-##############STATISTICS END###################
-
     output$plotStat <- renderPlot({
       if(input$statisticId == "0")
       {
@@ -516,5 +976,7 @@ shinyServer(
       }
       
     })
+    
+##############STATISTICS END###################
 
 })

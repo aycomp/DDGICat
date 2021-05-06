@@ -187,7 +187,54 @@ CREATE TABLE ddi_same_drug_protein(
 ALTER TABLE ddi_same_drug_protein ADD PRIMARY KEY (drug1_id, drug2_id, drug_protein_type, drug_protein_id);
 
 
---**********************************************DRUG_DRUG_GENE EXTRACTION***************************************************************--
+--**********************************************DISEASE***************************************************************--
+
+--create disease table
+DROP TABLE IF EXISTS disease;
+CREATE TABLE disease(
+	id INT,
+	pharmgkb_id TEXT,
+	name TEXT
+);
+--set primary key
+ALTER TABLE disease ADD PRIMARY KEY (id);
+
+--**********************************************DISEASE_DRUG***************************************************************--
+
+--create disease_drug table
+DROP TABLE IF EXISTS disease_drug;
+CREATE TABLE disease_drug(
+	disease_id INT,
+	drug_id TEXT
+);
+--set primary key
+ALTER TABLE disease_drug ADD PRIMARY KEY (disease_id, drug_id);
+
+--**********************************************DISEASE_GENE***************************************************************--
+
+--create disease_gene table
+DROP TABLE IF EXISTS disease_gene;
+CREATE TABLE disease_gene(
+	disease_id TEXT,
+	gene_name TEXT,
+	PMID TEXT
+);
+--set primary key
+ALTER TABLE disease_gene ADD PRIMARY KEY (disease_id, gene_name);
+
+--**********************************************DISEASE_VARIANT***************************************************************--
+
+--create disease_variant table
+DROP TABLE IF EXISTS disease_variant;
+CREATE TABLE disease_variant(
+	disease_id TEXT,
+	variant_id TEXT,
+	PMID TEXT
+);
+--set primary key
+ALTER TABLE disease_variant ADD PRIMARY KEY (disease_id, variant_id);
+
+--**********************************************DRUG_DRUG_GENE***************************************************************--
 
 --create ddgi table
 DROP TABLE IF EXISTS ddgi;

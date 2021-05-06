@@ -64,6 +64,46 @@ IF v_cnt > 0 THEN
     RAISE NOTICE '% row inserted into drug_snp table', v_cnt;
 END IF;
 
+/*********************************DISEASE IMPORT***********************************/
+
+INSERT INTO disease (id, pharmgkb_id, name) VALUES (1, 'PA443888', 'Diabetes Mellitus, Type 1');
+INSERT INTO disease (id, pharmgkb_id, name) VALUES (2, 'PA443890', 'Diabetes Mellitus, Type 2');
+INSERT INTO disease (id, pharmgkb_id, name) VALUES (3, 'PA443450', 'Asthma');
+INSERT INTO disease (id, pharmgkb_id, name) VALUES (4, 'PA444368', 'Heart Diseases');
+INSERT INTO disease (id, pharmgkb_id, name) VALUES (5, 'PA447278', 'Depression');
+
+
+/*********************************DISEASE DRUG IMPORT***********************************/
+--TODO:
+
+
+/*********************************DISEASE GENE IMPORT***********************************/
+
+INSERT INTO disease_gene
+(
+	disease_id, gene_name, PMID
+)
+SELECT
+	"Entity1_id", "Entity2_name", "PMIDs"
+FROM public.relationships
+WHERE "Entity1_id" IN ('PA443888', 'PA443890', 'PA443450', 'PA444368', 'PA447278')
+	AND "Entity1_type" = 'Disease'
+	AND "Entity2_type" = 'Gene'
+
+/*********************************DISEASE VARIANT IMPORT***********************************/
+
+INSERT INTO disease_variant
+(
+	disease_id, variant_id, PMID
+)
+SELECT
+	"Entity1_id", "Entity2_name", "PMIDs"
+FROM public.relationships
+WHERE "Entity1_id" IN ('PA443888', 'PA443890', 'PA443450', 'PA444368', 'PA447278')
+	AND "Entity1_type" = 'Disease'
+	AND "Entity2_type" = 'Variant'
+
+
 END;$BODY$;
 
 ALTER FUNCTION public."3_4_import_pharmgkb"()

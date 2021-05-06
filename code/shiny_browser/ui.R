@@ -93,17 +93,23 @@ shinyUI(fluidPage(
     tabPanel("DDGI",
              sidebarLayout(
                sidebarPanel(width=2,
-                            textInput("nameDdgiDrug1", "Please enter Drug1 name", value=""),
-                            textInput("nameDdgiDrug2", "Please enter Drug2 name", value=""),
-                            textInput("nameDdgiGen", "Please enter protein name", value="")
-               ),
-               
+                            selectInput("disease", "Plese select a disease", "Asthma"),
+                            selectInput("drug1", "Plese select drug 1", ""),
+                            selectInput("drug2", "Plese select drug 2", ""),
+                            radioButtons("intersectionSet", "Shared", 
+                                         c("Chromosome" = "0",
+                                           "Gene" = "1",
+                                           "Protein" = "2",
+                                           "SNP" = "3",
+                                           "Hub Gene" = "4"
+                                         ), "1")
+                            ),
                mainPanel(
                  tabsetPanel(type="tab",
                              tabPanel("Table",
-                                      DT::dataTableOutput("tableDDGI")),
+                                      DT::dataTableOutput("tableDdgi")),
                              tabPanel("Plot", 
-                                      plotOutput("histDDGI")))))        
+                                      plotOutput("plotDdgi")))))        
     ),
     tabPanel("Statistics",
              sidebarLayout(

@@ -12,3 +12,4 @@ pool <- dbPool(
   password = "terlik",
   idleTimeout = 3600000
 )
+

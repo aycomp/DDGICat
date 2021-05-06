@@ -46,7 +46,8 @@ IMPORT FOREIGN SCHEMA public
 LIMIT TO
 (
     clinical_ann_metadata, drug_external_identifiers,
-    primary_chemicals, primary_genes
+    primary_chemicals, primary_genes, clinical_variants,
+    relationships
 )
 FROM SERVER fdw_server_2 INTO public;
 
