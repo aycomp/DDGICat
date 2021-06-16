@@ -1,8 +1,8 @@
--- FUNCTION: public."3_1_1_import_drugbank"()
+-- FUNCTION: public."3_1_import_drugbank"()
 
--- DROP FUNCTION public."3_1_1_import_drugbank"();
+-- DROP FUNCTION public."3_1_import_drugbank"();
 
-CREATE OR REPLACE FUNCTION public."3_1_1_import_drugbank"(
+CREATE OR REPLACE FUNCTION public."3_1_import_drugbank"(
 	)
     RETURNS void
     LANGUAGE 'plpgsql'
@@ -410,12 +410,12 @@ END IF;
 
 end;$BODY$;
 
-ALTER FUNCTION public."3_1_1_import_drugbank"()
+ALTER FUNCTION public."3_1_import_drugbank"()
     OWNER TO postgres;
 
 
 --run function
-SELECT public."3_1_1_import_drugbank"();
+SELECT public."3_1_import_drugbank"();
 
 
 

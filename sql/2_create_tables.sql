@@ -192,12 +192,11 @@ ALTER TABLE ddi_same_drug_protein ADD PRIMARY KEY (drug1_id, drug2_id, drug_prot
 --create disease table
 DROP TABLE IF EXISTS disease;
 CREATE TABLE disease(
-	id INT,
-	pharmgkb_id TEXT,
-	name TEXT
+	name TEXT,
+	pharmgkb_id TEXT
 );
 --set primary key
-ALTER TABLE disease ADD PRIMARY KEY (id);
+ALTER TABLE disease ADD PRIMARY KEY (name, pharmgkb_id);
 
 --**********************************************DISEASE_DRUG***************************************************************--
 

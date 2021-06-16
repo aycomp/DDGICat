@@ -1,8 +1,8 @@
--- FUNCTION: public."3_1_2_fill_drug_mapper"()
+-- FUNCTION: public."3_2_fill_drug_mapper_with_drugbank"()
 
--- DROP FUNCTION public."3_1_2_fill_drug_mapper"();
+-- DROP FUNCTION public."3_2_fill_drug_mapper_with_drugbank"();
 
-CREATE OR REPLACE FUNCTION public."3_1_2_fill_drug_mapper"(
+CREATE OR REPLACE FUNCTION public."3_2_fill_drug_mapper_with_drugbank"(
 	)
     RETURNS void
     LANGUAGE 'plpgsql'
@@ -44,12 +44,12 @@ END IF;
 
 end;$BODY$;
 
-ALTER FUNCTION public."3_1_2_fill_drug_mapper"()
+ALTER FUNCTION public."3_2_fill_drug_mapper_with_drugbank"()
     OWNER TO postgres;
 
 
 --run function
-SELECT public."3_1_2_fill_drug_mapper"();
+SELECT public."3_2_fill_drug_mapper_with_drugbank"();
 
 /*
 

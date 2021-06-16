@@ -1,8 +1,8 @@
--- FUNCTION: public."3_4_fill_drug_mapper_with_onchigh_and_kegg"()
+-- FUNCTION: public."5_2_fill_drug_mapper_with_onchigh_and_kegg"()
 
--- DROP FUNCTION public."3_4_fill_drug_mapper_with_onchigh_and_kegg"();
+-- DROP FUNCTION public."5_2_fill_drug_mapper_with_onchigh_and_kegg"();
 
-CREATE OR REPLACE FUNCTION public."3_4_fill_drug_mapper_with_onchigh_and_kegg"(
+CREATE OR REPLACE FUNCTION public."5_2_fill_drug_mapper_with_onchigh_and_kegg"(
 	)
     RETURNS void
     LANGUAGE 'plpgsql'
@@ -55,12 +55,12 @@ END IF;
 
 END;$BODY$;
 
-ALTER FUNCTION public."3_4_fill_drug_mapper_with_onchigh_and_kegg"()
+ALTER FUNCTION public."5_2_fill_drug_mapper_with_onchigh_and_kegg"()
     OWNER TO postgres;
 
 
 --run function1
-SELECT public."3_4_fill_drug_mapper_with_onchigh_and_kegg"();
+SELECT public."5_2_fill_drug_mapper_with_onchigh_and_kegg"();
 
 /* OUTPUT:
 

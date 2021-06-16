@@ -1,8 +1,8 @@
--- FUNCTION: public."3_4_import_pharmgkb"()
+-- FUNCTION: public."4_1_import_pharmgkb"()
 
--- DROP FUNCTION public."3_4_import_pharmgkb"();
+-- DROP FUNCTION public."4_1_import_pharmgkb"();
 
-CREATE OR REPLACE FUNCTION public."3_4_import_pharmgkb"(
+CREATE OR REPLACE FUNCTION public."4_1_import_pharmgkb"(
 	)
     RETURNS void
     LANGUAGE 'plpgsql'
@@ -65,12 +65,24 @@ IF v_cnt > 0 THEN
 END IF;
 
 /*********************************DISEASE IMPORT***********************************/
-
-INSERT INTO disease (id, pharmgkb_id, name) VALUES (1, 'PA443888', 'Diabetes Mellitus, Type 1');
-INSERT INTO disease (id, pharmgkb_id, name) VALUES (2, 'PA443890', 'Diabetes Mellitus, Type 2');
-INSERT INTO disease (id, pharmgkb_id, name) VALUES (3, 'PA443450', 'Asthma');
-INSERT INTO disease (id, pharmgkb_id, name) VALUES (4, 'PA444368', 'Heart Diseases');
-INSERT INTO disease (id, pharmgkb_id, name) VALUES (5, 'PA447278', 'Depression');
+--67 rows inserted
+INSERT INTO disease
+(
+	name,
+	pharmgkb_id
+)
+SELECT
+	DISTINCT("Name") AS pheno_name , "PharmGKB.Accession.Id" AS pharmgkb_id
+FROM primary_phenotypes
+WHERE "Name" IN (
+	SELECT DISTINCT(phenotypes) FROM public.clinical_variants
+	WHERE chemicals IN (
+		SELECT DISTINCT("Entity1_name")
+		FROM public.relationships
+		WHERE "Entity1_type" = 'Chemical'
+			AND "Entity2_type" = 'Chemical'
+		) AND phenotypes != '' )
+ORDER BY "Name";
 
 
 /*********************************DISEASE DRUG IMPORT***********************************/
@@ -86,9 +98,9 @@ INSERT INTO disease_gene
 SELECT
 	"Entity1_id", "Entity2_name", "PMIDs"
 FROM public.relationships
-WHERE "Entity1_id" IN ('PA443888', 'PA443890', 'PA443450', 'PA444368', 'PA447278')
+WHERE "Entity1_id" IN (SELECT pharmgkb_id FROM disease)
 	AND "Entity1_type" = 'Disease'
-	AND "Entity2_type" = 'Gene'
+	AND "Entity2_type" = 'Gene';
 
 /*********************************DISEASE VARIANT IMPORT***********************************/
 
@@ -99,20 +111,20 @@ INSERT INTO disease_variant
 SELECT
 	"Entity1_id", "Entity2_name", "PMIDs"
 FROM public.relationships
-WHERE "Entity1_id" IN ('PA443888', 'PA443890', 'PA443450', 'PA444368', 'PA447278')
+WHERE "Entity1_id" IN (SELECT pharmgkb_id FROM disease)
 	AND "Entity1_type" = 'Disease'
-	AND "Entity2_type" = 'Variant'
+	AND "Entity2_type" = 'Variant';
 
 
 END;$BODY$;
 
-ALTER FUNCTION public."3_4_import_pharmgkb"()
+ALTER FUNCTION public."4_1_import_pharmgkb"()
     OWNER TO postgres;
 
 
 
 --run function
-SELECT public."3_4_import_pharmgkb"();
+SELECT public."4_1_import_pharmgkb"();
 
 
 /*

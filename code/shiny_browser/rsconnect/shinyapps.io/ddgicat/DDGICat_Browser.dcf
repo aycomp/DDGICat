@@ -1,0 +1,13 @@
+name: DDGICat_Browser
+title: DDGICat_Browser
+username:
+account: ddgicat
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 4232108
+bundleId: 4681220
+url: https://ddgicat.shinyapps.io/DDGICat_Browser/
+when: 1622905199.86524
+lastSyncTime: 1622905199.86533
+asMultiple: FALSE
+asStatic: FALSE

@@ -1,8 +1,8 @@
--- FUNCTION: public."3_5_fill_ddi_severity_with_onchigh"()
+-- FUNCTION: public."5_3_fill_ddi_severity_with_onchigh_and_kegg"()
 
--- DROP FUNCTION public."3_5_fill_ddi_severity_with_onchigh"();
+-- DROP FUNCTION public."5_3_fill_ddi_severity_with_onchigh_and_kegg"();
 
-CREATE OR REPLACE FUNCTION public."3_5_fill_ddi_severity_with_onchigh"(
+CREATE OR REPLACE FUNCTION public."5_3_fill_ddi_severity_with_onchigh_and_kegg"(
 	)
     RETURNS void
     LANGUAGE 'plpgsql'
@@ -52,12 +52,12 @@ BEGIN
 
 end;$BODY$;
 
-ALTER FUNCTION public."3_5_fill_ddi_severity_with_onchigh"()
+ALTER FUNCTION public."5_3_fill_ddi_severity_with_onchigh_and_kegg"()
     OWNER TO postgres;
 
 
 --run function
-SELECT public."3_5_fill_ddi_severity_with_onchigh"();
+SELECT public."5_3_fill_ddi_severity_with_onchigh_and_kegg"();
 
 
 

@@ -7,13 +7,14 @@ shinyServer(
   function(input, output, session){
 
 ##############DRUG BEGIN####################
+    
     output$tableDrug <- DT::renderDataTable({
       query <- sqlInterpolate(ANSI(),
         paste0(
         "
         SELECT 
-        	drug_id,name, type, state,
-        	LEFT(synonym, 60) AS synonym,
+        	drug_id, name, type, state,
+        	LEFT(synonym, 50) AS synonym,
 	        LEFT(indication, 60) || '...' AS indication,
         	LEFT(description, 60) || '...' AS description,
         	LEFT(toxicity, 60) || '...' AS toxicity,
@@ -21,15 +22,13 @@ shinyServer(
         	pharmacodynamics, absorption, half_life, 
         	metabolism, mechanism_of_action, volume_of_distribution, 
         	protein_binding, clearance, route_of_elimination, 
-        	'<a href=https://pubmed.ncbi.nlm.nih.gov/' || '16466327' || '/>' || '16466327' || '</a>' AS pubmed_id
-        	--pubmed_id
+        	'<a href=https://pubmed.ncbi.nlm.nih.gov/' || pubmed_id || '/>' || pubmed_id || '</a>' AS pubmed_id
         FROM public.drug d
         INNER JOIN drug_groups dg 
           ON d.drug_id = dg.",
-            paste("\"drugbank-id\"", " WHERE d.name LIKE ", "'%", input$nameDrug, 
+            paste("\"drugbank-id\"", " WHERE lower(d.name) LIKE ", "'", tolower(input$nameDrug), 
                   "%' AND d.type = '", input$typeDrug,  
-                  "' AND dg.group = '", input$statusDrug, "'", 
-                  " AND d.state = '", input$stateDrug, "'", sep=""),sep=""))
+                  "' AND dg.group = '", input$statusDrug, "'", sep=""),sep=""))
       
       outp <- dbGetQuery(pool, query)
       
@@ -38,9 +37,9 @@ shinyServer(
                                          "Scroller"),
                            options = list(colReorder = TRUE, dom = 'Bfrtip',
                                           buttons = c('copy', 'csv', 'excel', 'pdf', 'print'), 
-                                          #scrollX = TRUE,
                                           keys = TRUE,
                                           deferRender = TRUE,
+                                          autoWidth = TRUE,
                                           columnDefs = list(list(visible = FALSE, targets=8:11)),
                                           rowCallback = JS(
                                             "function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {",
@@ -50,7 +49,14 @@ shinyServer(
                                             full_text).css('background-color', aData[i+4]);",
                                             '}',
                                             "}")
-                                          ),  rownames = FALSE, escape = FALSE
+                                          ),  
+                                          colnames = c('Drug Id', 'Name', 'Type', 'State', 
+                                                       'Synonym', 'Indication', 'Description', 'Toxicity', 
+                                                       'Synonym', 'Indication', 'Description', 'Toxicity', 
+                                                       'Pharmacodynamics', 'Absorption', 'Half Life', 
+                                                       'Metabolism', 'Mechanism Of Action', 'Volume Of Distribution', 
+                                                       'Protein Binding', 'Clearance', 'Route Of Elimination', 'Pubmed Id'),
+                                          rownames = FALSE, escape = FALSE
                            )
       return(ret) })
     
@@ -103,8 +109,7 @@ shinyServer(
 ##############GENE BEGIN###################
     output$tableGene <- DT::renderDataTable({
       query <- sqlInterpolate(ANSI(), 
-        paste0(
-          "
+        paste0("
           SELECT
             ensembl_id,
             uniprot_id,
@@ -112,11 +117,9 @@ shinyServer(
             chromosome,
             start_position,
             end_position,
-            LEFT(description, 70) || '...' AS description,
             description
           FROM gene
-          ", paste(" WHERE name LIKE ", "'%", 
-                   input$nameGene, "%'", sep=""), 
+          ", paste(" WHERE lower(name) LIKE ", "'", tolower(input$nameGene), "%'", sep=""), 
           sep=""))
       
       outp <- dbGetQuery(pool, query)
@@ -126,17 +129,11 @@ shinyServer(
                                           buttons = c('copy', 'csv', 'excel', 'pdf', 'print'), 
                                           keys = TRUE,
                                           deferRender = TRUE,
-                                        
-                                          columnDefs = list(list(visible = FALSE, targets=7:7)),
-                                          rowCallback = JS(
-                                            "function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {",
-                                            'for(i=6; i<7; i++ ){',
-                                            "var full_text = aData[i+1];",
-                                            "$('td:eq('+i+')', nRow).attr('title', 
-                                            full_text).css('background-color', aData[i+1]);",
-                                            '}',
-                                            "}")
-                           ), rownames = FALSE )
+                                          autoWidth = TRUE
+                           ),
+                           colnames = c('Ensembl Id', 'Uniprot Id', 'Name', 'Chromosome', 
+                                        'Start Position', 'End Position', 'Description'),
+                           rownames = FALSE , escape = FALSE)
       return(ret) })
     
     gene_data <- reactive({
@@ -166,7 +163,7 @@ shinyServer(
 ##############SNP BEGIN####################
     output$tableSnp <- DT::renderDataTable({
       query <- sqlInterpolate(ANSI(), paste0("SELECT * FROM snp", 
-                                             paste(" WHERE refsnp_id LIKE ", "'%", input$nameSnp, "%'", sep=""), 
+                                             paste(" WHERE lower(refsnp_id) LIKE ", "'%", tolower(input$nameSnp), "%'", sep=""), 
                                              sep=""))
 
     outp <- dbGetQuery(pool, query)
@@ -175,8 +172,11 @@ shinyServer(
                          options = list(colReorder = TRUE, dom = 'Bfrtip',
                                         buttons = c('copy', 'csv', 'excel', 'pdf', 'print'), 
                                         keys = TRUE,
-                                        deferRender = TRUE
-                         ),  rownames = FALSE
+                                        deferRender = TRUE,
+                                        autoWidth = TRUE
+                         ),  colnames = c('RefSNP Id', 'RefSNP Source', 'Chromosome Name', 
+                                          'Chromosome Start', 'Chromosome End', 'Chromosome Strand', 'Allele'), 
+                                          rownames = FALSE, escape = FALSE
     )
     return(ret) })
       
@@ -209,12 +209,13 @@ shinyServer(
                           drug1_id, drug2_id, 
                           drug1_name, drug2_name, 
                           severity,
-                          LEFT(description, 50) || '...' AS description,
                           description
                       FROM ddi", 
-                  paste(" WHERE drug1_name LIKE ", "'%", input$nameDrug1, 
-                        "%' AND drug2_name LIKE ", "'%", input$nameDrug2, "%'", sep=""), 
-                  sep="")
+                paste(" WHERE 
+                        (lower(drug1_name) LIKE ", "'", tolower(input$nameDrug1), "%' AND lower(drug2_name) LIKE ", "'", tolower(input$nameDrug2), "%') OR", 
+                      " (lower(drug2_name) LIKE ", "'", tolower(input$nameDrug1), "%' AND lower(drug1_name) LIKE ", "'", tolower(input$nameDrug2), "%')",
+                      " AND severity = ", "'", input$severity, "'", sep=""), 
+                sep="")
       outp <- dbGetQuery(pool, query)
       ret <- DT::datatable(outp, width = "100%",
                            extensions= c("ColReorder", "Buttons", "KeyTable"),
@@ -222,19 +223,11 @@ shinyServer(
                                           buttons = c('copy', 'csv', 'excel', 'pdf', 'print'), 
                                           keys = TRUE,
                                           deferRender = TRUE,
-                                          columnDefs = list(list(visible = FALSE, targets=5:6)),
-                                          rowCallback = JS(
-                                            "function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {",
-                                            'for(i=5; i<6; i++ ){',
-                                            "var full_text = aData[i+1];",
-                                            "$('td:eq('+i+')', nRow).attr('title', 
-                                            full_text).css('background-color', aData[i+1]);",
-                                            '}',
-                                            "}")
-                           ),  rownames = FALSE
+                                          autoWidth = TRUE
+                           ),   colnames = c('Drug1 Id', 'Drug2 Id', 'Drug1 Name', 'Drug2 Name', 
+                                             'Severity', 'Description'), rownames = FALSE, escape = FALSE
       )
       return(ret) })
-    
     
     ddi_data <- reactive({
       query <- sqlInterpolate(ANSI(), "SELECT 
@@ -299,23 +292,28 @@ shinyServer(
 ##############DGI BEGIN####################
     output$tableDgi <- DT::renderDataTable({
       query <- sqlInterpolate(ANSI(), 
-                  paste0("SELECT 
-                            drug_id,
-                            CASE 
-                              WHEN drug_protein_type = 1 THEN 'Target'
-                              WHEN drug_protein_type = 2 THEN 'Enzyme'
-                              WHEN drug_protein_type = 3 THEN 'Transporter'
-                              WHEN drug_protein_type = 4 THEN 'Carrier' 
-                            END AS drug_protein_type,
-                            gene_name,
-                            drug_protein_name,
-                            polypeptide_uniprot_id,
-                            general_function,
-                            specific_function
-                         FROM drug_protein", 
-                             paste(" WHERE drug_id LIKE ", "'%", 
-                                   input$nameDgiDrug, "%'", sep=""), 
-                             sep=""))
+            paste0("SELECT 
+                      d.drug_id,
+                      d.name,
+                      CASE 
+                        WHEN dp.drug_protein_type = 1 THEN 'Target'
+                        WHEN dp.drug_protein_type = 2 THEN 'Enzyme'
+                        WHEN dp.drug_protein_type = 3 THEN 'Transporter'
+                        WHEN dp.drug_protein_type = 4 THEN 'Carrier' 
+                      END AS drug_protein_type,
+                      dp.gene_name,
+                      dp.drug_protein_name,
+                      dp.polypeptide_uniprot_id,
+                      dp.general_function,
+                      dp.specific_function
+                   FROM drug_protein dp 
+                   INNER JOIN drug d 
+                      ON d.drug_id = dp.drug_id ", 
+                paste(" WHERE lower(d.name) LIKE ", "'", tolower(input$nameDgiDrug), "%' 
+                          AND dp.drug_protein_type IN (", input$proteinType, ") ",
+                          "AND lower(dp.gene_name) LIKE '", tolower(input$nameDgiGen), "%'",
+                sep=""), 
+           sep=""))
       
       outp <- dbGetQuery(pool, query)
       ret <- DT::datatable(outp, width = "100%",
@@ -323,9 +321,12 @@ shinyServer(
                            options = list(colReorder = TRUE, dom = 'Bfrtip',
                                           buttons = c('copy', 'csv', 'excel', 'pdf', 'print'), 
                                           keys = TRUE,
-                                          deferRender = TRUE
-                           ),  rownames = FALSE
-      )
+                                          deferRender = TRUE,
+                                          autoWidth = TRUE ),
+                              colnames = c('Drug Id', 'Name', 'Protein Type', 'Gene Name', 'Drug Protein Name', 
+                                           'Polypeptide Uniprot Id', 'General Function', 'Specific Function'), 
+                              rownames = FALSE )
+      
       return(ret) })
     
     dgi_data <- reactive({
@@ -385,19 +386,19 @@ shinyServer(
 ##############DDGI BEGIN###################
     #Disease
     sqlOutputDisease <- reactive({
-      query <- sqlInterpolate(ANSI(), "SELECT DISTINCT(name) AS disease FROM disease ORDER BY name")
+        query <- sqlInterpolate(ANSI(), "SELECT DISTINCT(name) AS disease FROM disease ORDER BY name")
       outp <- dbGetQuery(pool, query)
     })
     observe ({
       updateSelectInput(session, "disease", choices = sqlOutputDisease()) })
-    
+      
     #Drug 1
     sqlOutputDrug1 <- reactive({
       query <- sqlInterpolate(ANSI(), paste0("
           SELECT 
           	  DISTINCT(chemicals) AS drug_name
           FROM public.clinical_variants
-          WHERE phenotypes LIKE ", "'%", input$disease, "%' ORDER BY chemicals " , sep=""))
+          WHERE lower(phenotypes) LIKE '", tolower(input$disease), "%' ORDER BY chemicals " , sep=""))
       outp <- dbGetQuery(pool, query)
     })
     observe ({
@@ -413,7 +414,7 @@ shinyServer(
             	WHERE \"Entity2_type\" = 'Chemical'
             		AND \"Entity1_type\" = 'Chemical'
             		AND (\"Entity1_name\" = '", input$drug1, "' OR \"Entity2_name\" = '", input$drug1, "' )
-            	UNION ALL 
+            	UNION ALL   
             	SELECT 
             		\"Entity2_name\" AS drug_name
             	FROM public.relationships
@@ -441,7 +442,7 @@ shinyServer(
                   	ON dp.drug_id = d.drug_id
                   INNER JOIN public.gene ge
                   	ON dp.gene_name = ge.name ", paste(" 
-                  WHERE lower(d.name) LIKE ", "'%", tolower(input$drug1), "%'
+                  WHERE lower(d.name) LIKE '", tolower(input$drug1), "%'
                     AND ge.chromosome NOT LIKE 'H%'
                   ORDER BY ge.chromosome ) ", sep=""), ", 
                q2 AS (
@@ -454,21 +455,18 @@ shinyServer(
                     ON dp.drug_id = d.drug_id
                   INNER JOIN public.gene ge
                     ON dp.gene_name = ge.name ", paste(" 
-                  WHERE lower(d.name) LIKE ", "'%", tolower(input$drug2), "%'
+                  WHERE lower(d.name) LIKE '", tolower(input$drug2), "%'
                     AND ge.chromosome NOT LIKE 'H%'
                   ORDER BY ge.chromosome ) ", sep=""), "
               SELECT 
-                  q1.name AS name,
-                  q1.drug_name AS drug1_name, 
-                  q2.drug_name AS drug2_name,
-                  q1.gene_name AS drug1_gene,
-                  q2.gene_name AS drug2_gene
+                  q1.name AS \"Chromosome Name\",
+                  q1.drug_name AS \"Drug1 Name\", 
+                  q2.drug_name AS \"Drug2 Name\",
+                  q1.gene_name AS \"Drug1 Gene\",
+                  q2.gene_name AS \"Drug2 Gene\"
               FROM q1
               INNER JOIN q2
                 ON lower(q1.name) = lower(q2.name) ", sep="")
-            
-            #print(gsub("[\r\n\t]", "", qsub))
-            
         }
         else if(input$intersectionSet == "1"){ #Gene
             qsub <- paste0("
@@ -490,7 +488,7 @@ shinyServer(
                     FROM public.drug_protein dp
                     INNER JOIN public.drug d
                     	ON dp.drug_id = d.drug_id ", paste(" 
-                    WHERE lower(d.name) LIKE ", "'%", tolower(input$drug1), "%' ", sep=""), "), 
+                    WHERE lower(d.name) LIKE '", tolower(input$drug1), "%' ", sep=""), "), 
                 q2 AS (
                    SELECT 
                       dp.gene_name,
@@ -509,18 +507,37 @@ shinyServer(
                     FROM public.drug_protein dp
                     INNER JOIN public.drug d
                     	ON dp.drug_id = d.drug_id ", paste(" 
-                    WHERE lower(d.name) LIKE ", "'%", tolower(input$drug2), "%' ", sep=""), ")
+                    WHERE lower(d.name) LIKE '", tolower(input$drug2), "%' ", sep=""), ")
               SELECT 
-                  q1.gene_name AS name,
-                  q1.drug_name AS drug1_name, 
-                  q2.drug_name AS drug2_name,
-                  q1.drug_protein_type,
-                  q1.drug_protein_name
+                  q1.gene_name AS \"Gene Name\",
+                  q1.drug_name AS \"Drug1 Name\", 
+                  q2.drug_name AS \"Drug2 Name\",
+                  q1.drug_protein_type AS \"Drug Protein Type\",
+                  q1.drug_protein_name AS \"Drug Protein Name\",
+                  CASE 
+                    WHEN q1.polypeptide_uniprot_id = q2.polypeptide_uniprot_id 
+                    THEN q1.polypeptide_uniprot_id
+                    ELSE 'not same'
+                  END AS \"Uniprot Id\",
+                  CASE 
+                    WHEN q1.polypeptide_name = q2.polypeptide_name 
+                    THEN q1.polypeptide_name
+                    ELSE 'not same'
+                  END AS \"Polypeptide Name\",
+                  CASE 
+                    WHEN q1.general_function = q2.general_function 
+                    THEN q1.general_function
+                    ELSE 'not same'
+                  END AS \"General Function\",
+                  CASE 
+                    WHEN q1.specific_function = q2.specific_function 
+                    THEN q1.specific_function
+                    ELSE 'not same'
+                  END AS \"Specific Function\"
               FROM q1
               INNER JOIN q2
                 ON lower(q1.gene_name) = lower(q2.gene_name) ", sep="")
                 
-            #print(gsub("[\r\n\t]", "", qsub))
         }
         else if(input$intersectionSet == "2"){ #Protein
           qsub <- paste0("
@@ -542,7 +559,7 @@ shinyServer(
                     FROM public.drug_protein dp
                     INNER JOIN public.drug d
                     	ON dp.drug_id = d.drug_id ", paste(" 
-                    WHERE lower(d.name) LIKE ", "'%", tolower(input$drug1), "%' ", sep=""), "), 
+                    WHERE lower(d.name) LIKE '", tolower(input$drug1), "%' ", sep=""), "), 
                 q2 AS (
                    SELECT 
                       dp.gene_name,
@@ -561,19 +578,16 @@ shinyServer(
                     FROM public.drug_protein dp
                     INNER JOIN public.drug d
                     	ON dp.drug_id = d.drug_id ", paste(" 
-                    WHERE lower(d.name) LIKE ", "'%", tolower(input$drug2), "%' ", sep=""), ")
+                    WHERE lower(d.name) LIKE '", tolower(input$drug2), "%' ", sep=""), ")
               SELECT 
-                  q1.polypeptide_uniprot_id AS name,
-                  q1.gene_name,
-                  q1.drug_protein_type,
-                  q1.drug_name AS drug1_name, 
-                  q2.drug_name AS drug2_name
+                  q1.polypeptide_uniprot_id AS \"Protein Name\",
+                  q1.gene_name AS \"Gene Name\",
+                  q1.drug_protein_type AS \"Protein Type\",
+                  q1.drug_name AS \"Drug1 Name\", 
+                  q2.drug_name AS \"Drug2 Name\"
               FROM q1
               INNER JOIN q2
                 ON lower(q1.polypeptide_uniprot_id) = lower(q2.polypeptide_uniprot_id) ", sep="")
-          
-          #print(gsub("[\r\n\t]", "", qsub))
-          
         }
         else if(input$intersectionSet == "3"){ #SNP
           qsub <- paste0("
@@ -590,7 +604,7 @@ shinyServer(
                   FROM public.drug_snp ds 
                   INNER JOIN public.drug d 
                     ON d.drug_id = ds.drug_id ", paste(" 
-                  WHERE lower(d.name) LIKE ", "'%", tolower(input$drug1), "%' ", sep=""), "),
+                  WHERE lower(d.name) LIKE '", tolower(input$drug1), "%' ", sep=""), "),
               q2 AS (
                   SELECT 
                     ds.uniprot_id,
@@ -604,18 +618,17 @@ shinyServer(
                   FROM public.drug_snp ds 
                   INNER JOIN public.drug d 
                     ON d.drug_id = ds.drug_id ", paste(" 
-                  WHERE lower(d.name) LIKE ", "'%", tolower(input$drug2), "%' ", sep=""), ")
+                  WHERE lower(d.name) LIKE '", tolower(input$drug2), "%' ", sep=""), ")
               SELECT 
-                  q1.snp_id AS name,
-                  q1.chromosome,
-                  q1.gene_name,
-                  q1.name AS drug1_name, 
-                  q2.name AS drug2_name
+                  q1.snp_id AS \"SNP Name\",
+                  q1.chromosome AS \"Chromosome\",
+                  q1.gene_name AS \"Gene Name\",
+                  q1.name AS \"Drug1 Name\", 
+                  q2.name AS \"Drug2 Name\"
               FROM q1
               INNER JOIN q2
                 ON lower(q1.snp_id) = lower(q2.snp_id) ", sep="")
           
-          #print(gsub("[\r\n\t]", "", qsub))
         }
       
         query <- sqlInterpolate(ANSI(), qsub)
@@ -624,10 +637,11 @@ shinyServer(
                              extensions= c("Responsive", "ColReorder", "Buttons", "KeyTable"),
                              options = list(colReorder = TRUE, dom = 'Bfrtip',
                                             buttons = c('copy', 'csv', 'excel', 'pdf', 'print'), 
-                                            keys = TRUE
-                             ),  rownames = FALSE,
+                                            keys = TRUE,
+                                            autoWidth = TRUE
+                             ),  
+                             rownames = FALSE,
                              print(gsub("[\r\n\t]", "", qsub))
-                             
       )
       return(ret) })
     
@@ -671,8 +685,6 @@ shinyServer(
               FROM q1
               INNER JOIN q2
                 ON lower(q1.name) = lower(q2.name) ", sep="")
-        
-        #print(gsub("[\r\n\t]", "", qsub))
         
       }
       else if(input$intersectionSet == "1"){ #Gene
@@ -724,8 +736,6 @@ shinyServer(
               FROM q1
               INNER JOIN q2
                 ON lower(q1.gene_name) = lower(q2.gene_name) ", sep="")
-        
-        #print(gsub("[\r\n\t]", "", qsub))
       }
       else if(input$intersectionSet == "2"){ #Protein
         qsub <- paste0("
@@ -776,8 +786,6 @@ shinyServer(
               FROM q1
               INNER JOIN q2
                 ON lower(q1.polypeptide_uniprot_id) = lower(q2.polypeptide_uniprot_id) ", sep="")
-        
-        #print(gsub("[\r\n\t]", "", qsub))
         
       }
       else if(input$intersectionSet == "3"){ #SNP
@@ -978,5 +986,32 @@ shinyServer(
     })
     
 ##############STATISTICS END###################
+    
 
+##############DOWNLOAD BEGIN###################
+
+    query <- sqlInterpolate(ANSI(), "SELECT * FROM public.drug;")
+    
+    Drug <- dbGetQuery(pool, query)
+      
+    # Reactive value for selected dataset ----
+    datasetInput <- reactive({
+      switch(input$dataset,
+             "Drug" = Drug,
+             "Gene" = Gene,
+             "SNP" = SNP)
+    })
+    
+    # Downloadable csv of selected dataset ----
+    output$downloadData <- downloadHandler(
+      filename = function() {
+        paste(input$dataset, ".csv", sep = "")
+      },
+      content = function(file) {
+        write.csv(datasetInput(), file, row.names = FALSE)
+      }
+    )
+    
+##############DOWNLOAD END#####################
+    
 })

@@ -10,8 +10,7 @@ shinyUI(fluidPage(
             selectInput("statusDrug", 
                         "Plese select drug approval status", 
                         c("approved", "experimental", "illicit", "investigational", "nutraceutical", "vet_approved", "withdrawn"), ""),
-            radioButtons("typeDrug", "Please select the drug type", c("small molecule", "biotech"), "small molecule"),
-            radioButtons("stateDrug", "Please select the drug state", c("liquid", "solid", "gas", "-"), "solid")),
+            radioButtons("typeDrug", "Please select the drug type", c("small molecule", "biotech"), "small molecule")),
           conditionalPanel(condition= "input.tabsDrug == 'Plot'",
             selectInput("plotDrug", "Plese select plot type", 
                       c("Drug Status" = "group", "Drug Type" = "type", "Drug State" = "state"), ""))),
@@ -60,29 +59,29 @@ shinyUI(fluidPage(
                sidebarPanel(width=2,
                   conditionalPanel(condition= "input.tabsDdi == 'Table'",
                       textInput("nameDrug1", "Please enter Drug1 name", value=""),
-                      textInput("nameDrug2", "Please enter Drug2 name", value="")),
+                      textInput("nameDrug2", "Please enter Drug2 name", value=""),
+                      selectInput("severity", "Plese select severity level", 
+                                  c("all" = "", "high" = "high", "CI" = "CI", "P" = "P", "CI,P" = "CI,P"), "")),
                   conditionalPanel(condition= "input.tabsDdi == 'Plot'",
                        selectInput("plotDdi", "Plese select plot type", 
                                    c("Drug Count" = "drug", "ATC Level" = "atc", "Severity" = "severity")))),
-   
                mainPanel(
                  tabsetPanel(id="tabsDdi",
                              tabPanel("Table",
                                       DT::dataTableOutput("tableDdi")),
                              tabPanel("Plot", 
-                                      plotOutput("plotDdi")))))        
-          ),
+                                      plotOutput("plotDdi")))))),
     tabPanel("DGI",
              sidebarLayout(
                sidebarPanel(width=2,
                   conditionalPanel(condition= "input.tabsDgi == 'Table'",
-                      textInput("nameDgiDrug", "Please enter Drug name", value=""),
-                      textInput("nameDgiGen", "Please enter protein name", value="")),
+                      textInput("nameDgiDrug", "Please Enter Drug Name", value=""),
+                      selectInput("proteinType", "Plese Select Drug Protein Type", 
+                                  c("all" = "1,2,3,4", "Target" = "1", "Enzyme" = "2", "Transporter" = "3", "Carrier" = "4"), ""),
+                      textInput("nameDgiGen", "Please Enter Gene Name", value="")),
                   conditionalPanel(condition= "input.tabsDgi == 'Plot'",
                        selectInput("plotDgi", "Plese select plot type", 
                                    c("Gene" = "gene", "Protein Type" = "protein_type")))),
-             
-               
                mainPanel(
                  tabsetPanel(id="tabsDgi",
                              tabPanel("Table",
@@ -100,8 +99,7 @@ shinyUI(fluidPage(
                                          c("Chromosome" = "0",
                                            "Gene" = "1",
                                            "Protein" = "2",
-                                           "SNP" = "3",
-                                           "Hub Gene" = "4"
+                                           "SNP" = "3"
                                          ), "1")
                             ),
                mainPanel(
@@ -133,6 +131,20 @@ shinyUI(fluidPage(
                  tabsetPanel(type="tab",
                              tabPanel("Plot", 
                                       plotOutput("plotStat")))))        
-    )   
+    ),
+    tabPanel("Downloads",
+             sidebarLayout(
+               sidebarPanel(width=2,
+                   # Input: Choose dataset ----
+                   selectInput("dataset", "Choose a dataset:",
+                               choices = c("Drug", "Gene", "SNP","DDI", "DGI", "DDGI")),
+                   
+                   # Button
+                   downloadButton("downloadData", "Download")
+               ),
+               
+               mainPanel(
+                 tableOutput("table"))) 
+    )
   )
 ))
