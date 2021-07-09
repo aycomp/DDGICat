@@ -5,89 +5,47 @@ shinyUI(fluidPage(
     tabPanel("Drug",
       sidebarLayout(
         sidebarPanel(width=2,
-          conditionalPanel(condition= "input.tabsDrug == 'Table'",
             textInput("nameDrug", "Please enter drug name", value=""),
             selectInput("statusDrug", 
                         "Plese select drug approval status", 
                         c("approved", "experimental", "illicit", "investigational", "nutraceutical", "vet_approved", "withdrawn"), ""),
             radioButtons("typeDrug", "Please select the drug type", c("small molecule", "biotech"), "small molecule")),
-          conditionalPanel(condition= "input.tabsDrug == 'Plot'",
-            selectInput("plotDrug", "Plese select plot type", 
-                      c("Drug Status" = "group", "Drug Type" = "type", "Drug State" = "state"), ""))),
     
-        mainPanel(
-         tabsetPanel(id="tabsDrug",
-                     tabPanel("Table",
-                              DT::dataTableOutput("tableDrug")),
-                     tabPanel("Plot", 
-                              plotOutput("plotDrug"))))),
+        mainPanel(DT::dataTableOutput("tableDrug"))),
             ),
     tabPanel("Gene",
            sidebarLayout(
              sidebarPanel(width=2,
-               conditionalPanel(condition= "input.tabsGene == 'Table'",
                   textInput("nameGene", "Please enter gene name", value="")),
-               conditionalPanel(condition= "input.tabsGene == 'Plot'",
-                  selectInput("plotGene", "Plese select plot type", 
-                      c("Chromosome" = "chr"), ""))),
              
-             mainPanel(
-               tabsetPanel(id="tabsGene",
-                           tabPanel("Table",
-                                    DT::dataTableOutput("tableGene")),
-                           tabPanel("Plot", 
-                                    plotOutput("plotGene"))))),           
+             mainPanel(DT::dataTableOutput("tableGene"))),      
             ),
     tabPanel("SNP",
              sidebarLayout(
                sidebarPanel(width=2,
-                conditionalPanel(condition= "input.tabsSnp == 'Table'",
                   textInput("nameSnp", "Please enter SNP name", value="")),
-                conditionalPanel(condition= "input.tabsSnp == 'Plot'",
-                   selectInput("plotSnp", "Plese select plot type", 
-                               c("Chromosome" = "chr")))),
                
-               mainPanel(
-                 tabsetPanel(id="tabsSnp",
-                             tabPanel("Table",
-                                      DT::dataTableOutput("tableSnp")),
-                             tabPanel("Plot", 
-                                      plotOutput("plotSnp")))))          
+               mainPanel(DT::dataTableOutput("tableSnp")))          
           ),
     tabPanel("DDI",
              sidebarLayout(
                sidebarPanel(width=2,
-                  conditionalPanel(condition= "input.tabsDdi == 'Table'",
                       textInput("nameDrug1", "Please enter Drug1 name", value=""),
                       textInput("nameDrug2", "Please enter Drug2 name", value=""),
                       selectInput("severity", "Plese select severity level", 
                                   c("all" = "", "high" = "high", "CI" = "CI", "P" = "P", "CI,P" = "CI,P"), "")),
-                  conditionalPanel(condition= "input.tabsDdi == 'Plot'",
-                       selectInput("plotDdi", "Plese select plot type", 
-                                   c("Drug Count" = "drug", "ATC Level" = "atc", "Severity" = "severity")))),
-               mainPanel(
-                 tabsetPanel(id="tabsDdi",
-                             tabPanel("Table",
-                                      DT::dataTableOutput("tableDdi")),
-                             tabPanel("Plot", 
-                                      plotOutput("plotDdi")))))),
+               
+               mainPanel(DT::dataTableOutput("tableDdi")))
+             ),
     tabPanel("DGI",
              sidebarLayout(
                sidebarPanel(width=2,
-                  conditionalPanel(condition= "input.tabsDgi == 'Table'",
                       textInput("nameDgiDrug", "Please Enter Drug Name", value=""),
                       selectInput("proteinType", "Plese Select Drug Protein Type", 
                                   c("all" = "1,2,3,4", "Target" = "1", "Enzyme" = "2", "Transporter" = "3", "Carrier" = "4"), ""),
                       textInput("nameDgiGen", "Please Enter Gene Name", value="")),
-                  conditionalPanel(condition= "input.tabsDgi == 'Plot'",
-                       selectInput("plotDgi", "Plese select plot type", 
-                                   c("Gene" = "gene", "Protein Type" = "protein_type")))),
-               mainPanel(
-                 tabsetPanel(id="tabsDgi",
-                             tabPanel("Table",
-                                      DT::dataTableOutput("tableDgi")),
-                             tabPanel("Plot", 
-                                      plotOutput("plotDgi")))))        
+               
+               mainPanel(DT::dataTableOutput("tableDgi")))
     ),
     tabPanel("DDGI",
              sidebarLayout(
@@ -102,29 +60,15 @@ shinyUI(fluidPage(
                                            "SNP" = "3"
                                          ), "1")
                             ),
-               mainPanel(
-                 tabsetPanel(type="tab",
-                             tabPanel("Table",
-                                      DT::dataTableOutput("tableDdgi")),
-                             tabPanel("Plot", 
-                                      plotOutput("plotDdgi")))))        
+               mainPanel(DT::dataTableOutput("tableDdgi")))      
     ),
     tabPanel("Statistics",
              sidebarLayout(
                sidebarPanel(width=2,
-                            radioButtons("statisticId", "Please select the statistic type", 
-                                         c("Drug Type and Group" = "0",
-                                           "#Gene per Chromosome" = "1",
-                                           "#SNP per Gene" = "2",
-                                           "#SNP per Chromosome" = "3",
-                                           "Druggable Gene per Drug" = "4",
-                                           "Drugable Gene per Chromosome" = "5",
-                                           "DDI Classification" = "6",
-                                           "#DDI per Drug" = "7",
-                                           "# Protein per Drug" = "8",
-                                           "# Protein per Drug" = "9",
-                                           "# DDI having same protein" = "10"
-                                          ), "")
+                            selectInput("entityId", "Plese Select Entity", 
+                                        c("Drug", "Gene", "SNP", "DDI", "DGI", "DDGI"), ""),
+                            
+                            selectInput("plot", "Plese Select Plot", ""),
                ),
                
                mainPanel(

@@ -35,6 +35,8 @@ SELECT
 	start_position,
 	end_position
 FROM public.geneb
+WHERE (chromosome_name >= '1' AND chromosome_name <= '23')
+    OR (chromosome_name IN ('X', 'Y'))
 GET DIAGNOSTICS v_cnt = ROW_COUNT;
 
 IF v_cnt > 0 THEN

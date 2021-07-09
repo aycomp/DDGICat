@@ -353,19 +353,21 @@ END IF;
 --gene
 INSERT INTO gene
 (
- 	ensembl_id,
-    uniprot_id,
-    name,
-    description,
-    chromosome,
-    start_position,
-    end_position
+	ensembl_id,
+	hgnc_symbol,
+	description,
+	uniprot_id,
+	uniprot_symbol,
+	chromosome,
+	start_position,
+	end_position
 )
 SELECT
 	DISTINCT(ensembl_gene_id),
-	uniprot_gn_id,
 	hgnc_symbol,
 	description,
+	uniprot_gn_id,
+	uniprot_gn_symbol,
 	chromosome_name,
 	start_position,
 	end_position

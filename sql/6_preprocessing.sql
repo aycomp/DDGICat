@@ -140,9 +140,10 @@ INSERT INTO ddi_same_drug_protein
 	gene_name,
 	general_function,
 	specific_function,
-	ddi_cat
+	ddi_cat,
+	severity
 )
-SELECT targ.*, d.category_id
+SELECT targ.*, d.category_id, d.severity
 FROM same_protein targ
 INNER JOIN ddi d
 	ON targ.drug1_id = d.drug1_id
@@ -251,9 +252,10 @@ INSERT INTO ddi_same_drug_protein
 	gene_name,
 	general_function,
 	specific_function,
-	ddi_cat
+	ddi_cat,
+	severity
 )
-SELECT targ.*, d.category_id
+SELECT targ.*, d.category_id, d.severity
 FROM same_protein targ
 INNER JOIN ddi d
 	ON targ.drug1_id = d.drug1_id
@@ -362,9 +364,10 @@ INSERT INTO ddi_same_drug_protein
 	gene_name,
 	general_function,
 	specific_function,
-	ddi_cat
+	ddi_cat,
+	severity
 )
-SELECT targ.*, d.category_id
+SELECT targ.*, d.category_id, d.severity
 FROM same_protein targ
 INNER JOIN ddi d
 	ON targ.drug1_id = d.drug1_id
@@ -472,9 +475,10 @@ INSERT INTO ddi_same_drug_protein
 	gene_name,
 	general_function,
 	specific_function,
-	ddi_cat
+	ddi_cat,
+	severity
 )
-SELECT targ.*, d.category_id
+SELECT targ.*, d.category_id, d.severity
 FROM same_protein targ
 INNER JOIN ddi d
 	ON targ.drug1_id = d.drug1_id

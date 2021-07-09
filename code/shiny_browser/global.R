@@ -13,3 +13,5 @@ pool <- dbPool(
   idleTimeout = 3600000
 )
 
+choice <- ""
+selectedChoice <-""

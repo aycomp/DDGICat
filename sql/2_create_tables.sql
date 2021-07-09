@@ -126,9 +126,10 @@ ALTER TABLE drug_snp ADD PRIMARY KEY (drug_id, snp_id, uniprot_id, description, 
 DROP TABLE IF EXISTS gene;
 CREATE TABLE gene(
 	ensembl_id TEXT,
-	uniprot_id TEXT,
-	name TEXT,
+	hgnc_symbol TEXT,
 	description TEXT,
+	uniprot_id TEXT,
+	uniprot_symbol TEXT,
 	chromosome TEXT,
 	start_position TEXT,
 	end_position TEXT
@@ -181,7 +182,8 @@ CREATE TABLE ddi_same_drug_protein(
 	gene_name TEXT,
 	general_function TEXT,
 	specific_function TEXT,
-	ddi_cat INT
+	ddi_cat INT,
+	severity TEXT
 );
 --set primary key
 ALTER TABLE ddi_same_drug_protein ADD PRIMARY KEY (drug1_id, drug2_id, drug_protein_type, drug_protein_id);
