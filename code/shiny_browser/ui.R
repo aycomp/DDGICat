@@ -8,10 +8,10 @@ shinyUI(fluidPage(
             textInput("nameDrug", "Please enter drug name", value=""),
             selectInput("statusDrug", 
                         "Plese select drug approval status", 
-                        c("approved", "experimental", "illicit", "investigational", "nutraceutical", "vet_approved", "withdrawn"), ""),
-            radioButtons("typeDrug", "Please select the drug type", c("small molecule", "biotech"), "small molecule")),
-    
-        mainPanel(DT::dataTableOutput("tableDrug"))),
+                        c("all", "approved", "experimental", "illicit", "investigational", "nutraceutical", "vet_approved", "withdrawn"), "all"),
+            radioButtons("typeDrug", "Please select the drug type", c("all", "small molecule", "biotech"), "all")),
+    fluidRow(
+        mainPanel(  DT::dataTableOutput("tableDrug")))),
             ),
     tabPanel("Gene",
            sidebarLayout(
@@ -66,7 +66,7 @@ shinyUI(fluidPage(
              sidebarLayout(
                sidebarPanel(width=2,
                             selectInput("entityId", "Plese Select Entity", 
-                                        c("Drug", "Gene", "SNP", "DDI", "DGI", "DDGI"), ""),
+                                        c("Drug", "Gene", "SNP", "DDI", "DDGI"), ""),
                             
                             selectInput("plot", "Plese Select Plot", ""),
                ),
@@ -81,7 +81,7 @@ shinyUI(fluidPage(
                sidebarPanel(width=2,
                    # Input: Choose dataset ----
                    selectInput("dataset", "Choose a dataset:",
-                               choices = c("Drug", "Gene", "SNP","DDI", "DGI", "DDGI")),
+                               choices = c("Drug", "Gene", "SNP","DDI", "DGI", "DDI-Having Same Drug Protein")),
                    
                    # Button
                    downloadButton("downloadData", "Download")

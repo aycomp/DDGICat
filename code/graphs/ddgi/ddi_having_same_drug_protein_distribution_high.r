@@ -23,31 +23,19 @@ data <- dbGetQuery(con, "
                 ORDER BY number_of_protein DESC, number_of_ddi"
 )
 
-
 ggplot(data, aes(x = number_of_protein, y = number_of_ddi)) +
-  geom_point(alpha=0.6) +
-  labs(x= "# DDI" , y = "# Protein") +
+  geom_point(alpha=0.8) +
+  labs(x = "Protein Count", y= "Interaction Count") +
   theme(
     text = element_text(family= "Times New Roman", size=14, face="bold"),
     title = element_text(family= "Times New Roman", size=14, face="bold"),
     legend.position = "bottom",
     legend.direction = "horizontal",
-    plot.title = element_text(family= "Times New Roman", size=14, face="bold", hjust = 0.5)) +
-  ggtitle("# DDI per # Protein Linear Scale")
-
-
-ggplot(data, aes(x = number_of_protein, y = number_of_ddi)) +
-  geom_point(alpha=0.6) +
-  labs(x= "# DDI" , y = "# Protein") +
-  theme(
-    text = element_text(family= "Times New Roman", size=14, face="bold"),
-    title = element_text(family= "Times New Roman", size=14, face="bold"),
-    legend.position = "bottom",
-    legend.direction = "horizontal",
-    plot.title = element_text(family= "Times New Roman", size=14, face="bold", hjust = 0.5)) +
-  ggtitle("# DDI per # Protein Logarithmic Scale") +
-scale_x_log10() + 
-scale_y_log10() +
-geom_smooth(method='lm')
-
+    plot.title = element_text(family= "Times New Roman", size=16, face="bold", hjust = 0.5)) +
+  ggtitle("DDI Distribution per Drug-Protein") +
+  scale_x_log10() + 
+  scale_y_log10() +
+  geom_smooth(method='lm') +
+  stat_regline_equation(label.x = log10(5), label.y = log10(30)) +
+  stat_regline_equation(label.x = log10(5), label.y = log10(20), aes(label = ..rr.label..))
 

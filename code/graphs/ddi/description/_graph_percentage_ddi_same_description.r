@@ -119,7 +119,17 @@ p4 <- ggplot(data, aes(x = '', y = as.integer(count), fill =  cat)) +
   theme_void()
 
 ##################
+data = NULL
+data <- dbGetQuery(con,
+                   "
+      SELECT category_id as category, description 
+      FROM ddi_category 
+      GROUP BY category_id, description
+      ORDER BY category_id");
+head(data)
+stable.p <- ggtexttable(data, rows = NULL)
 
+ggarrange(stable.p, ncol = 1, nrow = 1, heights = c(0.5, 0.25))
 
 prow <- plot_grid( p1 + theme(legend.position="none"),
                    p2 + theme(legend.position="none"),
@@ -135,14 +145,14 @@ legend_b <- get_legend(p1 + theme(legend.position="bottom"))
 plot_grid(prow, legend_b, nrow=2, rel_heights = c(1, .1))
 
 ######to draw explanation table of each category
-"data = NULL
+data = NULL
 data <- dbGetQuery(con,
-      ""
+      "
       SELECT category_id as category, description 
-      FROM description_category 
+      FROM ddi_category 
       GROUP BY category_id, description
-      ORDER BY category_id"");
+      ORDER BY category_id");
+head(data)
+stable.p <- ggtexttable(data, rows = NULL)
 
-stable.p <- ggtexttable(data, rows = NULL, theme = ttheme(""classic"
-
-"ggarrange(stable.p, ncol = 1, nrow = 1, heights = c(0.5, 0.25))"
+ggarrange(stable.p, ncol = 1, nrow = 1, heights = c(0.5, 0.25))

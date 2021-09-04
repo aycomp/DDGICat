@@ -9,7 +9,7 @@ con <- dbConnect(RPostgres::Postgres(),user="postgres",password="terlik",host="l
 data1 <- dbGetQuery(con,
 "
 WITH target AS (
-  SELECT 
+  SELECT  
     COUNT(drug_protein_id) AS target_count, 
     drug_id
   FROM public.drug_protein

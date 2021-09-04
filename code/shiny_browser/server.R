@@ -27,8 +27,8 @@ shinyServer(
         INNER JOIN drug_groups dg 
           ON d.drug_id = dg.",
             paste("\"drugbank-id\"", " WHERE lower(d.name) LIKE ", "'", tolower(input$nameDrug), 
-                  "%' AND d.type = '", input$typeDrug,  
-                  "' AND dg.group = '", input$statusDrug, "'", sep=""),sep=""))
+                  "%' AND ('", input$typeDrug, "' = 'all' OR d.type = '", input$typeDrug,  
+                  "' ) AND ('", input$statusDrug, "' = 'all' OR dg.group = '", input$statusDrug, "')", sep=""),sep=""))
       
       outp <- dbGetQuery(pool, query)
       
@@ -134,7 +134,7 @@ shinyServer(
                       
                       " AND ( CASE WHEN '", input$severity , "' = '' THEN 1 = 1 
                           ELSE severity = '", input$severity, "' END )", sep=""))
-      print(query)
+      
       outp <- dbGetQuery(pool, query)
       ret <- DT::datatable(outp, width = "100%",
                            extensions= c("ColReorder", "Buttons", "KeyTable"),
@@ -792,30 +792,42 @@ shinyServer(
     choiced <- reactive({
       
       if(input$entityId == "Drug"){
-        choice <- c("Drug State" = "drugState", "Drug Status" = "drugStatus", "Drug Type" = "drugType", "Drug Status per Drug Type" = "drugStatusPerDrug")
+        choice <- c("Drug State" = "drugState", 
+                    "Drug Status" = "drugStatus", 
+                    "Drug Type" = "drugType", 
+                    "Drug Status per Drug Type" = "drugStatusPerDrug")
       }
       else if(input$entityId == "Gene"){
-        choice <- c("Chromosome" = "genePerChromosome")
+        choice <- c("Drugable Gene Count per Chromosome" = "drugableGenePerChromosome", 
+                    "Drugable/NonDrugable Gene Count per Chromosome" = "drugableNonDrugableGenePerChromosome",
+                    "Top Drug Associated Genes" = "topDrugAssociatedGenes",
+                    "Top Drug Associated Proteins" = "topDrugAssociatedProteins",
+                    "Protein Type per Drug Association" = "proteinTypePerDrugAssociation",
+                    "Target Distribution per Drug" = "targetDistributionPerDrug",
+                    "Enzyme Distribution per Drug" = "enzymeDistributionPerDrug",
+                    "Carrier Distribution per Drug" = "carrierDistributionPerDrug",
+                    "Transporter Distribution per Drug" = "transporterDistributionPerDrug")
       }
       else if(input$entityId == "SNP"){
-        choice <- c("Chromosome" = "snpPerChromosome")
+        choice <- c("Drugable SNP Count per Chromosome" = "drugableSNPPerChromosome", 
+                    "Drugable/NonDrugable SNP Count per Chromosome" = "drugableNonDrugableSNPPerChromosome")
       }
       else if(input$entityId == "DDI"){
-        choice <- c("Drug Count" = "6", "ATC Level" = "7", "Severity" = "8")
-      }
-      else if(input$entityId == "DGI"){
-        choice <- c("Gene" = "9", "Protein Type" = "10")
-      }
+        choice <- c("Drug Count" = "ddiDistributionperDrugCount",
+                    "Same ATC Level" = "ddiSharingSameATCLevel",
+                    "Distribution per ATC Level1" = "ddiDistributionperATCLevel1",
+                    "Distribution per ATC Level2" = "ddiDistributionperATCLevel2",
+                    "Distribution per ATC Level3" = "ddiDistributionperATCLevel3",
+                    "Distribution per ATC Level4" = "ddiDistributionperATCLevel4"
+                    )}
       else if(input$entityId == "DDGI"){
-        choice <- c("a" = "11", "b" = "12")
-      }
+        choice <- c("DDI Distribution per Drug-Protein" = "ddiDistributionperDrugProtein",
+                    "DDI Percentagesper Sharing Same Drug-Protein" = "ddiDistributionperSharingSameDrugProtein")}
     })
-    
     
     observe ({
       updateSelectInput(session, "plot", choices = choiced())
     })
-    
     
     output$plotStat <- renderPlot({
 
@@ -825,14 +837,15 @@ shinyServer(
             SELECT 
             	state, COUNT(*) AS count
             FROM public.drug
-            GROUP BY state
-            ORDER BY state"
+            WHERE state != '-'
+            GROUP BY state"
         )
         
         stat_drug_data <- dbGetQuery(pool, query)
         
-        ggplot(stat_drug_data, aes(x = state, y = as.integer(count))) +
+        ggplot(stat_drug_data, aes(x = reorder(state, -count), y = as.integer(count))) +
           geom_col(width = 0.8) +
+          geom_text(aes(label = count), vjust = -0.2) +
           labs(x= "Drug State" , y = "Count", fill = "") +
           theme(
             text = element_text(family= "Times New Roman", size=16),
@@ -857,8 +870,9 @@ shinyServer(
         
         stat_drug_data <- dbGetQuery(pool, query)
         
-        ggplot(stat_drug_data, aes(x = status, y = as.integer(count))) +
+        ggplot(stat_drug_data, aes(x = reorder(status, -count), y = as.integer(count))) +
           geom_col(width = 0.8) +
+          geom_text(aes(label = count), vjust = -0.2) +
           labs(x= "Drug Status" , y = "Count", fill = "") +
           theme(
             text = element_text(family= "Times New Roman", size=16),
@@ -880,9 +894,10 @@ shinyServer(
         
         stat_drug_data <- dbGetQuery(pool, query)
         
-        ggplot(stat_drug_data, aes(x = type, y = as.integer(count))) +
+        ggplot(stat_drug_data, aes(x = reorder(type, -count), y = as.integer(count))) +
           geom_col(width = 0.8) +
-          labs(x= "Drug Type" , y = "Count", fill = "") +
+          geom_text(aes(label = count), vjust = -0.2) +
+          labs(x= "Drug Type" , y = "Count") +
           theme(
             text = element_text(family= "Times New Roman", size=16),
             title = element_text(family= "Times New Roman", size=16, face="bold"),
@@ -926,10 +941,11 @@ shinyServer(
         )
         
         stat_drug_data <- dbGetQuery(pool, query)
-        
-        ggplot(stat_drug_data, aes(x = group, y = as.integer(count), fill = drug_type)) +
+          
+        ggplot(stat_drug_data, aes(x = reorder(group, -count), y = count, fill = drug_type)) +
           geom_col(width = 0.8) +
-          labs(x= "Drug Status" , y = "Count", fill = "") +
+          geom_text(aes(label = count), vjust = -0.2,  position=position_stack(vjust=.5)) +
+          labs(x= "Drug Status" , y = "Count") +
           theme(
             text = element_text(family= "Times New Roman", size=16),
             title = element_text(family= "Times New Roman", size=16, face="bold"),
@@ -938,7 +954,7 @@ shinyServer(
             plot.title = element_text(family= "Times New Roman", size=18, face="bold", hjust = 0.5)) +
           ggtitle("Drug Status per Drug Type")
       }
-      else if (input$plot == "genePerChromosome")
+      else if (input$plot == "drugableGenePerChromosome")
       {
         query <- sqlInterpolate(ANSI(), "
             WITH a AS (	
@@ -977,10 +993,171 @@ shinyServer(
             legend.position = "bottom",
             legend.direction = "horizontal",
             plot.title = element_text(family= "Times New Roman", size=18, face="bold", hjust = 0.5)) +
-          ggtitle("#Gene per Chromosome")
+          geom_text(aes(label = count), vjust = -0.2) +
+          ggtitle("Drugable Gene Count per Chromosome")
+      }
+      else if (input$plot == "drugableNonDrugableGenePerChromosome")
+      {
+        query <- sqlInterpolate(ANSI(), "
+         WITH drugable_gene AS (
+            WITH 
+             a AS (	
+            	  SELECT
+            		COUNT(*) AS count,
+            		chromosome
+            	  FROM public.gene	
+            	  WHERE chromosome >= '1' 
+            		AND chromosome <= '23'
+            	  GROUP BY chromosome
+            	  ORDER BY chromosome::INT  
+            	  ),
+            b AS (
+            	SELECT 
+            		COUNT(*) AS count,
+            		chromosome
+            	FROM public.gene	
+            	WHERE chromosome IN ('X', 'Y')
+            	GROUP BY chromosome
+            	ORDER BY chromosome
+            	)
+            	SELECT chromosome, count FROM a 
+            	UNION ALL 
+            	SELECT chromosome, count FROM b
+            ),
+            gene_count AS (
+            	SELECT chromosome, count
+            	FROM gene_count_per_chromosome
+            )
+            SELECT 
+            	g.chromosome AS chromosome,
+            	d.count AS count,
+            	'drugable' AS drugability,
+            	round(((d.count::decimal / g.count::decimal) * 100),2) || ' %' AS percentage
+            FROM gene_count g
+            INNER JOIN drugable_gene d
+            	ON g.chromosome = d.chromosome
+            UNION ALL
+            SELECT 
+            	g.chromosome AS chromosome,
+            	g.count AS count,
+            	'none' AS drugability,
+            	(100 - round(((d.count::decimal / g.count::decimal) * 100),2)) || ' %' AS percentage
+            FROM gene_count g
+            INNER JOIN drugable_gene d
+            	ON g.chromosome = d.chromosome
+            --ORDER BY drugability, count desc; 
+                                "
+        )
+
+        stat_gene_data <- dbGetQuery(pool, query)
+        
+        ggplot(stat_gene_data, aes(x = reorder(chromosome, -count), y = count, fill = drugability)) +
+          geom_col(width = 0.9) +
+          geom_text(aes(label = percentage, vjust = -0.2),  position=position_stack(vjust=.5)) +
+          labs(x= "Chromosome", y = "Gene Count") +
+          theme(
+            text = element_text(family= "Times New Roman", size=16, face="bold"),
+            title = element_text(family= "Times New Roman", size=16, face="bold"),
+            legend.position = "bottom",
+            legend.direction = "horizontal",
+            plot.title = element_text(family= "Times New Roman", size=18, face="bold", hjust = 0.5)) +
+          ggtitle("Drugable/NonDrugable Gene Counts per Chromosome")
+      }
+      else if (input$plot == "topDrugAssociatedGenes") {
+        query <- sqlInterpolate(ANSI(), "
+            SELECT 
+            	COUNT(*)::int AS cnt, gene_name
+            FROM public.drug_protein
+            WHERE gene_name IS NOT NULL
+            GROUP BY gene_name
+            ORDER BY cnt DESC
+            LIMIT 10; " );
+        
+        theme_set(theme_bw())
+        
+        stat_gene_data <- dbGetQuery(pool, query)
+        
+        ggplot(stat_gene_data, aes(x = reorder(gene_name, -cnt), y = cnt)) +
+          geom_col(width = 0.8) +
+          geom_text(aes(label = cnt, vjust = -0.2)) +
+          labs(x= "Gene Name" , y = "Count") +
+          theme(
+            text = element_text(family= "Times New Roman", size=12, face="bold"),
+            title = element_text(family= "Times New Roman", size=14, face="bold"),
+            legend.position = "bottom",
+            legend.direction = "horizontal",
+            plot.title = element_text(family= "Times New Roman", size=18, face="bold", hjust = 0.5)) +
+          ggtitle("Top 10 Most Drug-Associated Genes")
         
       }
-      else if (input$plot == "snpPerChromosome")
+      else if (input$plot == "topDrugAssociatedProteins") {
+        query <- sqlInterpolate(ANSI(), "
+         SELECT 
+              	COUNT(*)::int AS cnt, 
+              	CASE WHEN drug_protein_type = 1 THEN 'Target'
+              	     WHEN drug_protein_type = 2 THEN 'Enzyme'
+              	     WHEN drug_protein_type = 3 THEN 'Carrier'
+              	     WHEN drug_protein_type = 4 THEN 'Transporter'
+              	END AS drug_protein_type,
+              	drug_protein_name AS protein_name
+                FROM public.drug_protein
+              --WHERE drug_protein_name IS NOT NULL
+              GROUP BY drug_protein_type, drug_protein_name
+              ORDER BY cnt DESC
+            LIMIT 10; ");
+                                
+        stat_drug_protein_data <- dbGetQuery(pool, query)
+        
+        theme_set(theme_bw())
+        
+        ggplot(stat_drug_protein_data, aes(x = reorder(protein_name, -cnt), y = cnt, 
+                         fill=reorder(drug_protein_type, -cnt))) +
+          geom_col(width = 0.7) +
+          geom_text(aes(label = cnt, vjust = -0.2)) +
+          labs(x= "Protein Name" , y = "Count", fill="") +
+          theme(
+            text = element_text(family= "Times New Roman", size=10, face="bold"),
+            axis.text.x = element_text(angle = 20),
+            title = element_text(family= "Times New Roman", size=12, face="bold"),
+            legend.position = "bottom",
+            legend.direction = "horizontal",
+            plot.title = element_text(family= "Times New Roman", size=14, face="bold", hjust = 0.5)) +
+          ggtitle("Top Drug-Interacting Proteins") +
+          guides(fill=guide_legend())
+                                
+      }
+      else if (input$plot == "proteinTypePerDrugAssociation") {
+        query <- sqlInterpolate(ANSI(), "
+            SELECT 
+            	COUNT(*)::int AS cnt,
+        			CASE 
+        			  WHEN drug_protein_type = 1 THEN 'Target'
+        			  WHEN drug_protein_type = 2 THEN 'Enzyme'
+        			  WHEN drug_protein_type = 3 THEN 'Carrier'
+        			  WHEN drug_protein_type = 4 THEN 'Transporter'
+        			END AS drug_protein_type
+            FROM public.drug_protein
+            GROUP BY drug_protein_type
+            ORDER BY cnt DESC "
+        )
+        
+        stat_protein_type_data <- dbGetQuery(pool, query)
+        
+        theme_set(theme_bw())
+        
+        ggplot(stat_protein_type_data, aes(x = reorder(drug_protein_type, -cnt), y = cnt)) +
+          geom_col(width = 0.8) +
+          geom_text(aes(label = cnt, vjust = -0.2)) +
+          labs(x= "Protein Type" , y = "Count") +
+          theme(
+            text = element_text(family= "Times New Roman", size=12, face="bold"),
+            title = element_text(family= "Times New Roman", size=13, face="bold"),
+            legend.position = "bottom",
+            legend.direction = "horizontal",
+            plot.title = element_text(family= "Times New Roman", size=14, face="bold", hjust = 0.5)) +
+          ggtitle("Protein Types per Drug Association")
+      }
+      else if (input$plot == "drugableSNPPerChromosome")
       {
         query <- sqlInterpolate(ANSI(), "
             SELECT 
@@ -990,9 +1167,9 @@ shinyServer(
             ORDER BY (chr_name::INT)"
         )
         
-        stat_drug_data <- dbGetQuery(pool, query)
+        stat_snp_data <- dbGetQuery(pool, query)
         
-        ggplot(stat_drug_data, aes(x = reorder(chr_name, -count), y = count)) +
+        ggplot(stat_snp_data, aes(x = reorder(chr_name, -count), y = count)) +
           geom_col(width = 0.8) +
           labs(x= "Chromosome", y = "SNP Count") +
           theme(
@@ -1001,8 +1178,574 @@ shinyServer(
             legend.position = "bottom",
             legend.direction = "horizontal",
             plot.title = element_text(family= "Times New Roman", size=18, face="bold", hjust = 0.5)) +
-          ggtitle("#SNP per Chromosome")
-        }
+          geom_text(aes(label = count), vjust = -0.2) +
+          ggtitle("DDGICat - #SNP per Chromosome")
+      }
+      else if (input$plot == "drugableNonDrugableSNPPerChromosome")
+      {
+        query <- sqlInterpolate(ANSI(), "
+         WITH drugable_snp AS (
+            	WITH 
+            	 a AS (	
+            		  SELECT
+            			COUNT(*) AS count,
+            			chr_name::text AS chromosome
+            		  FROM public.snp	
+            		  WHERE chr_name >= '1' 
+            			AND chr_name <= '23'
+            		  GROUP BY chr_name
+            		  ORDER BY chr_name::INT 
+            		  )
+            		SELECT chromosome, count FROM a 
+            	),
+            	snp_count AS (
+            		SELECT chromosome, count
+            		FROM snp_count_per_chromosome
+            	)
+            	SELECT 
+            		g.chromosome AS chromosome,
+            		d.count AS count,
+            		'drugable' AS drugability,
+            		round(((d.count::decimal / g.count::decimal) * 100),2) || ' %' AS percentage
+            	FROM snp_count g
+            	INNER JOIN drugable_snp d
+            		ON g.chromosome = d.chromosome
+            	UNION ALL
+            	SELECT 
+            		g.chromosome AS chromosome,
+            		g.count AS count,
+            		'none' AS drugability,
+            		(100 - round(((d.count::decimal / g.count::decimal) * 100),2)) || ' %' AS percentage
+            	FROM snp_count g
+            	INNER JOIN drugable_snp d
+            		ON g.chromosome = d.chromosome;  "
+        )
+        
+        stat_snp_data <- dbGetQuery(pool, query)
+        
+        ggplot(stat_snp_data, aes(x = reorder(chromosome, -count), y = log(count), fill = drugability)) +
+          geom_col(width = 0.8) +
+          geom_text(aes(label = percentage, vjust = -0.2),  position=position_stack(vjust=.5)) +
+          labs(x= "Chromosome", y = "SNP Count (Log 10)") +
+          theme(
+            text = element_text(family= "Times New Roman", size=16, face="bold"),
+            title = element_text(family= "Times New Roman", size=16, face="bold"),
+            legend.position = "bottom",
+            legend.direction = "horizontal",
+            plot.title = element_text(family= "Times New Roman", size=18, face="bold", hjust = 0.5)) +
+          ggtitle("Drugable/NonDrugable SNP Counts per Chromosome")
+      }
+      else if (input$plot == "targetDistributionPerDrug") {
+        query <- sqlInterpolate(ANSI(), "
+          WITH target AS (
+              SELECT 
+                COUNT(drug_protein_id) AS target_count, 
+                drug_id
+              FROM public.drug_protein
+              WHERE drug_protein_type = 1
+              GROUP BY drug_id
+              ORDER BY target_count DESC
+            )
+            SELECT
+              COUNT(drug_id) AS number_of_drugs, 
+              target_count AS number_of_target
+            FROM target
+            WHERE target_count < 40
+            GROUP BY number_of_target
+            ORDER BY number_of_drugs DESC, number_of_target
+        ")
+        
+        stat_target_data <- dbGetQuery(pool, query)
+        
+        ggplot(stat_target_data, aes(x = number_of_drugs, y = number_of_target)) +
+          geom_point(alpha=0.8) +
+          labs(x= "Drug Count" , y = "Target Count") +
+          theme(
+            text = element_text(family= "Times New Roman", size=14, face="bold"),
+            title = element_text(family= "Times New Roman", size=14, face="bold"),
+            legend.position = "bottom",
+            legend.direction = "horizontal",
+            plot.title = element_text(family= "Times New Roman", size=16, face="bold", hjust = 0.5)) +
+          ggtitle("Target Distribution per Drug") +
+          scale_x_log10() + 
+          scale_y_log10() +
+          geom_smooth(method='lm') +
+          stat_regline_equation(label.x = log10(10), label.y = log10(20)) +
+          stat_regline_equation(label.x = log10(10), label.y = log10(18), aes(label = ..rr.label..))
+        
+      }
+      else if (input$plot == "enzymeDistributionPerDrug") {
+        query <- sqlInterpolate(ANSI(), "
+            WITH enzyme AS (
+                SELECT 
+                COUNT(drug_protein_id) AS enzyme_count, 
+                drug_id
+                FROM public.drug_protein
+                WHERE drug_protein_type = 2
+                GROUP BY drug_id
+                ORDER BY enzyme_count DESC
+              )
+              SELECT
+              COUNT(drug_id) AS number_of_drugs, 
+              enzyme_count AS number_of_enzyme
+              FROM enzyme
+              WHERE enzyme_count < 11
+              GROUP BY number_of_enzyme
+              ORDER BY number_of_drugs DESC, number_of_enzyme ")
+        
+        stat_enzyme_data <- dbGetQuery(pool, query)
+        
+        ggplot(stat_enzyme_data, aes(x = number_of_drugs, y = number_of_enzyme)) +
+          geom_point(alpha=0.8) +
+          labs(x= "Drug Count" , y = "Enzyme Count") +
+          theme(
+            text = element_text(family= "Times New Roman", size=14, face="bold"),
+            title = element_text(family= "Times New Roman", size=14, face="bold"),
+            legend.position = "bottom",
+            legend.direction = "horizontal",
+            plot.title = element_text(family= "Times New Roman", size=16, face="bold", hjust = 0.5)) +
+          ggtitle("Enzyme Distribution per Drug") +
+          scale_x_log10() + 
+          scale_y_log10() +
+          geom_smooth(method='lm') +
+          stat_regline_equation(label.x = log10(100), label.y = log10(8)) +
+          stat_regline_equation(label.x = log10(100), label.y = log10(7), aes(label = ..rr.label..))
+      }
+      else if (input$plot == "carrierDistributionPerDrug") {
+        query <- sqlInterpolate(ANSI(), "
+              WITH carrier AS (
+                SELECT 
+                  COUNT(drug_protein_id) AS carrier_count, 
+                  drug_id
+                FROM public.drug_protein
+                WHERE drug_protein_type = 3
+                GROUP BY drug_id
+                ORDER BY carrier_count DESC
+              )
+              SELECT
+                COUNT(drug_id) AS number_of_drugs, 
+                carrier_count AS number_of_carrier
+              FROM carrier
+              GROUP BY number_of_carrier
+              ORDER BY number_of_drugs DESC, number_of_carrier       
+        ")
+        
+        stat_carrier_data <- dbGetQuery(pool, query)
+        
+        ggplot(stat_carrier_data, aes(x = number_of_drugs, y = number_of_carrier)) +
+          geom_point(alpha=0.8) +
+          labs(x= "Drug Count" , y = "Carrier Count") +
+          theme(
+            text = element_text(family= "Times New Roman", size=14, face="bold"),
+            title = element_text(family= "Times New Roman", size=14, face="bold"),
+            legend.position = "bottom",
+            legend.direction = "horizontal",
+            plot.title = element_text(family= "Times New Roman", size=16, face="bold", hjust = 0.5)) +
+          ggtitle("Carrier Distribution per Drug") +
+          scale_x_log10() + 
+          scale_y_log10() +
+          geom_smooth(method='lm') +
+          stat_regline_equation(label.x = log10(10), label.y = log10(6)) +
+          stat_regline_equation(label.x = log10(10), label.y = log10(5), aes(label = ..rr.label..))
+      }
+      else if (input$plot == "transporterDistributionPerDrug") {
+        query <- sqlInterpolate(ANSI(), "
+            WITH transporter AS (
+                SELECT 
+                  COUNT(drug_protein_id) AS transporter_count, 
+                  drug_id
+                FROM public.drug_protein
+                WHERE drug_protein_type = 4
+                GROUP BY drug_id
+                ORDER BY transporter_count DESC
+              )
+              SELECT
+                COUNT(drug_id) AS number_of_drugs, 
+                transporter_count AS number_of_transporter
+              FROM transporter
+              GROUP BY number_of_transporter
+              ORDER BY number_of_drugs DESC, number_of_transporter
+        ")
+        
+        stat_transporter_data <- dbGetQuery(pool, query)
+        
+        ggplot(stat_transporter_data, aes(x = number_of_drugs, y = number_of_transporter)) +
+          geom_point(alpha=0.8) +
+          labs(x= "Drug Count" , y = "Transporter Count") +
+          theme(
+            text = element_text(family= "Times New Roman", size=14, face="bold"),
+            title = element_text(family= "Times New Roman", size=14, face="bold"),
+            legend.position = "bottom",
+            legend.direction = "horizontal",
+            plot.title = element_text(family= "Times New Roman", size=16, face="bold", hjust = 0.5)) +
+          ggtitle("Transporter Distribution per Drug") +
+          scale_x_log10() + 
+          scale_y_log10() +
+          geom_smooth(method='lm') +
+          stat_regline_equation(label.x = log10(10), label.y = log10(26)) +
+          stat_regline_equation(label.x = log10(10), label.y = log10(23), aes(label = ..rr.label..))
+      }
+      else if (input$plot == "ddiDistributionperDrugCount"){
+        query <- sqlInterpolate(ANSI(), "
+        WITH ddi AS (
+          SELECT 
+          COUNT(*) AS ddi_count, 
+          drug1_id
+          FROM public.ddi
+          WHERE severity = 'high'
+          GROUP BY drug1_id
+          ORDER BY ddi_count DESC
+        )
+        SELECT
+        COUNT(drug1_id)::int AS number_of_drugs, 
+        ddi_count::int AS number_of_ddi
+        FROM ddi
+        GROUP BY number_of_ddi
+        ORDER BY number_of_drugs DESC, number_of_ddi" );
+        
+        stat_ddi_per_drug_data <- dbGetQuery(pool, query)
+        
+        ggplot(stat_ddi_per_drug_data, aes(x = number_of_drugs, y = number_of_ddi)) +
+          geom_point(alpha=0.8) +
+          labs(x= "Drug Count" , y = "Interaction Count") +
+          theme(
+            text = element_text(family= "Times New Roman", size=14, face="bold"),
+            title = element_text(family= "Times New Roman", size=14, face="bold"),
+            legend.position = "bottom",
+            legend.direction = "horizontal",
+            plot.title = element_text(family= "Times New Roman", size=16, face="bold", hjust = 0.5)) +
+          ggtitle("DDI Distribution per Drug") +
+          scale_x_log10() + 
+          scale_y_log10() +
+          geom_smooth(method='lm') +
+          stat_regline_equation(label.x = log10(7), label.y = log10(15)) +
+          stat_regline_equation(label.x = log10(7), label.y = log10(13), aes(label = ..rr.label..))
+      }
+      else if (input$plot == "ddiSharingSameATCLevel"){
+        query <- sqlInterpolate(ANSI(), " 
+            WITH 
+               ddi1 AS (WITH ddi AS (
+                SELECT 
+                COUNT(1) AS ddi_count
+                FROM temp_ddi_same_atc1
+                )
+                SELECT
+                  'level 1'::TEXT AS atc_level,
+                  COUNT(1)::int AS number_of_same_atc, 
+                  ddi_count::int AS number_of_ddi
+                FROM temp_ddi_same_atc1, ddi
+                WHERE drug1_atc = drug2_atc 
+                group by ddi_count
+              ),
+              ddi2 AS (with ddi as (
+                SELECT 
+                COUNT(1) AS ddi_count
+                FROM temp_ddi_same_atc2
+                )
+                SELECT
+                'level 2'::TEXT AS atc_level,
+                COUNT(1)::int AS number_of_same_atc, 
+                ddi_count::int AS number_of_ddi
+                FROM temp_ddi_same_atc2, ddi
+                WHERE drug1_atc = drug2_atc 
+                group by ddi_count
+              ),
+              ddi3 AS (
+                with ddi as (
+                SELECT 
+                COUNT(1) AS ddi_count
+                FROM temp_ddi_same_atc3
+              )
+              SELECT
+                'level 3'::TEXT AS atc_level,
+                COUNT(1)::int AS number_of_same_atc, 
+                ddi_count::int AS number_of_ddi
+              FROM temp_ddi_same_atc3, ddi
+              WHERE drug1_atc = drug2_atc 
+              group by ddi_count
+              ),
+              ddi4 AS (
+              with ddi as (
+                SELECT 
+                COUNT(1) AS ddi_count
+                FROM temp_ddi_same_atc4
+              )
+              SELECT
+                'level 4'::TEXT AS atc_level,
+                COUNT(1)::int AS number_of_same_atc, 
+                ddi_count::int AS number_of_ddi
+              FROM temp_ddi_same_atc4, ddi
+              WHERE drug1_atc = drug2_atc 
+              group by ddi_count
+              )
+            SELECT \"atc_level\", 'Interaction(YES)' AS interaction, number_of_same_atc AS number_of_ddi FROM ddi1
+            UNION ALL
+            SELECT \"atc_level\", 'Interaction(NO)' AS interaction, (number_of_ddi- number_of_same_atc) AS number_of_ddi FROM ddi1
+            UNION ALL
+            SELECT \"atc_level\",  'Interaction(YES)' AS interaction, number_of_same_atc AS number_of_ddi FROM ddi2
+            UNION ALL
+            SELECT \"atc_level\", 'Interaction(NO)' AS interaction, (number_of_ddi- number_of_same_atc) AS number_of_ddi FROM ddi2
+            UNION ALL
+            SELECT \"atc_level\", 'Interaction(YES)' AS interaction, number_of_same_atc AS number_of_ddi FROM ddi3
+            UNION ALL
+            SELECT \"atc_level\", 'Interaction(NO)' AS interaction, (number_of_ddi- number_of_same_atc) AS number_of_ddi FROM ddi3
+            UNION ALL
+            SELECT \"atc_level\", 'Interaction(YES)' AS interaction, number_of_same_atc AS number_of_ddi FROM ddi4
+            UNION ALL
+            SELECT \"atc_level\", 'Interaction(NO)' AS interaction, (number_of_ddi- number_of_same_atc) AS number_of_ddi FROM ddi4
+            " )
+      
+        stat_ddi_dist_per_atc <- dbGetQuery(pool, query)
+        
+        theme_set(theme_bw())
+        
+        ggplot(stat_ddi_dist_per_atc, aes(fill=interaction, y=number_of_ddi, x=atc_level)) + 
+          geom_col(width = 0.5) +
+          labs(x= "ATC Level" , y = "Interaction Count", fill = "") +
+          theme(
+            text = element_text(family= "Times New Roman", size=16),
+            title = element_text(family= "Times New Roman", size=16, face="bold"),
+            legend.position = "bottom",
+            legend.direction = "horizontal",
+            plot.title = element_text(family= "Times New Roman", size=18, face="bold", hjust = 0.5)) +
+          ggtitle("DDI Distribution per ATC Level")
+        
+      }
+      else if (input$plot == "ddiDistributionperATCLevel1"){
+        query <- sqlInterpolate(ANSI(), "
+          WITH most_interacted_drugs AS 
+              (
+              	SELECT 
+              		drug1_id AS drug_id, 
+              		COUNT(1) AS cnt
+              	FROM public.ddi
+              	GROUP BY drug1_id
+              	ORDER BY cnt DESC
+              )
+              SELECT 
+              	COUNT(1)::int AS cnt, 
+              	code_4, 
+              	level_4
+              FROM most_interacted_drugs mid
+              INNER JOIN drug_atc_codes atc
+              	ON mid.drug_id = atc.\"drugbank-id\"
+              GROUP BY code_4, level_4
+              ORDER BY cnt DESC
+              LIMIT 10
+        ")
+        
+        stat_ddi_dist_same_atc1 <- dbGetQuery(pool, query)
+        theme_set(theme_bw())
+        
+        ggplot(data, aes(x = reorder(code_4, -cnt), y = cnt, fill = reorder(level_4, -cnt))) +
+          geom_col(width = 0.6) +
+          labs(x= "ATC 1" , y = "DDI Count", fill = "") +
+          theme(
+            text = element_text(size=12),
+            title = element_text(family= "Times New Roman", size=12, face="bold"),
+            legend.position = "bottom",
+            legend.direction = "vertical",
+            plot.title = element_text(family= "Times New Roman", size=16, face="bold", hjust = 0.5)) +
+          ggtitle("ATC Level 1") 
+  
+      }
+      else if (input$plot == "ddiDistributionperATCLevel2"){
+        query <- sqlInterpolate(ANSI(), "
+             WITH most_interacted_drugs AS 
+            (
+            	SELECT 
+            		drug1_id AS drug_id, 
+            		COUNT(1) AS cnt
+            	FROM public.ddi
+            	GROUP BY drug1_id
+            	ORDER BY cnt DESC
+            )
+            SELECT 
+            	COUNT(1)::int AS cnt, 
+            	code_3, 
+            	level_3
+            FROM most_interacted_drugs mid
+            INNER JOIN drug_atc_codes atc
+            	ON mid.drug_id = atc.\"drugbank-id\"
+            GROUP BY code_3, level_3
+            ORDER BY cnt DESC
+            LIMIT 10
+        ")
+        
+        stat_ddi_dist_same_atc2 <- dbGetQuery(pool, query)
+        theme_set(theme_bw())
+      
+        ggplot(stat_ddi_dist_same_atc2, aes(x = reorder(code_3, -cnt), y = cnt, fill = reorder(level_3, -cnt))) +
+          geom_col(width = 0.6) +
+          labs(x= "ATC 2" , y = "DDI Count", fill = "") +
+          theme(
+            text = element_text(size=12),
+            title = element_text(family= "Times New Roman", size=12, face="bold"),
+            legend.position = "bottom",
+            legend.direction = "vertical",
+            plot.title = element_text(family= "Times New Roman", size=16, face="bold", hjust = 0.5)) +
+          ggtitle("ATC Level 2")
+      }
+      else if (input$plot == "ddiDistributionperATCLevel3"){
+        query <- sqlInterpolate(ANSI(), "
+          WITH most_interacted_drugs AS 
+            (
+            	SELECT 
+            		drug1_id AS drug_id, 
+            		COUNT(1) AS cnt
+            	FROM public.ddi
+            	GROUP BY drug1_id
+            	ORDER BY cnt DESC
+            )
+            SELECT 
+            	COUNT(1)::int AS cnt, 
+            	code_2, 
+            	level_2
+            FROM most_interacted_drugs mid
+            INNER JOIN drug_atc_codes atc
+            	ON mid.drug_id = atc.\"drugbank-id\"
+            GROUP BY code_2, level_2
+            ORDER BY cnt DESC
+            LIMIT 10
+        ")
+        
+        stat_ddi_dist_same_atc3 <- dbGetQuery(pool, query)
+        theme_set(theme_bw())
+        
+        ggplot(stat_ddi_dist_same_atc3, aes(x = reorder(code_2, -cnt), y = cnt, fill = reorder(level_2, -cnt))) +
+          geom_col(width = 0.6) +
+          labs(x= "ATC 3" , y = "DDI Count", fill = "") +
+          theme(
+            text = element_text(size=12),
+            title = element_text(family= "Times New Roman", size=12, face="bold"),
+            legend.position = "bottom",
+            legend.direction = "vertical",
+            plot.title = element_text(family= "Times New Roman", size=16, face="bold", hjust = 0.5)) +
+          ggtitle("ATC Level 3")
+      }
+      else if (input$plot == "ddiDistributionperATCLevel4"){
+        query <- sqlInterpolate(ANSI(), "
+             WITH most_interacted_drugs AS 
+            (
+            	SELECT 
+            		drug1_id AS drug_id, 
+            		COUNT(1) AS cnt
+            	FROM public.ddi
+            	GROUP BY drug1_id
+            	ORDER BY cnt DESC
+            )
+            SELECT 
+            	COUNT(1)::int AS cnt, 
+            	code_1, 
+            	level_1
+            FROM most_interacted_drugs mid
+            INNER JOIN drug_atc_codes atc
+            	ON mid.drug_id = atc.\"drugbank-id\"
+            GROUP BY code_1, level_1
+            ORDER BY cnt DESC
+            LIMIT 10
+        ")
+        
+        stat_ddi_dist_same_atc4 <- dbGetQuery(pool, query)
+        theme_set(theme_bw())
+        
+        ggplot(stat_ddi_dist_same_atc4, aes(x = reorder(code_1, -cnt), y = cnt, fill = reorder(level_1, -cnt))) +
+          geom_col(width = 0.6) +
+          labs(x= "ATC 4" , y = "DDI Count", fill = "") +
+          theme(
+            text = element_text(size=12),
+            title = element_text(family= "Times New Roman", size=12, face="bold"),
+            legend.position = "bottom",
+            legend.direction = "vertical",
+            plot.title = element_text(family= "Times New Roman", size=16, face="bold", hjust = 0.5)) +
+          ggtitle("ATC Level 4")
+   
+      }
+      else if (input$plot == "ddiDistributionperDrugProtein"){ 
+      
+        query <- sqlInterpolate(ANSI(), " 
+                WITH ddi_same_drug_protein AS (
+                  SELECT 
+                    COUNT(*) AS ddi_count, 
+                    drug_protein_id
+                  FROM public.ddi_same_drug_protein 
+                  WHERE severity = 'high'
+                  GROUP BY drug_protein_id
+                  ORDER BY ddi_count DESC
+                )
+                SELECT
+                  COUNT(drug_protein_id)::int AS number_of_protein, 
+                  ddi_count::int AS number_of_ddi
+                FROM ddi_same_drug_protein
+                GROUP BY number_of_ddi  
+                ORDER BY number_of_protein DESC, number_of_ddi"
+        )
+        
+        stat_ddi_per_protein_data <- dbGetQuery(pool, query)
+        
+        theme_set(theme_bw())
+        
+        ggplot(stat_ddi_per_protein_data, aes(x = number_of_protein, y = number_of_ddi)) +
+          geom_point(alpha=0.8) +
+          labs(x = "Protein Count", y= "Interaction Count") +
+          theme(
+            text = element_text(family= "Times New Roman", size=14, face="bold"),
+            title = element_text(family= "Times New Roman", size=14, face="bold"),
+            legend.position = "bottom",
+            legend.direction = "horizontal",
+            plot.title = element_text(family= "Times New Roman", size=16, face="bold", hjust = 0.5)) +
+          ggtitle("DDI Distribution per Drug-Protein") +
+          scale_x_log10() + 
+          scale_y_log10() +
+          geom_smooth(method='lm') +
+          stat_regline_equation(label.x = log10(5), label.y = log10(30)) +
+          stat_regline_equation(label.x = log10(5), label.y = log10(20), aes(label = ..rr.label..))
+        
+        
+      }
+      else if (input$plot == "ddiDistributionperSharingSameDrugProtein"){
+        query <- sqlInterpolate(ANSI(), " 
+              SELECT 'Target' AS protein_type, 'Same Drug-Protein' AS protein_sharing, final_percentage AS percentage
+              	FROM public.calculate_shared_protein_percentage_of_interacted_drugs(1)
+              UNION ALL
+              SELECT 'Target' AS protein_type, 'Different Drug-Protein' AS protein_sharing, (100- final_percentage) AS percentage 
+              	FROM public.calculate_shared_protein_percentage_of_interacted_drugs(1)
+              UNION ALL
+              SELECT 'Enzyme' AS protein_type, 'Same Drug-Protein' AS protein_sharing, final_percentage AS percentage
+              	FROM public.calculate_shared_protein_percentage_of_interacted_drugs(2)
+              UNION ALL
+              SELECT 'Enzyme' AS protein_type, 'Different Drug-Protein' AS protein_sharing,  (100- final_percentage) AS percentage
+              	FROM public.calculate_shared_protein_percentage_of_interacted_drugs(2)
+              UNION ALL
+              SELECT 'Carrier' AS protein_type, 'Same Drug-Protein' AS protein_sharing, final_percentage AS percentage 
+              	FROM public.calculate_shared_protein_percentage_of_interacted_drugs(3)	
+              UNION ALL
+              SELECT 'Carrier' AS protein_type, 'Different Drug-Protein' AS protein_sharing, (100- final_percentage) AS percentage 
+              	FROM public.calculate_shared_protein_percentage_of_interacted_drugs(3)	
+              UNION ALL
+              SELECT 'Transporter' AS protein_type, 'Same Drug-Protein' AS protein_sharing, final_percentage AS percentage
+              FROM public.calculate_shared_protein_percentage_of_interacted_drugs(4)
+              UNION ALL
+              SELECT 'Transporter' AS protein_type, 'Different Drug-Protein' AS protein_sharing, (100- final_percentage) AS percentage  
+              	FROM public.calculate_shared_protein_percentage_of_interacted_drugs(4)
+        ")
+        
+        stat_ddi_per_same_protein_data <- dbGetQuery(pool, query)
+        
+        theme_set(theme_bw())
+        
+        ggplot(stat_ddi_per_same_protein_data, aes(fill=protein_sharing, y=percentage, x=protein_type)) + 
+          geom_col(width = 0.5) +
+          labs(x= "Protein Type" , y = "Percentage", fill = "") +
+          theme(
+            text = element_text(family= "Times New Roman", size=16),
+            title = element_text(family= "Times New Roman", size=16, face="bold"),
+            legend.position = "bottom",
+            legend.direction = "horizontal",
+            plot.title = element_text(family= "Times New Roman", size=18, face="bold", hjust = 0.5)) +
+          ggtitle("DDI Percentages per Sharing Same Drug-Protein")
+      }
+      
     })
     
 ##############STATISTICS END###################
@@ -1011,15 +1754,32 @@ shinyServer(
 ##############DOWNLOAD BEGIN###################
 
     query <- sqlInterpolate(ANSI(), "SELECT * FROM public.drug;")
-    
     Drug <- dbGetQuery(pool, query)
       
-    # Reactive value for selected dataset ----    
+    query <- sqlInterpolate(ANSI(), "SELECT * FROM public.gene;")
+    Gene <- dbGetQuery(pool, query)
+    
+    query <- sqlInterpolate(ANSI(), "SELECT * FROM public.snp;")
+    SNP <- dbGetQuery(pool, query)
+  
+    query <- sqlInterpolate(ANSI(), "SELECT * FROM public.ddi;")
+    DDI <- dbGetQuery(pool, query)
+    
+    query <- sqlInterpolate(ANSI(), "SELECT * FROM public.drug_protein;")
+    DGI <- dbGetQuery(pool, query)
+    
+    query <- sqlInterpolate(ANSI(), "SELECT * FROM public.ddi_same_drug_protein;")
+    DDGI <- dbGetQuery(pool, query)
+    
+    # Reactive value for selected dataset ----
     datasetInput <- reactive({
       switch(input$dataset,
              "Drug" = Drug,
              "Gene" = Gene,
-             "SNP" = SNP)
+             "SNP" = SNP,
+             "DDI" = DDI,
+             "DGI" = DGI,
+             "DDI-Having Same Drug Protein" = DDGI)
     })
     
     # Downloadable csv of selected dataset ----

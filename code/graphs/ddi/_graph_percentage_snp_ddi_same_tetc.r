@@ -1,4 +1,4 @@
-library(DBI)
+  library(DBI)
 library(ggplot2)
 
 con <- dbConnect(RPostgres::Postgres(),user="postgres",password="terlik",host="localhost",port=5432, dbname="DDGICat")
