@@ -10,8 +10,8 @@ shinyUI(fluidPage(
                         "Plese select drug approval status", 
                         c("all", "approved", "experimental", "illicit", "investigational", "nutraceutical", "vet_approved", "withdrawn"), "all"),
             radioButtons("typeDrug", "Please select the drug type", c("all", "small molecule", "biotech"), "all")),
-    fluidRow(
-        mainPanel(  DT::dataTableOutput("tableDrug")))),
+    
+        mainPanel( fluidRow( DT::dataTableOutput("tableDrug")))),
             ),
     tabPanel("Gene",
            sidebarLayout(

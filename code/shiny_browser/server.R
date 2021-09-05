@@ -1031,8 +1031,8 @@ shinyServer(
             SELECT 
             	g.chromosome AS chromosome,
             	d.count AS count,
-            	'drugable' AS drugability,
-            	round(((d.count::decimal / g.count::decimal) * 100),2) || ' %' AS percentage
+            	'Yes' AS drugability,
+            	round(((d.count::decimal / g.count::decimal) * 100),0) AS percentage
             FROM gene_count g
             INNER JOIN drugable_gene d
             	ON g.chromosome = d.chromosome
@@ -1040,20 +1040,18 @@ shinyServer(
             SELECT 
             	g.chromosome AS chromosome,
             	g.count AS count,
-            	'none' AS drugability,
-            	(100 - round(((d.count::decimal / g.count::decimal) * 100),2)) || ' %' AS percentage
+            	'No' AS drugability,
+            	(100 - round(((d.count::decimal / g.count::decimal) * 100),0)) AS percentage
             FROM gene_count g
             INNER JOIN drugable_gene d
-            	ON g.chromosome = d.chromosome
-            --ORDER BY drugability, count desc; 
-                                "
+            	ON g.chromosome = d.chromosome "
         )
 
         stat_gene_data <- dbGetQuery(pool, query)
         
         ggplot(stat_gene_data, aes(x = reorder(chromosome, -count), y = count, fill = drugability)) +
           geom_col(width = 0.9) +
-          geom_text(aes(label = percentage, vjust = -0.2),  position=position_stack(vjust=.5)) +
+          geom_text(aes(label = percentage, vjust = -0.2)) +
           labs(x= "Chromosome", y = "Gene Count") +
           theme(
             text = element_text(family= "Times New Roman", size=16, face="bold"),
@@ -1061,7 +1059,7 @@ shinyServer(
             legend.position = "bottom",
             legend.direction = "horizontal",
             plot.title = element_text(family= "Times New Roman", size=18, face="bold", hjust = 0.5)) +
-          ggtitle("Drugable/NonDrugable Gene Counts per Chromosome")
+          ggtitle("Drugable/NonDrugable Gene Percentage per Chromosome")
       }
       else if (input$plot == "topDrugAssociatedGenes") {
         query <- sqlInterpolate(ANSI(), "
@@ -1205,8 +1203,8 @@ shinyServer(
             	SELECT 
             		g.chromosome AS chromosome,
             		d.count AS count,
-            		'drugable' AS drugability,
-            		round(((d.count::decimal / g.count::decimal) * 100),2) || ' %' AS percentage
+            		'Yes' AS drugability,
+            	  round(((d.count::decimal / g.count::decimal) * 100),2) AS percentage
             	FROM snp_count g
             	INNER JOIN drugable_snp d
             		ON g.chromosome = d.chromosome
@@ -1214,8 +1212,8 @@ shinyServer(
             	SELECT 
             		g.chromosome AS chromosome,
             		g.count AS count,
-            		'none' AS drugability,
-            		(100 - round(((d.count::decimal / g.count::decimal) * 100),2)) || ' %' AS percentage
+            		'No' AS drugability,
+            		(100 - round(((d.count::decimal / g.count::decimal) * 100), 2)) AS percentage
             	FROM snp_count g
             	INNER JOIN drugable_snp d
             		ON g.chromosome = d.chromosome;  "
@@ -1233,7 +1231,7 @@ shinyServer(
             legend.position = "bottom",
             legend.direction = "horizontal",
             plot.title = element_text(family= "Times New Roman", size=18, face="bold", hjust = 0.5)) +
-          ggtitle("Drugable/NonDrugable SNP Counts per Chromosome")
+          ggtitle("Drugable/NonDrugable SNP Percentage per Chromosome")
       }
       else if (input$plot == "targetDistributionPerDrug") {
         query <- sqlInterpolate(ANSI(), "
@@ -1537,7 +1535,7 @@ shinyServer(
         stat_ddi_dist_same_atc1 <- dbGetQuery(pool, query)
         theme_set(theme_bw())
         
-        ggplot(data, aes(x = reorder(code_4, -cnt), y = cnt, fill = reorder(level_4, -cnt))) +
+        ggplot(stat_ddi_dist_same_atc1, aes(x = reorder(code_4, -cnt), y = cnt, fill = reorder(level_4, -cnt))) +
           geom_col(width = 0.6) +
           labs(x= "ATC 1" , y = "DDI Count", fill = "") +
           theme(
