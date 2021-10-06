@@ -1743,7 +1743,45 @@ shinyServer(
             plot.title = element_text(family= "Times New Roman", size=18, face="bold", hjust = 0.5)) +
           ggtitle("DDI Percentages per Sharing Same Drug-Protein")
       }
-      
+      else if (input$plot == "Numbers"){
+        
+        query <- sqlInterpolate(ANSI(), " 
+                  SELECT 
+                  	'DDI' AS entity_name, 
+                  	COUNT(1) AS count 
+                  FROM public.ddi
+                  UNION ALL
+                  SELECT 
+                  	'Drug' AS entity_name, 
+                  	COUNT(1) AS count 
+                  FROM public.drug
+                  UNION ALL
+                  SELECT 
+                  	'DDI' AS entity_name, 
+                  	COUNT(1) AS count 
+                  FROM public.ddi
+                  UNION ALL
+                  SELECT 
+                  	'Disease' AS entity_name, 
+                  	COUNT(1) AS count 
+                  FROM public.disease ");
+        
+        stat_total_numbers_data <- dbGetQuery(pool, query)
+        
+        theme_set(theme_bw())
+        
+        ggplot(stat_total_numbers_data, aes(y=count, x=entity_name)) + 
+          geom_col(width = 0.5) +
+          labs(x= "Entity" , y = "Count", fill = "") +
+          theme(
+            text = element_text(family= "Times New Roman", size=16),
+            title = element_text(family= "Times New Roman", size=16, face="bold"),
+            legend.position = "bottom",
+            legend.direction = "horizontal",
+            plot.title = element_text(family= "Times New Roman", size=18, face="bold", hjust = 0.5)) +
+          ggtitle("DDI Percentages per Sharing Same Drug-Protein")
+        
+      }
     })
     
 ##############STATISTICS END###################

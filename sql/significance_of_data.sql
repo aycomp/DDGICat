@@ -61,3 +61,45 @@ b as (
 )
 select drug_protein_type, ((cnt/ttl)*100) as percentage
 from total,b
+
+
+--total data history
+SELECT
+	'Drug' AS entity_name,
+	COUNT(1) AS count
+FROM public.drug
+UNION ALL
+SELECT
+	'Gene' AS entity_name,
+	COUNT(1) AS count
+FROM public.gene
+UNION ALL
+SELECT
+	'SNP' AS entity_name,
+	COUNT(1) AS count
+FROM public.snp
+UNION ALL
+SELECT
+	'Drug-Protein' AS entity_name,
+	COUNT(1) AS count
+FROM public.drug_protein
+UNION ALL
+SELECT
+	'Drug-SNP' AS entity_name,
+	COUNT(1) AS count
+FROM public.drug_snp
+UNION ALL
+SELECT
+	'DDI' AS entity_name,
+	COUNT(1) AS count
+FROM public.ddi
+UNION ALL
+SELECT
+	'DDIs grouped by sharing same Drug-Protein' AS entity_name,
+	COUNT(1) AS count
+FROM public.ddi_same_drug_protein
+UNION ALL
+SELECT
+	'Disease' AS entity_name,
+	COUNT(1) AS count
+FROM public.disease

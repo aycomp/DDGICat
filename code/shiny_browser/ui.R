@@ -66,7 +66,7 @@ shinyUI(fluidPage(
              sidebarLayout(
                sidebarPanel(width=2,
                             selectInput("entityId", "Plese Select Entity", 
-                                        c("Drug", "Gene", "SNP", "DDI", "DDGI"), ""),
+                                        c("Drug", "Gene", "SNP", "DDI", "DDGI", "Numbers"), ""),
                             
                             selectInput("plot", "Plese Select Plot", ""),
                ),
